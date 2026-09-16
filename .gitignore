@@ -1,0 +1,6 @@
+config.py
+*.pem
+.browser_profile/
+__pycache__/
+lab1_state.json
+
