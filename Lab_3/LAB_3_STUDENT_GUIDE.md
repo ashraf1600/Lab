@@ -8,26 +8,7 @@ This lab teaches you to establish a secure site-to-site IPSec VPN tunnel connect
 
 ![Lab 3 Architecture Diagram](lab_3.webp)
 
-```
-+----------------------------------------+            +-----------------------------------------------+
-| Client Side (On-Premises / Hospital)   |            | AWS Cloud Environment                         |
-| CIDR: 192.168.0.0/16                   |            | VPC CIDR: 10.0.0.0/16                         |
-|                                        |            |                                               |
-|  +----------------------------------+  |   IPSec    |  +-----------------------------------------+  |
-|  | On-Prem VPN Gateway / Client     |  |   Tunnel   |  | Virtual Private Gateway (VGW)           |  |
-|  | Private IP: 192.168.1.187        |  | (AES-256)  |  | Attached to VPC: lab3-aws-vpc           |  |
-|  | Public Elastic IP: 52.76.232.237 |==+============+==| Route: 192.168.0.0/16 -> VGW            |  |
-|  | strongSwan IKEv2 / ESP Daemon    |  |            |  +--------------------+--------------------+  |
-|  +----------------------------------+  |            |                       |                       |
-|                   |                    |            |                       v                       |
-|                   v                    |            |  +-----------------------------------------+  |
-|       Sends confidential audio         |            |  | Private Subnet (10.0.1.0/24)            |  |
-|       and inspects raw ESP frames      |            |  | * EC2 Whisper Model Server (10.0.1.50)  |  |
-|                                        |            |  | * Zero Public IP / No IGW Route         |  |
-|                                        |            |  | * Inbound Port 8000 only from On-Prem   |  |
-|                                        |            |  +-----------------------------------------+  |
-+----------------------------------------+            +-----------------------------------------------+
-```
+
 
 ---
 
