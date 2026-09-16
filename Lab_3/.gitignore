@@ -1,0 +1,5 @@
+config.py
+*.pem
+__pycache__/
+lab3_state.json
+screenshots/html/

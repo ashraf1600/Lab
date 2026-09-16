@@ -1,6 +1,13 @@
-config.py
+# Secrets & Credentials
+*config.py
+!*config.example.py
 *.pem
-.browser_profile/
+*.key
+*.token
+*_state.json
 __pycache__/
-lab1_state.json
-
+*.pyc
+.pytest_cache/
+.DS_Store
+screenshots/html/
+.browser_profile/
