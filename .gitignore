@@ -11,3 +11,18 @@ __pycache__/
 .DS_Store
 screenshots/html/
 .browser_profile/
+
+# Helper generator & deployment scripts
+Lab_1/capture_*
+Lab_1/take_all_*
+Lab_1/test_navigate_*
+Lab_1/persistent_*
+Lab_1/verify_*
+Lab_1/generate_console_*
+Lab_1/deploy_infra.py
+Lab_1/launch_instances.py
+Lab_1/Lab_2_ss/
+Lab_1/Lab_3_SS/
+Lab_1/Lab_2.webp
+Lab_1/lab_3.webp
+Lab_2/
