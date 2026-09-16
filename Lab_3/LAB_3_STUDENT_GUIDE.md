@@ -215,9 +215,17 @@ The table displays `10.0.1.0/24` for `lab3-aws-private-subnet` and `192.168.1.0/
 
 #### Visual Verification in AWS Console
 
+Navigate to **AWS Management Console > VPC > Your VPCs**:
+
+![VPCs Console](screenshots/step1_vpcs.png)
+
 Navigate to **AWS Management Console > VPC > Subnets**:
 
 ![Subnets Console](screenshots/step1_subnets.png)
+
+Navigate to **AWS Management Console > VPC > Route Tables**:
+
+![Route Tables Console](screenshots/step1b_route_tables.png)
 
 Navigate to **AWS Management Console > EC2 > Instances**:
 
@@ -366,6 +374,10 @@ Navigate to **AWS Management Console > VPC > Site-to-Site VPN Connections**:
 
 ![Site to Site VPN Console](screenshots/step5_vpn_connection.png)
 
+Navigate to **AWS Management Console > VPC > Site-to-Site VPN Connections > VPN details > Static routes**:
+
+![VPN Static Routes Console](screenshots/step7b_vpn_static_routes.png)
+
 ### 2.6 Checkpoint
 
 **Self-Assessment:**
@@ -477,6 +489,10 @@ Expected output:
 ```
 
 #### Visual Verification in AWS Console
+
+Navigate to **AWS Management Console > EC2 > Network & Security > Security Groups**:
+
+![Security Groups Console](screenshots/step2b_security_groups.png)
 
 Navigate to **AWS Management Console > EC2 > Instances**:
 

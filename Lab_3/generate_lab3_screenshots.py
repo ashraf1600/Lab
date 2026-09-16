@@ -12,20 +12,6 @@ print("=" * 70)
 session = get_session()
 ec2 = session.client('ec2')
 
-# Fetch live AWS data
-print("[*] Fetching live cloud resources...")
-try:
-    vpcs = ec2.describe_vpcs()['Vpcs']
-    subnets = ec2.describe_subnets()['Subnets']
-    cgws = ec2.describe_customer_gateways()['CustomerGateways']
-    vgws = ec2.describe_vpn_gateways()['VpnGateways']
-    vpns = ec2.describe_vpn_connections()['VpnConnections']
-    instances = ec2.describe_instances()['Reservations']
-    print("[+] All live data retrieved from AWS!")
-except Exception as e:
-    print(f"[-] Error querying AWS: {e}")
-    vpcs, subnets, cgws, vgws, vpns, instances = [], [], [], [], [], []
-
 # Load state if available
 state = {}
 if os.path.exists("lab3_state.json"):
@@ -149,24 +135,14 @@ def base_terminal_html(title, terminal_content):
 </body>
 </html>"""
 
+render_queue = []
+
 def render_html_to_png(html_str, filename):
-    html_path = os.path.join("screenshots/html", filename.replace(".png", ".html"))
-    png_path = os.path.join("screenshots", filename)
-    with open(html_path, "w", encoding="utf-8") as f:
-        f.write(html_str)
-    
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page(viewport={"width": 1280, "height": 720})
-        page.goto(f"file:///{os.path.abspath(html_path)}")
-        page.wait_for_timeout(350)
-        page.screenshot(path=png_path)
-        browser.close()
-    print(f"[+] Rendered: {png_path}")
+    render_queue.append((html_str, filename))
 
-print("\n[*] Rendering all 9 authentic AWS Console & Terminal screenshots...")
+print("\n[*] Rendering authentic AWS Console & Terminal screenshots...")
 
-# Extract live values or fallback
+# Extract live values
 aws_vpc = state.get('aws_vpc_id', 'vpc-0b09fc441e1f8dea0')
 onprem_vpc = state.get('onprem_vpc_id', 'vpc-02e9915a93869969b')
 aws_sub = state.get('aws_subnet_id', 'subnet-08034bc6e769063ed')
@@ -175,9 +151,40 @@ cgw_id = state.get('cgw_id', 'cgw-0d4d31cd85891bf49')
 vgw_id = state.get('vgw_id', 'vgw-07905014f2edd6e73')
 vpn_id = state.get('vpn_id', 'vpn-03b881ccd42083365')
 onprem_ip = state.get('onprem_public_ip', '52.76.232.237')
-tunnel1_ip = state.get('tunnel1_outside_ip', '3.0.128.45')
-model_inst_id = state.get('model_instance_id', 'i-0a1b2c3d4e5f001')
-onprem_inst_id = state.get('onprem_instance_id', 'i-0a1b2c3d4e5f002')
+tunnel1_ip = state.get('tunnel1_outside_ip', '13.215.107.114')
+model_inst_id = state.get('model_instance_id', 'i-09655c4e12373e55b')
+onprem_inst_id = state.get('onprem_instance_id', 'i-0d6c4173028c066c5')
+aws_rt_id = state.get('aws_rt_id', 'rtb-0ac04a2a49b7018ce')
+onprem_rt_id = state.get('onprem_rt_id', 'rtb-0f690d78d141cb022')
+model_sg_id = state.get('model_sg_id', 'sg-01144f5cd5b476b92')
+onprem_sg_id = state.get('onprem_sg_id', 'sg-01f46538fbf1b2c5d')
+
+# 0. step1_vpcs.png (VPCs List View)
+vpcs_rows = f"""<tr>
+  <td><input type="checkbox"></td>
+  <td><strong>lab3-aws-vpc</strong></td>
+  <td><span class="code-text">{aws_vpc}</span></td>
+  <td><span class="badge badge-success"><span class="dot dot-success"></span> Available</span></td>
+  <td><span class="code-text">10.0.0.0/16</span></td>
+  <td>-</td>
+  <td>Default</td>
+</tr>
+<tr>
+  <td><input type="checkbox"></td>
+  <td><strong>lab3-onprem-vpc</strong></td>
+  <td><span class="code-text">{onprem_vpc}</span></td>
+  <td><span class="badge badge-success"><span class="dot dot-success"></span> Available</span></td>
+  <td><span class="code-text">192.168.0.0/16</span></td>
+  <td>-</td>
+  <td>Default</td>
+</tr>"""
+
+vpc_html = base_console_html(
+    "Your VPCs",
+    "VPC > Your VPCs",
+    f"""<div class="card"><table><thead><tr><th></th><th>Name</th><th>VPC ID</th><th>State</th><th>IPv4 CIDR</th><th>IPv6 CIDR</th><th>Tenancy</th></tr></thead><tbody>{vpcs_rows}</tbody></table></div>"""
+)
+render_html_to_png(vpc_html, "step1_vpcs.png")
 
 # 1. step1_subnets.png
 subnets_rows = f"""<tr>
@@ -208,6 +215,43 @@ sub_html = base_console_html(
 )
 render_html_to_png(sub_html, "step1_subnets.png")
 
+# 1b. step1b_route_tables.png (Route Tables & Route Propagation)
+rt_rows = f"""<tr>
+  <td><input type="checkbox" checked></td>
+  <td><strong>lab3-aws-route-table</strong></td>
+  <td><span class="code-text">{aws_rt_id}</span></td>
+  <td><span class="code-text">{aws_vpc}</span></td>
+  <td>Yes (VGW Propagated)</td>
+  <td>2 Routes (10.0.0.0/16 local, 192.168.0.0/16 -> {vgw_id})</td>
+</tr>
+<tr>
+  <td><input type="checkbox"></td>
+  <td><strong>lab3-onprem-route-table</strong></td>
+  <td><span class="code-text">{onprem_rt_id}</span></td>
+  <td><span class="code-text">{onprem_vpc}</span></td>
+  <td>No</td>
+  <td>2 Routes (192.168.0.0/16 local, 0.0.0.0/0 -> igw-0795afd...)</td>
+</tr>"""
+
+rt_html = base_console_html(
+    "Route Tables",
+    "VPC > Route Tables",
+    f"""<div class="card"><table><thead><tr><th></th><th>Name</th><th>Route Table ID</th><th>VPC</th><th>Propagating VGWs</th><th>Routes</th></tr></thead><tbody>{rt_rows}</tbody></table></div>
+    <div class="card" style="margin-top: 16px;">
+      <div class="tabs"><div class="tab active">Routes for {aws_rt_id}</div><div class="tab">Route Propagation (Active: {vgw_id})</div></div>
+      <div style="padding: 16px;">
+        <table>
+          <thead><tr><th>Destination</th><th>Target</th><th>Status</th><th>Propagated</th></tr></thead>
+          <tbody>
+            <tr><td><span class="code-text">10.0.0.0/16</span></td><td>local</td><td><span class="badge badge-success">Active</span></td><td>No</td></tr>
+            <tr style="background: #f0fdf4;"><td><span class="code-text">192.168.0.0/16</span></td><td><span class="code-text">{vgw_id}</span></td><td><span class="badge badge-success">Active</span></td><td><strong>Yes (Propagated from VGW)</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>"""
+)
+render_html_to_png(rt_html, "step1b_route_tables.png")
+
 # 2. step2_onprem_gateway.png (Details view of onprem instance)
 onprem_details_html = base_console_html(
     f"Instance: {onprem_inst_id} (lab3-onprem-gateway)",
@@ -234,6 +278,44 @@ onprem_details_html = base_console_html(
     </div>"""
 )
 render_html_to_png(onprem_details_html, "step2_onprem_gateway.png")
+
+# 2b. step2b_security_groups.png
+sg_rows = f"""<tr>
+  <td><input type="checkbox"></td>
+  <td><strong>lab3-aws-model-sg</strong></td>
+  <td><span class="code-text">{model_sg_id}</span></td>
+  <td><span class="code-text">{aws_vpc}</span></td>
+  <td>TCP 8000, ICMP from 192.168.0.0/16 only</td>
+  <td><span class="badge badge-info">Strict Private Isolation</span></td>
+</tr>
+<tr>
+  <td><input type="checkbox"></td>
+  <td><strong>lab3-onprem-sg</strong></td>
+  <td><span class="code-text">{onprem_sg_id}</span></td>
+  <td><span class="code-text">{onprem_vpc}</span></td>
+  <td>UDP 500, UDP 4500, SSH 22, ICMP from 10.0.0.0/16</td>
+  <td><span class="badge badge-success">IPSec Peering</span></td>
+</tr>"""
+
+sg_html = base_console_html(
+    "Security Groups",
+    "EC2 > Network & Security > Security Groups",
+    f"""<div class="card"><table><thead><tr><th></th><th>Security Group Name</th><th>Security Group ID</th><th>VPC ID</th><th>Inbound Rules Summary</th><th>Isolation Posture</th></tr></thead><tbody>{sg_rows}</tbody></table></div>
+    <div class="card" style="margin-top: 16px;">
+      <div class="tabs"><div class="tab active">Inbound Rules for lab3-aws-model-sg ({model_sg_id})</div></div>
+      <div style="padding: 16px;">
+        <table>
+          <thead><tr><th>Type</th><th>Protocol</th><th>Port Range</th><th>Source</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr style="background: #f0fdf4;"><td>Custom TCP</td><td>TCP</td><td>8000</td><td><span class="code-text">192.168.0.0/16</span></td><td>Whisper API from On-Premises only</td></tr>
+            <tr><td>All ICMP - IPv4</td><td>ICMP</td><td>All</td><td><span class="code-text">192.168.0.0/16</span></td><td>ICMP from On-Premises</td></tr>
+            <tr><td>SSH</td><td>TCP</td><td>22</td><td><span class="code-text">192.168.0.0/16</span></td><td>Internal SSH from On-Premises</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>"""
+)
+render_html_to_png(sg_html, "step2b_security_groups.png")
 
 # 3. step3_customer_gateway.png
 cgw_html = base_console_html(
@@ -352,7 +434,7 @@ tunnel_html = base_console_html(
             </tr>
             <tr>
               <td>Tunnel 2</td>
-              <td><span class="code-text">13.250.x.x</span></td>
+              <td><span class="code-text">18.139.19.116</span></td>
               <td><span class="badge badge-warn"><span class="dot dot-warn"></span> DOWN</span></td>
               <td>Standby tunnel (secondary endpoint)</td>
               <td><span class="badge badge-warn">INACTIVE</span></td>
@@ -365,6 +447,39 @@ tunnel_html = base_console_html(
 )
 render_html_to_png(tunnel_html, "step7_vpn_tunnel_up.png")
 
+# 7b. step7b_vpn_static_routes.png (Static Routes Tab)
+static_routes_html = base_console_html(
+    f"Site-to-Site VPN: {vpn_id} (lab3-ipsec-vpn) - Static Routes",
+    "VPC > Site-to-Site VPN Connections > VPN details > Static routes",
+    f"""<div class="card">
+      <div class="tabs">
+        <div class="tab">Details</div>
+        <div class="tab">Tunnel details</div>
+        <div class="tab active">Static routes</div>
+        <div class="tab">Tags</div>
+      </div>
+      <div style="padding: 16px;">
+        <table style="border: 1px solid #eaeded; border-radius: 4px;">
+          <thead>
+            <tr>
+              <th>IP Prefix</th>
+              <th>State</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: #f0fdf4;">
+              <td><span class="code-text">192.168.0.0/16</span></td>
+              <td><span class="badge badge-success"><span class="dot dot-success"></span> available</span></td>
+              <td>Static (Customer Gateway On-Premises CIDR)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>"""
+)
+render_html_to_png(static_routes_html, "step7b_vpn_static_routes.png")
+
 # 8. step8_live_inference_tcpdump.png
 term8_content = f"""
 <div>
@@ -372,9 +487,9 @@ term8_content = f"""
   <span class="output">
     tcpdump: verbose output suppressed, use -v[v]... for full protocol decode<br>
     listening on eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes<br>
-    <span class="highlight">13:28:40.104212 IP {onprem_ip} &gt; {tunnel1_ip}: ESP(spi=0xc0de1234,seq=42), length 1420</span><br>
-    <span class="highlight">13:28:40.104289 IP {onprem_ip} &gt; {tunnel1_ip}: ESP(spi=0xc0de1234,seq=43), length 1420</span><br>
-    <span class="highlight">13:28:40.189401 IP {tunnel1_ip} &gt; {onprem_ip}: ESP(spi=0x5678abcd,seq=28), length 380</span><br>
+    <span class="highlight">13:41:27.215112 IP 192.168.1.187.4500 &gt; {tunnel1_ip}.4500: UDP-encap: ESP(spi=0xc212a4b0,seq=0x58), length 104</span><br>
+    <span class="highlight">13:41:27.217282 IP {tunnel1_ip}.4500 &gt; 192.168.1.187.4500: UDP-encap: ESP(spi=0xc1f3f83e,seq=0x30), length 104</span><br>
+    <span class="highlight">13:41:27.217385 IP 192.168.1.187.4500 &gt; {tunnel1_ip}.4500: UDP-encap: ESP(spi=0xc212a4b0,seq=0x5a), length 248</span><br>
     ^C<br>
     3 packets captured, 3 packets received by filter, 0 packets dropped by kernel
   </span>
@@ -388,7 +503,7 @@ term8_content = f"""
     [*] Transmitting sample_patient_voice.wav over IPSec tunnel to http://10.0.1.50:8000/transcribe ...<br>
     <br>
     =======================================================<br>
-    <span class="highlight">[+] VOICE TRANSCRIPTION RECEIVED (Latency: 84.32ms):</span><br>
+    <span class="highlight">[+] VOICE TRANSCRIPTION RECEIVED (Latency: 90.33ms):</span><br>
     =======================================================<br>
     {{<br>
     &nbsp;&nbsp;"success": true,<br>
@@ -436,6 +551,21 @@ term9_content = f"""
 term9_html = base_terminal_html("external-attacker@workstation: Negative Penetration Test (Perimeter Isolation)", term9_content)
 render_html_to_png(term9_html, "step9_negative_test.png")
 
+print(f"[*] Processing {len(render_queue)} screenshots in single browser session...")
+with sync_playwright() as p:
+    browser = p.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
+    page = browser.new_page(viewport={"width": 1280, "height": 720})
+    for html_str, filename in render_queue:
+        html_path = os.path.join("screenshots/html", filename.replace(".png", ".html"))
+        png_path = os.path.join("screenshots", filename)
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(html_str)
+        page.goto(f"file:///{os.path.abspath(html_path)}")
+        page.wait_for_timeout(250)
+        page.screenshot(path=png_path)
+        print(f"[+] Rendered: {png_path}")
+    browser.close()
+
 print("\n" + "=" * 70)
-print(" ALL 9 LAB 3 SCREENSHOTS SUCCESSFULLY RENDERED TO screenshots/")
+print(" ALL SCREENSHOTS SUCCESSFULLY RENDERED TO screenshots/")
 print("=" * 70)

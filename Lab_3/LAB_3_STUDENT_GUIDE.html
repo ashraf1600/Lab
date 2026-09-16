@@ -210,8 +210,12 @@ The table displays `10.0.1.0/24` for `lab3-aws-private-subnet` and `192.168.1.0/
 </details>
 
 <h4>Visual Verification in AWS Console</h4>
+<p>Navigate to <strong>AWS Management Console &gt; VPC &gt; Your VPCs</strong>:</p>
+<p><img alt="VPCs Console" src="screenshots/step1_vpcs.png" /></p>
 <p>Navigate to <strong>AWS Management Console &gt; VPC &gt; Subnets</strong>:</p>
 <p><img alt="Subnets Console" src="screenshots/step1_subnets.png" /></p>
+<p>Navigate to <strong>AWS Management Console &gt; VPC &gt; Route Tables</strong>:</p>
+<p><img alt="Route Tables Console" src="screenshots/step1b_route_tables.png" /></p>
 <p>Navigate to <strong>AWS Management Console &gt; EC2 &gt; Instances</strong>:</p>
 <p><img alt="On-Prem Gateway EC2" src="screenshots/step2_onprem_gateway.png" /></p>
 <blockquote>
@@ -349,6 +353,8 @@ The output displays `cgw-0d4d31cd85891bf49 available 52.76.232.237`.
 <p><img alt="Virtual Private Gateways Console" src="screenshots/step4_virtual_private_gateway.png" /></p>
 <p>Navigate to <strong>AWS Management Console &gt; VPC &gt; Site-to-Site VPN Connections</strong>:</p>
 <p><img alt="Site to Site VPN Console" src="screenshots/step5_vpn_connection.png" /></p>
+<p>Navigate to <strong>AWS Management Console &gt; VPC &gt; Site-to-Site VPN Connections &gt; VPN details &gt; Static routes</strong>:</p>
+<p><img alt="VPN Static Routes Console" src="screenshots/step7b_vpn_static_routes.png" /></p>
 <h3>2.6 Checkpoint</h3>
 <p><strong>Self-Assessment:</strong>
 - [ ] Customer Gateway status is <code>available</code>.
@@ -463,6 +469,8 @@ if __name__ == &quot;__main__&quot;:
 <pre><code class="language-json">{&quot;status&quot;: &quot;healthy&quot;, &quot;service&quot;: &quot;whisper-ipsec&quot;, &quot;mode&quot;: &quot;private&quot;}
 </code></pre>
 <h4>Visual Verification in AWS Console</h4>
+<p>Navigate to <strong>AWS Management Console &gt; EC2 &gt; Network &amp; Security &gt; Security Groups</strong>:</p>
+<p><img alt="Security Groups Console" src="screenshots/step2b_security_groups.png" /></p>
 <p>Navigate to <strong>AWS Management Console &gt; EC2 &gt; Instances</strong>:</p>
 <p><img alt="Private Model Server Instance" src="screenshots/step6_ec2_instances.png" /></p>
 <blockquote>
