@@ -6,7 +6,7 @@ In regulated industries such as healthcare and financial services, voice recordi
 
 This lab teaches you to establish a secure site-to-site IPSec VPN tunnel connecting an on-premises hospital infrastructure to an isolated Amazon Virtual Private Cloud (VPC). You will deploy an automated speech recognition service using FastAPI and OpenAI Whisper on an isolated EC2 host with zero public internet exposure. You will configure the strongSwan IPSec daemon, verify tunnel convergence, execute encrypted voice transcription, and confirm cryptographic encapsulation at the packet level using packet capture tools.
 
-![Lab 3 Architecture Diagram](lab_3.webp)
+![Lab 3 Architecture Diagram](architecture-animated.svg)
 
 
 
