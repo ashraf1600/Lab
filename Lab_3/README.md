@@ -1,6 +1,8 @@
 # Lab 3: Secure Voice Model over IPSec Tunnel
 
-Healthcare এবং finance-এ voice data অনেক sensitive। এই lab-এ IPSec tunnel দিয়ে encrypted channel-এ Whisper model-এ audio পাঠাবো।
+In healthcare and finance, voice recordings contain sensitive Protected Health Information (PHI) and Personally Identifiable Information (PII). Transmitting audio over the public internet without encryption exposes patients to data breaches and violates HIPAA and GDPR regulations.
+
+In this lab you will build a secure site-to-site IPSec VPN connecting a simulated on-premises hospital network to a private AWS VPC hosting an OpenAI Whisper speech recognition service — with zero public internet exposure.
 
 ![Lab 3 Architecture Diagram](architecture-animated.svg)
 
@@ -8,21 +10,21 @@ Healthcare এবং finance-এ voice data অনেক sensitive। এই lab
 
 ## What You'll Do
 
-- দুই side-এ IPSec tunnel configure করবে
-- Private subnet-এ Whisper deploy করবে
-- Encrypted channel দিয়ে audio পাঠাবে, transcription পাবে
-- `tcpdump` দিয়ে দেখবে traffic encrypted কিনা
+- Configure an IPSec tunnel on both sides (AWS VGW + strongSwan)
+- Deploy Whisper in a private subnet with no public IP
+- Send encrypted audio through the tunnel and receive a transcription
+- Use `tcpdump` to prove traffic is ESP-encrypted, not plaintext
 
 ---
 
 ## Objectives
 
-1. দুটো isolated VPC তৈরি করো — On-Prem (`192.168.0.0/16`) এবং AWS (`10.0.0.0/16`)
-2. AWS Customer Gateway ও Virtual Private Gateway configure করো
-3. strongSwan দিয়ে IKEv2 tunnel establish করো (AES-256-GCM)
-4. Private subnet-এ FastAPI + Whisper deploy করো (no internet access)
-5. `tcpdump`-এ ESP Protocol 50 packets দেখে encryption prove করো
-6. External access block আছে কিনা negative test দিয়ে validate করো
+1. Create two isolated VPCs — On-Prem (`192.168.0.0/16`) and AWS (`10.0.0.0/16`)
+2. Configure the AWS Customer Gateway and Virtual Private Gateway
+3. Establish the IKEv2 tunnel with strongSwan (AES-256-GCM)
+4. Deploy FastAPI + Whisper in a private subnet (no internet access)
+5. Prove encryption by observing ESP Protocol 50 packets in `tcpdump`
+6. Validate that external access is blocked using a negative test
 
 **Prerequisites:** Basic Linux networking (`ip`, `tcpdump`), CIDR basics, Python HTTP
 
@@ -52,17 +54,17 @@ Healthcare এবং finance-এ voice data অনেক sensitive। এই lab
 
 ## Chapter 1 — Network Setup
 
-দুটো VPC তৈরি করো যাদের IP space overlap করবে না।
+Create two VPCs with non-overlapping IP space.
 
 | VPC | CIDR | Purpose |
 | :--- | :--- | :--- |
 | `lab3-aws-vpc` | `10.0.0.0/16` | Cloud-side, Whisper server |
 | `lab3-onprem-vpc` | `192.168.0.0/16` | On-prem simulator |
 
-**Private subnet** (`10.0.1.0/24`) এ কোনো Internet Gateway route থাকবে না।  
-**On-prem subnet** (`192.168.1.0/24`) এ IGW থাকবে — VPN tunnel establish করার জন্য।
+**Private subnet** (`10.0.1.0/24`) will have no Internet Gateway route.
+**On-prem subnet** (`192.168.1.0/24`) will have an IGW — required to establish the VPN tunnel.
 
-> **Why non-overlapping?** দুই side-এ same CIDR থাকলে OS মনে করে destination local host — packet tunnel দিয়ে যাবে না।
+> **Why non-overlapping?** If both sides use the same CIDR, the OS treats the destination as a local host — packets will never go through the tunnel.
 
 ### Console Screenshots
 
@@ -83,17 +85,17 @@ Healthcare এবং finance-এ voice data অনেক sensitive। এই lab
 ![On-Prem Gateway](screenshots/step2_onprem_gateway.png)
 
 ### Checkpoint
-- [ ] দুটো VPC `available` state-এ আছে
+- [ ] Both VPCs are in `available` state
 - [ ] AWS VPC: `10.0.0.0/16`, On-Prem VPC: `192.168.0.0/16`
-- [ ] On-prem gateway-এ Elastic IP assigned
+- [ ] Elastic IP is assigned to the on-prem gateway
 
 ---
 
 ## Chapter 2 — AWS VPN Configuration
 
-AWS side-এ দুটো component লাগবে:
-- **Customer Gateway** — on-prem device register করে AWS-এ
-- **Virtual Private Gateway** — AWS VPC-এর VPN endpoint
+The AWS side requires two components:
+- **Customer Gateway** — registers the on-prem device in AWS
+- **Virtual Private Gateway** — the VPN endpoint for the AWS VPC
 
 ### What's Configured
 
@@ -105,7 +107,7 @@ AWS side-এ দুটো component লাগবে:
 | Tunnel 1 Outside IP | `13.215.168.39` |
 | Pre-Shared Key | `HospitalVoiceSecurePsk2026` |
 
-Route propagation enable করতে হবে যাতে AWS VPC জানে `192.168.0.0/16` traffic VGW দিয়ে যাবে।
+You must enable route propagation so the AWS VPC knows that traffic for `192.168.0.0/16` goes via the VGW.
 
 ### Console Screenshots
 
@@ -135,7 +137,7 @@ Route propagation enable করতে হবে যাতে AWS VPC জান�
 
 ## Chapter 3 — Whisper Model Server
 
-Private subnet-এ FastAPI + Whisper deploy করো। Server-এর **কোনো public IP থাকবে না**।
+Deploy FastAPI + Whisper in the private subnet. The server will have **no public IP**.
 
 ### Security Group Rules (`lab3-aws-model-sg`)
 
@@ -174,7 +176,7 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)  # 0.0.0.0 = all interfaces
 ```
 
-> **Why `0.0.0.0`?** `127.0.0.1` bind করলে শুধু localhost শুনবে — VPN tunnel থেকে আসা packets reject হবে।
+> **Why `0.0.0.0`?** Binding to `127.0.0.1` listens on localhost only — packets arriving from the VPN tunnel would be rejected.
 
 ### Console Screenshots
 
@@ -195,7 +197,7 @@ if __name__ == "__main__":
 
 ## Chapter 4 — strongSwan Configuration
 
-`lab3-onprem-gateway`-এ strongSwan configure করো AWS VPN tunnel establish করতে।
+Configure strongSwan on `lab3-onprem-gateway` to establish the AWS VPN tunnel.
 
 ### Step 1: Enable IP Forwarding
 
