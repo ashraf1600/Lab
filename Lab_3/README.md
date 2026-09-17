@@ -58,30 +58,12 @@ Your task is to re-architect the voice processing pipeline. You must isolate the
 
 ## Environment Setup
 
-Log in to your local workstation and verify required tools:
+> **Region:** All resources are deployed in **`ap-southeast-1` (Singapore)**.
+
+Log in to your workstation and verify the AWS CLI is installed:
 
 ```bash
-python3 --version
-pip --version
 aws --version
-```
-
-Expected output:
-```text
-Python 3.10+ (or 3.11+)
-pip 22.0+
-aws-cli/2.0+
-```
-
-Create your project workspace directory structure:
-
-```bash
-mkdir -p lab3_vpn/{src,client,monitoring,screenshots}
-```
-
-Verify your active AWS session identity:
-
-```bash
 aws sts get-caller-identity
 ```
 
@@ -90,12 +72,32 @@ aws sts get-caller-identity
 
 ```json
 {
-    "UserId": "AIDA...",
+    "UserId": "AKIA4JBFBPQS2UBSWKGP",
     "Account": "844038765605",
-    "Arn": "arn:aws:iam::844038765605:user/..."
+    "Arn": "arn:aws:iam::844038765605:user/tpnn-poridhi"
 }
 ```
 </details>
+
+### Deployed Resource Reference
+
+All resources in this lab have been provisioned in `ap-southeast-1`. Use these identifiers throughout the chapters:
+
+| Resource | Name | ID / Value |
+| :--- | :--- | :--- |
+| AWS Cloud VPC | `lab3-aws-vpc` | `vpc-05e9b6390b8b13e40` |
+| AWS Private Subnet | `lab3-aws-private-subnet` | `10.0.1.0/24` |
+| On-Prem VPC | `lab3-onprem-vpc` | `vpc-001c74c3c1ddef094` |
+| On-Prem Subnet | `lab3-onprem-public-subnet` | `192.168.1.0/24` |
+| On-Prem Elastic IP | `lab3-onprem-eip` | `52.76.232.237` |
+| Customer Gateway | `lab3-customer-gw` | `cgw-0d378d5048c395b77` |
+| Virtual Private Gateway | `lab3-vgw` | `vgw-084ba3a31eefa93ff` |
+| Site-to-Site VPN | `lab3-ipsec-vpn` | `vpn-0d48f21852888a6a5` |
+| VPN Tunnel 1 Outside IP | — | `13.215.168.39` |
+| On-Prem Gateway EC2 | `lab3-onprem-gateway` | `i-0d6c4173028c066c5` / `192.168.1.187` |
+| Whisper Model EC2 | `lab3-whisper-model` | `i-09655c4e12373e55b` / `10.0.1.50` (no public IP) |
+| On-Prem Security Group | `lab3-onprem-sg` | `sg-0f1231755bd59e6ca` |
+| Model Security Group | `lab3-aws-model-sg` | `sg-01144f5cd5b476b92` |
 
 ---
 
@@ -736,15 +738,16 @@ To observe how IPSec enforces cryptographic integrity:
 
 Your deployed architecture provides the following production components:
 
-| Component | AWS Identifier | Network Address | Operational Role |
-| :--- | :--- | :--- | :--- |
-| AWS Model VPC | `lab3-aws-vpc` | `10.0.0.0/16` | Isolated cloud inference network |
-| Private Model Subnet | `lab3-aws-private-subnet` | `10.0.1.0/24` | Zero internet access subnet |
-| Model Server Host | `lab3-whisper-model` | `10.0.1.50` (Private) | Whisper transcription daemon |
-| Customer Gateway | `lab3-customer-gw` | `52.76.232.237` | On-prem router registration |
-| Virtual Private Gateway | `lab3-vgw` | ASN `64512` | AWS VPC VPN termination |
-| Site-to-Site VPN | `lab3-ipsec-vpn` | AES-256 / SHA2-256 | Encrypted transit channel |
-| On-Premises Gateway | `lab3-onprem-gateway` | `192.168.1.187` | strongSwan IKEv2 tunnel peer |
+| Component | AWS Identifier | Resource ID | Network Address | Operational Role |
+| :--- | :--- | :--- | :--- | :--- |
+| AWS Model VPC | `lab3-aws-vpc` | `vpc-05e9b6390b8b13e40` | `10.0.0.0/16` | Isolated cloud inference network |
+| Private Model Subnet | `lab3-aws-private-subnet` | `subnet-08034bc6e769063ed` | `10.0.1.0/24` | Zero internet access subnet |
+| Model Server Host | `lab3-whisper-model` | `i-09655c4e12373e55b` | `10.0.1.50` (Private only) | Whisper transcription daemon |
+| On-Prem VPC | `lab3-onprem-vpc` | `vpc-001c74c3c1ddef094` | `192.168.0.0/16` | Simulated hospital perimeter |
+| On-Prem Gateway EC2 | `lab3-onprem-gateway` | `i-0d6c4173028c066c5` | `192.168.1.187` / EIP `52.76.232.237` | strongSwan IKEv2 tunnel peer |
+| Customer Gateway | `lab3-customer-gw` | `cgw-0d378d5048c395b77` | `52.76.232.237` | On-prem router registration in AWS |
+| Virtual Private Gateway | `lab3-vgw` | `vgw-084ba3a31eefa93ff` | ASN `64512` | AWS VPC VPN termination |
+| Site-to-Site VPN | `lab3-ipsec-vpn` | `vpn-0d48f21852888a6a5` | Tunnel 1: `13.215.168.39` | AES-256 / IKEv2 encrypted transit |
 
 ### Complete Verification Sequence
 
@@ -782,8 +785,9 @@ curl -m 3 http://10.0.1.50:8000/health || echo "Perimeter isolation confirmed"
 **Cause 1:** On-premises security group blocks UDP port 500 or 4500.  
 **Solution:**
 ```bash
-aws ec2 authorize-security-group-ingress --group-id sg-06c7... --protocol udp --port 500 --cidr 0.0.0.0/0
-aws ec2 authorize-security-group-ingress --group-id sg-06c7... --protocol udp --port 4500 --cidr 0.0.0.0/0
+# Add UDP 500 (IKE) and 4500 (NAT-T) to the on-prem security group
+aws ec2 authorize-security-group-ingress --group-id sg-0f1231755bd59e6ca --protocol udp --port 500 --cidr 0.0.0.0/0 --region ap-southeast-1
+aws ec2 authorize-security-group-ingress --group-id sg-0f1231755bd59e6ca --protocol udp --port 4500 --cidr 0.0.0.0/0 --region ap-southeast-1
 ```
 
 **Cause 2:** Pre-shared key mismatch between `/etc/ipsec.secrets` and AWS VPN configuration.  
@@ -796,7 +800,8 @@ aws ec2 authorize-security-group-ingress --group-id sg-06c7... --protocol udp --
 **Cause:** Route propagation is disabled on the AWS VPC route table. AWS does not know how to return packets to `192.168.0.0/16`.  
 **Solution:**
 ```bash
-aws ec2 enable-vgw-route-propagation --route-table-id rtb-036... --gateway-id vgw-08a...
+# Enable VGW route propagation on the AWS VPC route table
+aws ec2 enable-vgw-route-propagation --route-table-id rtb-0ac04a2a49b7018ce --gateway-id vgw-084ba3a31eefa93ff --region ap-southeast-1
 ```
 
 ---
