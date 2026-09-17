@@ -1,0 +1,310 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 920 600" width="920" height="600" font-family="'Segoe UI', Inter, Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTpmNDg3MDljZS02NGYwLTQ3ZDgtYmRmYi01ZGY5MWQ1NTY0MjkAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaGDzZAr89sZLvu83AMuUqcAAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDplYTk5YjRiYi0yNDI5LTQ1MzUtOGQ4OC01YzNjZDFlYWI0Y2RscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoJlFDtJzs9bq+cL+Udw/lcgAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggP3EB2mqXPTnNL20ez9Eoo/zQlFTQNofcquOjxI3tpwakZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaK7LyLQj1hSnKBsipRL1mwgAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIHxETUctcXGaG4x9Lqu2b4Ndp8lRl736n4rdc5RtnHziZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GQEEZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmY0ODcwOWNlLTY0ZjAtNDdkOC1iZGZiLTVkZjkxZDU1NjQyOS9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjQ0ZTk3Mjk1LTUwNmYtNDJmOC05ZTMwLTdlNTlhNTVlYzA3ZHJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCA/cQHaapc9Oc0vbR7P0Sij/NCUVNA2h9yq46PEje2nBqJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFgg2oLpcrzIpTPlJvUwb4ul740NXC1wfWYiSGg4/Jqv5FeiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggUvi7gJooKHDiXPAc5sqwEFiQ7DzpQWc9E56/LsUqflJ0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQN8NQcWnydmSRz77un1AtzAwogK8ZdzGIfZ1cJL6MOumAjvvPgf54rvtqaTF5khBJtWq0Nn7HQDa3dF3wUSIGUA=</c2pa:manifest></metadata>
+
+  <title>AWS Air-Gapped Model Registry — HuggingFace to MinIO to VPC-A / VPC-B via Transit Gateway</title>
+
+  <defs>
+    <!-- ============ HAND-DRAWN ROUGHNESS ============ -->
+    <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="3" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="roughSoft" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="19" result="n2"/>
+      <feDisplacementMap in="SourceGraphic" in2="n2" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <!-- ============ SHADOWS (draw.io style) ============ -->
+    <filter id="sh" x="-30%" y="-30%" width="170%" height="170%">
+      <feDropShadow dx="3" dy="3" stdDeviation="2.4" flood-color="#0b1b33" flood-opacity="0.22"/>
+    </filter>
+    <filter id="shSm" x="-40%" y="-40%" width="190%" height="190%">
+      <feDropShadow dx="2" dy="2" stdDeviation="1.6" flood-color="#0b1b33" flood-opacity="0.26"/>
+    </filter>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- ============ GRADIENTS ============ -->
+    <linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3fbf63"/><stop offset="1" stop-color="#1f8f43"/>
+    </linearGradient>
+    <linearGradient id="gPurple" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9b6ff0"/><stop offset="1" stop-color="#6c3fd4"/>
+    </linearGradient>
+    <linearGradient id="gOrange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff9a4d"/><stop offset="1" stop-color="#ed6f22"/>
+    </linearGradient>
+    <linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b3a4d"/><stop offset="1" stop-color="#16202c"/>
+    </linearGradient>
+    <linearGradient id="gYellow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd85c"/><stop offset="1" stop-color="#f2b705"/>
+    </linearGradient>
+    <linearGradient id="gMinio" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2413c"/><stop offset="1" stop-color="#a91f1a"/>
+    </linearGradient>
+
+    <!-- ============ ARROW HEADS ============ -->
+    <marker id="arrPurple" markerWidth="11" markerHeight="11" refX="8" refY="5.5" orient="auto">
+      <path d="M0,0.8 L9.5,5.5 L0,10.2 L2.4,5.5 Z" fill="#6c3fd4"/>
+    </marker>
+    <marker id="arrBlue" markerWidth="10" markerHeight="10" refX="7.5" refY="5" orient="auto">
+      <path d="M0,0.8 L8.8,5 L0,9.2 L2.2,5 Z" fill="#1f6fd0"/>
+    </marker>
+    <marker id="arrGrey" markerWidth="10" markerHeight="10" refX="7.5" refY="5" orient="auto">
+      <path d="M0,0.8 L8.8,5 L0,9.2 L2.2,5 Z" fill="#5a6a7d"/>
+    </marker>
+
+    <!-- ============ FLOW PATHS ============ -->
+    <path id="pHF"   d="M188 74 C 262 74, 296 84, 398 106"/>
+    <path id="pS3"   d="M430 136 L 430 162"/>
+    <path id="pVPE"  d="M430 208 L 430 236"/>
+    <path id="pTGA"  d="M430 292 L 430 326 Q 430 336 420 336 L 245 336 Q 235 336 235 346 L 235 360"/>
+    <path id="pTGB"  d="M430 292 L 430 326 Q 430 336 440 336 L 667 336 Q 677 336 677 346 L 677 360"/>
+    <path id="pA1"   d="M172 468 L 238 468"/>
+    <path id="pB1"   d="M614 468 L 680 468"/>
+  </defs>
+
+  <style><![CDATA[
+    .lbl      { font-size:12.5px; font-weight:700; fill:#16202c; }
+    .sub      { font-size:9.6px;  fill:#5d6b7c; }
+    .hdr      { font-size:13.5px; font-weight:700; fill:#16202c; }
+    .legend   { font-size:10.2px; fill:#243447; }
+    .legendB  { font-weight:700; }
+    .foot     { font-size:10px; font-weight:600; fill:#2a3a4d; }
+    .caption  { font-size:10px; font-weight:700; fill:#2f7d3f; }
+
+    /* dashes that crawl like a finger tracing the line */
+    .flow      { fill:none; stroke-linecap:round; stroke-dasharray:9 7; animation:crawl 1.1s linear infinite; }
+    .flowSlow  { fill:none; stroke-linecap:round; stroke-dasharray:7 6; animation:crawl 1.8s linear infinite; }
+    @keyframes crawl { to { stroke-dashoffset:-16; } }
+
+    .rail { fill:none; stroke:#cfd8e3; stroke-width:4.5; stroke-linecap:round; }
+
+    /* node breathing */
+    .breathe { animation:breathe 3.4s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+    @keyframes breathe { 0%,100%{transform:scale(1);} 50%{transform:scale(1.045);} }
+
+    .spin { animation:spin 9s linear infinite; transform-box:fill-box; transform-origin:center; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .pulseRing { animation:ring 2.6s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+    @keyframes ring { 0%{transform:scale(.6);opacity:.55;} 100%{transform:scale(1.7);opacity:0;} }
+
+    /* container "sketched in" stroke reveal */
+    .draw { stroke-dasharray:2600; stroke-dashoffset:2600; animation:draw 2.4s ease-out forwards; }
+    @keyframes draw { to { stroke-dashoffset:0; } }
+
+    .fadeUp { opacity:0; animation:fadeUp .7s ease-out forwards; }
+    @keyframes fadeUp { from{opacity:0; transform:translateY(7px);} to{opacity:1; transform:translateY(0);} }
+
+    .d1{animation-delay:.15s}.d2{animation-delay:.35s}.d3{animation-delay:.55s}
+    .d4{animation-delay:.75s}.d5{animation-delay:.95s}.d6{animation-delay:1.15s}
+    .d7{animation-delay:1.35s}.d8{animation-delay:1.55s}
+
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important;}
+    }
+  ]]></style>
+
+  <rect width="920" height="600" fill="#ffffff"/>
+
+  <!-- ==================== AWS CENTRAL ACCOUNT ==================== -->
+  <g filter="url(#rough)">
+    <rect x="310" y="10" width="325" height="302" rx="12" fill="#ffffff" stroke="#2f4a6d" stroke-width="2.2"
+          class="draw" filter="url(#sh)"/>
+    <rect x="326" y="52" width="294" height="252" rx="10" fill="#f3fbf5" stroke="#2f9e4f" stroke-width="2"
+          class="draw d2"/>
+  </g>
+
+  <!-- AWS badge -->
+  <g class="fadeUp d1" filter="url(#shSm)">
+    <rect x="312" y="10" width="44" height="34" rx="7" fill="url(#gDark)"/>
+    <text x="334" y="29" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">aws</text>
+    <path d="M321 35 q13 6 26 0" stroke="#ff9a4d" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  <text x="364" y="31" class="hdr fadeUp d1">AWS (Central Account)</text>
+
+  <!-- VPC badge -->
+  <g class="fadeUp d2">
+    <rect x="328" y="54" width="26" height="20" rx="5" fill="url(#gGreen)"/>
+    <path d="M334 66 q3-6 8-4 q4-3 7 4 z" fill="#ffffff"/>
+    <text x="360" y="69" class="lbl" font-size="11.5">VPC (Model Registry)</text>
+  </g>
+
+  <!-- ==================== HUGGINGFACE ==================== -->
+  <g class="fadeUp" filter="url(#rough)">
+    <rect x="20" y="46" width="168" height="56" rx="11" fill="#ffffff" stroke="#8b5cf6" stroke-width="2.2" filter="url(#sh)"/>
+  </g>
+  <g class="fadeUp d1">
+    <g class="breathe">
+      <circle cx="46" cy="70" r="13" fill="url(#gYellow)" stroke="#d99b00" stroke-width="1.2"/>
+      <circle cx="41.5" cy="67" r="2" fill="#3d2b00"/>
+      <circle cx="50.5" cy="67" r="2" fill="#3d2b00"/>
+      <path d="M40 74 q6 5 12 0" stroke="#3d2b00" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    </g>
+    <text x="68" y="69" class="lbl" fill="#6d28d9">HuggingFace</text>
+    <text x="68" y="84" class="sub">(One-time pull)</text>
+  </g>
+
+  <!-- HF -> MinIO dashed pull -->
+  <use xlink:href="#pHF" class="rail" opacity=".5"/>
+  <use xlink:href="#pHF" class="flowSlow" stroke="#5a6a7d" stroke-width="2.2" marker-end="url(#arrGrey)"/>
+  <circle r="3.6" fill="#8b5cf6" filter="url(#glow)">
+    <animateMotion dur="2.6s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+      <mpath xlink:href="#pHF"/>
+    </animateMotion>
+  </circle>
+  <text x="196" y="62" class="caption">1. Pull model (one-time)</text>
+  <text x="196" y="75" class="sub">(from internet / allowed environment)</text>
+
+  <!-- ==================== MINIO BUCKET ==================== -->
+  <g class="fadeUp d3">
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="406" y="86" width="48" height="48" rx="10" fill="url(#gMinio)"/>
+      <path d="M418 100 h24 l-3 22 a9 5 0 0 1 -18 0 z" fill="#ffffff"/>
+      <ellipse cx="430" cy="100" rx="12" ry="4.6" fill="#ffece9"/>
+    </g>
+    <text x="466" y="104" class="lbl">MinIO Bucket</text>
+    <text x="466" y="118" class="sub">(Private Model Store)</text>
+  </g>
+
+  <use xlink:href="#pS3" class="rail"/>
+  <use xlink:href="#pS3" class="flow" stroke="#6c3fd4" stroke-width="2.6" marker-end="url(#arrPurple)"/>
+  <circle r="3.2" fill="#6c3fd4" filter="url(#glow)">
+    <animateMotion dur="1.4s" repeatCount="indefinite"><mpath xlink:href="#pS3"/></animateMotion>
+  </circle>
+
+  <!-- ==================== VPC ENDPOINT ==================== -->
+  <g class="fadeUp d4">
+    <circle cx="430" cy="186" r="26" fill="#ffffff" stroke="#6c3fd4" stroke-width="2.2" filter="url(#shSm)"/>
+    <circle cx="430" cy="186" r="26" fill="none" stroke="#9b6ff0" stroke-width="2" class="pulseRing"/>
+    <g class="breathe">
+      <path d="M419 176 h14 a8 8 0 0 1 0 20 h-14 z" fill="none" stroke="#6c3fd4" stroke-width="2.4"/>
+      <circle cx="424" cy="186" r="3.2" fill="#6c3fd4"/>
+    </g>
+    <text x="466" y="181" class="lbl">VPC Endpoint</text>
+    <text x="466" y="195" class="sub">(MinIO Gateway Endpoint)</text>
+  </g>
+
+  <use xlink:href="#pVPE" class="rail"/>
+  <use xlink:href="#pVPE" class="flow" stroke="#6c3fd4" stroke-width="2.6" marker-end="url(#arrPurple)"/>
+  <circle r="3.2" fill="#6c3fd4" filter="url(#glow)">
+    <animateMotion dur="1.4s" begin=".3s" repeatCount="indefinite"><mpath xlink:href="#pVPE"/></animateMotion>
+  </circle>
+
+  <!-- ==================== TRANSIT GATEWAY ==================== -->
+  <g class="fadeUp d5">
+    <rect x="406" y="240" width="50" height="50" rx="11" fill="url(#gPurple)" filter="url(#shSm)"/>
+    <g class="spin">
+      <circle cx="431" cy="265" r="14" fill="none" stroke="#ffffff" stroke-width="2.2"/>
+      <circle cx="431" cy="265" r="4.4" fill="#ffffff"/>
+      <path d="M431 251 v7 M431 272 v7 M417 265 h7 M438 265 h7
+               M421 255 l5 5 M436 270 l5 5 M441 255 l-5 5 M426 270 l-5 5"
+            stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <text x="466" y="260" class="lbl">Transit Gateway</text>
+    <text x="466" y="274" class="sub">(Connects all VPCs)</text>
+  </g>
+
+  <!-- TGW -> VPC-A / VPC-B -->
+  <use xlink:href="#pTGA" class="rail"/>
+  <use xlink:href="#pTGB" class="rail"/>
+  <use xlink:href="#pTGA" class="flow" stroke="#6c3fd4" stroke-width="2.8" marker-end="url(#arrPurple)"/>
+  <use xlink:href="#pTGB" class="flow" stroke="#6c3fd4" stroke-width="2.8" marker-end="url(#arrPurple)"/>
+  <circle r="4" fill="#8b5cf6" filter="url(#glow)">
+    <animateMotion dur="2.2s" repeatCount="indefinite"><mpath xlink:href="#pTGA"/></animateMotion>
+  </circle>
+  <circle r="4" fill="#8b5cf6" filter="url(#glow)">
+    <animateMotion dur="2.2s" begin=".4s" repeatCount="indefinite"><mpath xlink:href="#pTGB"/></animateMotion>
+  </circle>
+
+  <!-- ==================== VPC-A ==================== -->
+  <g filter="url(#rough)">
+    <rect x="20" y="362" width="430" height="212" rx="12" fill="#ffffff" stroke="#2f9e4f" stroke-width="2.2"
+          class="draw d5" filter="url(#sh)"/>
+    <rect x="40" y="406" width="390" height="128" rx="10" fill="#f5fbff" stroke="#1f6fd0" stroke-width="1.8"
+          stroke-dasharray="7 5" class="draw d6"/>
+  </g>
+  <g class="fadeUp d6">
+    <rect x="34" y="370" width="26" height="20" rx="5" fill="url(#gGreen)"/>
+    <path d="M40 382 q3-6 8-4 q4-3 7 4 z" fill="#ffffff"/>
+    <text x="68" y="385" class="lbl">VPC-A <tspan font-weight="500" fill="#5d6b7c">(Team 1)</tspan></text>
+
+    <rect x="52" y="412" width="20" height="18" rx="5" fill="#1f6fd0"/>
+    <path d="M58 421 v-3 a4 4 0 0 1 8 0 v3" fill="none" stroke="#fff" stroke-width="1.6"/>
+    <rect x="59" y="421" width="6" height="5" fill="#fff"/>
+    <text x="80" y="425" font-size="10.5" font-weight="700" fill="#1f6fd0">Private Subnet</text>
+  </g>
+
+  <g class="fadeUp d7">
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="128" y="446" width="44" height="44" rx="10" fill="url(#gOrange)"/>
+      <rect x="139" y="455" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+      <rect x="145" y="461" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+    </g>
+    <text x="150" y="508" text-anchor="middle" class="lbl">EC2 / ECS</text>
+    <text x="150" y="521" text-anchor="middle" class="sub">(Inference App)</text>
+
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="248" y="446" width="44" height="44" rx="10" fill="url(#gPurple)"/>
+      <path d="M270 454 l14 8 v16 l-14 8 l-14-8 v-16 z" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="270" cy="470" r="4.5" fill="#fff"/>
+    </g>
+    <text x="270" y="508" text-anchor="middle" class="lbl">Model Pull</text>
+    <text x="270" y="521" text-anchor="middle" class="sub">(via VPC Endpoint)</text>
+  </g>
+
+  <use xlink:href="#pA1" class="rail"/>
+  <use xlink:href="#pA1" class="flow" stroke="#1f6fd0" stroke-width="2.4" marker-end="url(#arrBlue)"/>
+  <circle r="3.2" fill="#1f6fd0" filter="url(#glow)">
+    <animateMotion dur="1.5s" repeatCount="indefinite"><mpath xlink:href="#pA1"/></animateMotion>
+  </circle>
+  <text x="235" y="558" text-anchor="middle" class="foot">Team 1 – Pull model from MinIO &amp; run inference</text>
+
+  <!-- ==================== VPC-B ==================== -->
+  <g filter="url(#rough)">
+    <rect x="462" y="362" width="430" height="212" rx="12" fill="#ffffff" stroke="#2f9e4f" stroke-width="2.2"
+          class="draw d6" filter="url(#sh)"/>
+    <rect x="482" y="406" width="390" height="128" rx="10" fill="#f5fbff" stroke="#1f6fd0" stroke-width="1.8"
+          stroke-dasharray="7 5" class="draw d7"/>
+  </g>
+  <g class="fadeUp d7">
+    <rect x="476" y="370" width="26" height="20" rx="5" fill="url(#gGreen)"/>
+    <path d="M482 382 q3-6 8-4 q4-3 7 4 z" fill="#ffffff"/>
+    <text x="510" y="385" class="lbl">VPC-B <tspan font-weight="500" fill="#5d6b7c">(Team 2)</tspan></text>
+
+    <rect x="494" y="412" width="20" height="18" rx="5" fill="#1f6fd0"/>
+    <path d="M500 421 v-3 a4 4 0 0 1 8 0 v3" fill="none" stroke="#fff" stroke-width="1.6"/>
+    <rect x="501" y="421" width="6" height="5" fill="#fff"/>
+    <text x="522" y="425" font-size="10.5" font-weight="700" fill="#1f6fd0">Private Subnet</text>
+  </g>
+
+  <g class="fadeUp d8">
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="570" y="446" width="44" height="44" rx="10" fill="url(#gOrange)"/>
+      <rect x="581" y="455" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+      <rect x="587" y="461" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+    </g>
+    <text x="592" y="508" text-anchor="middle" class="lbl">EC2 / ECS</text>
+    <text x="592" y="521" text-anchor="middle" class="sub">(Inference App)</text>
+
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="690" y="446" width="44" height="44" rx="10" fill="url(#gPurple)"/>
+      <path d="M712 454 l14 8 v16 l-14 8 l-14-8 v-16 z" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="712" cy="470" r="4.5" fill="#fff"/>
+    </g>
+    <text x="712" y="508" text-anchor="middle" class="lbl">Model Pull</text>
+    <text x="712" y="521" text-anchor="middle" class="sub">(via VPC Endpoint)</text>
+  </g>
+
+  <use xlink:href="#pB1" class="rail"/>
+  <use xlink:href="#pB1" class="flow" stroke="#1f6fd0" stroke-width="2.4" marker-end="url(#arrBlue)"/>
+  <circle r="3.2" fill="#1f6fd0" filter="url(#glow)">
+    <animateMotion dur="1.5s" begin=".35s" repeatCount="indefinite"><mpath xlink:href="#pB1"/></animateMotion>
+  </circle>
+  <text x="677" y="558" text-anchor="middle" class="foot">Team 2 – Pull model from MinIO &amp; run inference</text>
+
+</svg>

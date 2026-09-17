@@ -4,7 +4,7 @@
 
 This lab guides you through designing and deploying an enterprise-grade, isolated Machine Learning inference infrastructure on AWS. You will construct a private network architecture where a Vision Transformer (ViT) model server resides in a dedicated Virtual Private Cloud (VPC) with zero internet access, reachable only by authorized internal consumer services via AWS Transit Gateway. This design pattern mitigates common production risks including distributed denial-of-service attacks, model extraction, and unauthorized data exfiltration.
 
-![Architecture Diagram: VPC-Isolated ML Inference Endpoint using AWS Transit Gateway](Lab_1.webp)
+![Architecture Diagram: VPC-Isolated ML Inference Endpoint using AWS Transit Gateway](model-vpc-client-vpc-tgw-animated.svg)
 
 ```
 ┌───────────────────────────────────────┐            ┌───────────────────────────────────────┐
