@@ -431,39 +431,6 @@ aws --endpoint-url http://<registry-ip>:9000 s3 ls s3://model-registry/models/<m
 - [ ] Restoring route → access returns
 
 ---
-
-## Architecture Summary
-
-```
-  Allowed Internet Environment
-           |
-           | one-time pull
-           v
-       HuggingFace
-           |
-           v
-  ┌─────────────────────────┐
-  │   MinIO Model Bucket    │  (S3-compatible Private Model Store)
-  └───────────┬─────────────┘
-             │
-      VPC Endpoint / ENI
-             │
-  ┌──────────┴──────────┐
-  │   Registry VPC      │  10.0.0.0/16
-  └──────────┬──────────┘
-             │
-      Transit Gateway (tgw-lab4)
-        /              \
-  ┌─────┴──────┐   ┌────┴───────┐
-  │  VPC-A     │   │  VPC-B     │
-  │ 10.1.0.0/16│   │10.2.0.0/16 │
-  │ EC2 (priv) │   │ EC2 (priv) │
-  │ Model Pull │   │ Model Pull │
-  │(from MinIO)│   │(from MinIO)│
-  └────────────┘   └────────────┘
-     No Internet      No Internet
-```
-
 ---
 
 ## Troubleshooting
