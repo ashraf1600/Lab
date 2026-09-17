@@ -6,30 +6,6 @@ This lab guides you through designing and deploying an enterprise-grade, isolate
 
 ![Architecture Diagram: VPC-Isolated ML Inference Endpoint using AWS Transit Gateway](model-vpc-client-vpc-tgw-animated.svg)
 
-```
-┌───────────────────────────────────────┐            ┌───────────────────────────────────────┐
-│ VPC 1 — Model VPC (10.0.0.0/16)       │            │ VPC 2 — Client VPC (10.1.0.0/16)      │
-│                                       │            │                                       │
-│  ┌─────────────────────────────────┐  │            │  ┌─────────────────────────────────┐  │
-│  │ Private Subnet (10.0.1.0/24)    │  │            │  │ Client Subnet (10.1.1.0/24)     │  │
-│  │                                 │  │            │  │                                 │  │
-│  │  ┌───────────────────────────┐  │  │    TGW     │  │  ┌───────────────────────────┐  │  │
-│  │  │ Model Server (EC2)        │  │  │ Attachment │  │  │ Client App / Tester (EC2) │  │  │
-│  │  │ FastAPI + ViT Model       ├──┼──┴────────────┼──┼──┤ Sends test images         │  │  │
-│  │  │ Private IP: 10.0.1.x      │  │  (lab1-tgw)   │  │  │ Public IP (for management)│  │  │
-│  │  └───────────────────────────┘  │  │            │  │  └───────────────────────────┘  │  │
-│  └─────────────────────────────────┘  │            │  └─────────────────────────────────┘  │
-│                                       │            │                                       │
-│  Route Table:                         │            │  Route Table:                         │
-│  • 10.0.0.0/16 -> local               │            │  • 10.1.0.0/16 -> local               │
-│  • 10.1.0.0/16 -> lab1-tgw            │            │  • 10.0.0.0/16 -> lab1-tgw            │
-│  • 0.0.0.0/0   -> (NO ROUTE)          │            │  • 0.0.0.0/0   -> igw-client          │
-└───────────────────────────────────────┘            └───────────────────────────────────────┘
-                    ▲                                                    │
-                    │                                                    │
-             NO INTERNET ACCESS                                  MANAGEMENT ACCESS
-        (No Public IP, No IGW, No NAT)                        (SSH to execute client tests)
-```
 
 ## Learning Objectives
 
