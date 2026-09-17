@@ -14,11 +14,4 @@ Production-grade cloud architectures for isolated, highly secure machine learnin
 
 ---
 
-## Lab 3 Architecture Overview
 
-![Lab 3 Architecture Diagram](Lab_3/lab_3.webp)
-
-- **Isolated AWS VPC (`10.0.0.0/16`)**: Dedicated private subnet (`10.0.1.0/24`) with zero internet gateway, hosting private FastAPI + Whisper voice model endpoint.
-- **On-Premises Simulator (`192.168.0.0/16`)**: Gateway host running strongSwan IKEv2 daemon.
-- **IPSec Tunnel**: AES-256 encrypted hardware-accelerated Site-to-Site VPN with Virtual Private Gateway (VGW) and Customer Gateway (CGW).
-- **Traffic Encapsulation**: ESP Protocol 50 encapsulation shielding patient voice recordings and transcripts.
