@@ -72,17 +72,42 @@ Create two VPCs with non-overlapping IP space.
 
 ![VPCs Console](screenshots/step1_vpcs.png)
 
+*How to create this in AWS (Region `ap-southeast-1`) — step by step:*
+1. Go to VPC Console → Your VPCs → Create VPC → select VPC only.
+2. Name `lab3-aws-vpc`, IPv4 CIDR `10.0.0.0/16`, Tenancy Default → Create VPC.
+3. Repeat with Name `lab3-onprem-vpc`, CIDR `192.168.0.0/16`.
+4. Wait until State = Available for both rows (as shown).
+
 **Subnets:**
 
 ![Subnets Console](screenshots/step1_subnets.png)
+
+*How to create this in AWS — step by step:*
+1. Go to VPC → Subnets → Create subnet → select VPC `lab3-aws-vpc`.
+2. Subnet name `lab3-aws-private-subnet`, AZ `ap-southeast-1a`, CIDR `10.0.1.0/24` → Create.
+3. Repeat in VPC `lab3-onprem-vpc`: name `lab3-onprem-public-subnet`, CIDR `192.168.1.0/24`.
+4. State should be Available for both (as shown).
 
 **Route Tables:**
 
 ![Route Tables](screenshots/step1b_route_tables.png)
 
+*How to create this in AWS — step by step:*
+1. Go to VPC → Route Tables → Create route table → Name it, select the VPC (one table per VPC).
+2. On-prem table: Routes → Edit routes → Add `0.0.0.0/0` → Internet Gateway → Save; then Subnet associations → associate `192.168.1.0/24`.
+3. AWS private table: keep only the local route (`10.0.0.0/16`) — add NO Internet Gateway route to keep Whisper isolated.
+4. Open the table → Details tab shows the Route table ID (as shown).
+
 **On-Prem Gateway EC2** (Elastic IP: `52.76.232.237`):
 
 ![On-Prem Gateway](screenshots/step2_onprem_gateway.png)
+
+*How to create this in AWS — step by step:*
+1. Go to EC2 → Instances → Launch instances → Name `lab3-onprem-gateway`, Ubuntu, `t2.micro`, key pair `lab3-keypair`.
+2. Network settings: VPC `lab3-onprem-vpc`, Subnet `192.168.1.0/24`, Auto-assign public IP Enabled, Security group `lab3-onprem-sg`.
+3. Go to EC2 → Elastic IPs → Allocate → Associate to this instance so it gets `52.76.232.237`.
+4. Select instance → Actions → Networking → Change source/destination check → Stop/Disable (required for a Router/strongSwan — shows "Disabled (Router / strongSwan)").
+5. The Details tab then shows Running, Private `192.168.1.187`, Public EIP (as shown).
 
 ### Checkpoint
 - [ ] Both VPCs are in `available` state
@@ -115,17 +140,37 @@ You must enable route propagation so the AWS VPC knows that traffic for `192.168
 
 ![Customer Gateway](screenshots/step3_customer_gateway.png)
 
+*How to create this in AWS — step by step:*
+1. Go to VPC → Customer Gateways → Create customer gateway.
+2. Name `lab3-customer-gw`, BGP ASN `65000`, IP address `52.76.232.237` (your on-prem Elastic IP), Device: Other.
+3. Create → State becomes Available with ID `cgw-...` (as shown).
+
 **Virtual Private Gateway:**
 
 ![Virtual Private Gateway](screenshots/step4_virtual_private_gateway.png)
+
+*How to create this in AWS — step by step:*
+1. Go to VPC → Virtual Private Gateways → Create virtual private gateway → Name `lab3-vgw`, ASN `64512`, Type `ipsec.1` → Create.
+2. Select it → Actions → Attach to VPC → choose `lab3-aws-vpc` → Attach.
+3. State = Available and VPC attachment = Attached (as shown).
 
 **Site-to-Site VPN:**
 
 ![VPN Connection](screenshots/step5_vpn_connection.png)
 
+*How to create this in AWS — step by step:*
+1. Go to VPC → Site-to-Site VPN Connections → Create VPN connection → Name `lab3-ipsec-vpn`.
+2. Target gateway = `lab3-vgw`, Customer gateway Existing = `lab3-customer-gw`, Routing options Static → add static route `192.168.0.0/16`, Tunnel options default.
+3. Create → State = Available (as shown) → Download configuration → note Tunnel 1 outside IP `13.215.168.39` and PSK `HospitalVoiceSecurePsk2026` for strongSwan.
+
 **Static Routes:**
 
 ![VPN Static Routes](screenshots/step7b_vpn_static_routes.png)
+
+*How to create this in AWS — step by step:*
+1. Select `lab3-ipsec-vpn` → Static routes tab → confirm `192.168.0.0/16` is listed (added at creation).
+2. Go to VPC → Route Tables → select the private table of `lab3-aws-vpc` → Route propagation → Edit → Enable propagation from VGW `vgw-...` → Save.
+3. The private table then learns `192.168.0.0/16` → VGW so return traffic reaches the hospital network.
 
 ### Checkpoint
 - [ ] Customer Gateway status: `available`
@@ -184,9 +229,20 @@ if __name__ == "__main__":
 
 ![Security Groups](screenshots/step2b_security_groups.png)
 
+*How to create this in AWS — step by step:*
+1. Go to EC2 → Security Groups → Create security group → Name `lab3-aws-model-sg`, VPC `lab3-aws-vpc` (repeat for `lab3-onprem-sg` in `lab3-onprem-vpc`).
+2. Inbound rules: TCP `8000` from `192.168.0.0/16`, TCP `22` from `192.168.0.0/16`; on the on-prem SG also add UDP `500` and UDP `4500` from `0.0.0.0/0` (IKE + NAT-T).
+3. Outbound: Allow all traffic → Create.
+4. Open the SG → Details shows the ID and rule counts; click Inbound rules and scroll down to see the entries (as shown).
+
 **EC2 Instances** (`lab3-whisper-model` — no public IPv4):
 
 ![EC2 Instances](screenshots/step6_ec2_instances.png)
+
+*How to create this in AWS — step by step:*
+1. Go to EC2 → Instances → Launch: Name `lab3-whisper-model`, `t2.micro`, VPC `lab3-aws-vpc`, Subnet `10.0.1.0/24`, Auto-assign public IP Disabled, SG `lab3-aws-model-sg` → Launch (gets private `10.0.1.50`, Public = None/Private Isolated).
+2. Launch `lab3-onprem-gateway` the same way in the on-prem subnet with a public IP/EIP (`192.168.1.187` / `52.76.232.237`).
+3. The Instances list then shows Name, ID, Running state, and IPs (as shown).
 
 ### Checkpoint
 - [ ] `lab3-whisper-model` launched in `lab3-aws-private-subnet`
@@ -261,6 +317,11 @@ aws-tunnel-1{1}:   192.168.0.0/16 === 10.0.0.0/16
 
 ![VPN Tunnel](screenshots/step7_vpn_tunnel_up.png)
 
+*How to get this view in AWS — step by step:*
+1. On `lab3-onprem-gateway`, finish strongSwan (`/etc/ipsec.conf` + `/etc/ipsec.secrets`) then run `sudo ipsec up aws-tunnel-1`.
+2. Go to VPC → Site-to-Site VPN → select `lab3-ipsec-vpn` → Tunnel details tab.
+3. Tunnel 1 Status turns UP (green); scroll to Tunnel state for outside IPs and IKE details (as shown). If DOWN, recheck PSK and UDP `500`/`4500`.
+
 ### Checkpoint
 - [ ] `net.ipv4.ip_forward = 1`
 - [ ] `ipsec status` shows `ESTABLISHED`
@@ -302,6 +363,11 @@ IP 13.215.168.39 > 52.76.232.237: ESP(spi=0xc1f3f83e,seq=0x30), length 104
 
 ![Live Inference + tcpdump](screenshots/step8_live_inference_tcpdump.png)
 
+*How to reproduce this (on `lab3-onprem-gateway` terminal — not the AWS Console) — step by step:*
+1. Terminal 1: run `sudo tcpdump -i eth0 -nn "proto 50 or port 500 or port 4500"` and leave it listening.
+2. Terminal 2: run `curl http://10.0.1.50:8000/health`, then `curl -X POST "http://10.0.1.50:8000/transcribe" -F "file=@sample_patient_voice.wav"`.
+3. Terminal 1 then shows ESP/UDP-encap packets and Terminal 2 returns the JSON transcription (as shown).
+
 ### Negative Test — External Access Must Fail
 
 ```bash
@@ -314,6 +380,11 @@ ping -c 3 10.0.1.50
 ```
 
 ![External Connection Timeout](screenshots/step9_negative_test.png)
+
+*How to reproduce this (from any machine NOT on the VPN) — step by step:*
+1. Run `curl -m 3 http://10.0.1.50:8000/health` → expect timeout `(28)` after 3000 ms.
+2. Run the POST version with `-F "file=@stolen_audio.wav"` → expect the same timeout.
+3. Run `ping -c 3 10.0.1.50` → expect 100% packet loss, proving zero public exposure (green assertion bar).
 
 ### Checkpoint
 - [ ] `tcpdump` shows ESP Protocol 50 packets during audio transfer
