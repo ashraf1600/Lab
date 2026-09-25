@@ -5,6 +5,8 @@
 
 ## Introduction
 
+> **📁 Local Lab Directory & Project Workspace:** `D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Lab\Lab_2`
+
 In mission-critical enterprise environments—such as clinical speech transcription in hospital emergency rooms (using OpenAI Whisper) or real-time credit card fraud detection—an ML serving outage can result in severe financial damage or life-safety risks. Relying on a single cloud region or public internet endpoints exposes your application to catastrophic downtime caused by undersea fiber cuts, regional cloud datacenter blackouts, ISP route leaks, or distributed denial-of-service (DDoS) attacks.
 
 In this lab, you design, deploy, and validate a resilient, multi-region AI inference infrastructure on AWS **entirely using the AWS Management Console**. You deploy speech-to-text models across two isolated private Virtual Private Clouds (Primary Region A and Standby Region B), connected via an AWS VPC Peering backbone to a central Edge BGP Gateway Router. You implement dynamic path selection using Border Gateway Protocol (BGP) attributes (Autonomous System Numbers, Local Preference), sub-second health-check probes, fast route withdrawal, a private S3-compatible model registry, and full-stack telemetry using Prometheus and Grafana.
@@ -44,7 +46,11 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
 
 ## Environment Setup & Console Sign-In
 
-1. Open your web browser and navigate to the AWS Management Console sign-in page:
+1. **Local Lab Directory:**
+   ```text
+   D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Lab\Lab_2
+   ```
+2. Open your web browser and navigate to the AWS Management Console sign-in page:
    ```text
    https://<your-account-id>.signin.aws.amazon.com/console
    ```

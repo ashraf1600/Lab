@@ -4,6 +4,8 @@
 
 ## ১. ভূমিকা: রিয়েল-ওয়ার্ল্ড সমস্যা ও প্রেক্ষাপট
 
+> 📁 **লোকাল প্রজেক্ট ডিরেক্টরি (Local Workspace):** `D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Lab\Lab_2`
+
 ধরা যাক, আপনি একটি আন্তর্জাতিক স্বাস্থ্যসেবা (HealthTech) প্ল্যাটফর্মের সিনিয়র MLOps ইঞ্জিনিয়ার। আপনার কোম্পানিতে ডাক্তাররা যখন রোগীর সাথে কথা বলেন, তখন ব্যাকএন্ডে **OpenAI Whisper Speech-to-Text Model** লাইভ অডিও শুনে রিয়েল-টাইমে প্রেসক্রিপশন ও ক্লিনিক্যাল নোট টাইপ করে দেয়।
 
 ### সমস্যা:
