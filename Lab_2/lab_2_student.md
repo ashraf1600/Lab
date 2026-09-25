@@ -5,8 +5,6 @@
 
 ## Introduction
 
-> **📁 Local Lab Directory & Project Workspace:** `D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Lab\Lab_2`
-
 In mission-critical enterprise environments—such as clinical speech transcription in hospital emergency rooms (using OpenAI Whisper) or real-time credit card fraud detection—an ML serving outage can result in severe financial damage or life-safety risks. Relying on a single cloud region or public internet endpoints exposes your application to catastrophic downtime caused by undersea fiber cuts, regional cloud datacenter blackouts, ISP route leaks, or distributed denial-of-service (DDoS) attacks.
 
 In this lab, you design, deploy, and validate a resilient, multi-region AI inference infrastructure on AWS **entirely using the AWS Management Console**. You deploy speech-to-text models across two isolated private Virtual Private Clouds (Primary Region A and Standby Region B), connected via an AWS VPC Peering backbone to a central Edge BGP Gateway Router. You implement dynamic path selection using Border Gateway Protocol (BGP) attributes (Autonomous System Numbers, Local Preference), sub-second health-check probes, fast route withdrawal, a private S3-compatible model registry, and full-stack telemetry using Prometheus and Grafana.
@@ -46,11 +44,7 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
 
 ## Environment Setup & Console Sign-In
 
-1. **Local Lab Directory:**
-   ```text
-   D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Lab\Lab_2
-   ```
-2. Open your web browser and navigate to the AWS Management Console sign-in page:
+1. Open your web browser and navigate to the AWS Management Console sign-in page:
    ```text
    https://<your-account-id>.signin.aws.amazon.com/console
    ```
@@ -59,6 +53,8 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
    ```text
    Asia Pacific (Singapore) ap-southeast-1
    ```
+4. In your **Poridhi Lab Terminal**:
+   - You have access to the pre-configured terminal environment for running verification scripts, curl requests, and monitoring network traffic.
 
 ---
 
@@ -90,42 +86,7 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
 
 ## Chapter 1: Multi-VPC Architecture & Peering Backbone Configuration
 
-![Multi-Region BGP Dynamic Failover Architecture](multi-region-bgp-failover-animated.svg)
 
-```text
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                       CLIENT NETWORK                                        │
-│                                                                                             │
-│                     Inference Client App (test audio, transcription payload)                │
-└───────────────────────────────────────────────┬─────────────────────────────────────────────┘
-                                                │ HTTP / TCP :8000
-                                                ▼
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                          BGP ROUTER & OBSERVABILITY VPC (172.16.0.0/16)                      │
-│                                                                                             │
-│    ┌──────────────────────────────────┐        ┌───────────────────────────────────────┐    │
-│    │ BGP Gateway Controller (AS 65000)│        │ Telemetry & Object Storage Hub        │    │
-│    │ Anycast VIP: 47.128.218.223:8000 │        │ • Prometheus (:9090)                  │    │
-│    │ Internal IP: 172.16.1.10         │        │ • Grafana Dashboard (:3000)           │    │
-│    │                                  │        │ • S3 Private Registry (:9000)         │    │
-│    └─────────────────┬────────────────┘        └───────────────────────────────────────┘    │
-└──────────────────────┼────────────────────────────────────────┼─────────────────────────────┘
-                       │                                        │
-         VPC Peering A │ (Active Route)           VPC Peering B │ (Standby Route)
-      [pcx-0eabd71a2e52c20ca]                        [pcx-0f2c06378721e5b49]
-      BGP Local-Pref: 200                            BGP Local-Pref: 100
-                       │                                        │
-                       ▼                                        ▼
-┌───────────────────────────────────────┐    ┌───────────────────────────────────────┐
-│ REGION A VPC: Primary (10.0.0.0/16)   │    │ REGION B VPC: Failover (10.1.0.0/16)  │
-│                                       │    │                                       │
-│  Private Subnet (10.0.1.0/24)         │    │  Private Subnet (10.1.1.0/24)         │
-│  Model Host: 10.0.1.100:8000          │    │  Model Host: 10.1.1.100:8000          │
-│  • OpenAI Whisper Model               │    │  • OpenAI Whisper Hot-Spare           │
-│  • Zero Public IP / No IGW            │    │  • Zero Public IP / No IGW            │
-│  • AS Number: 65001                   │    │  • AS Number: 65002                   │
-└───────────────────────────────────────┘    └───────────────────────────────────────┘
-```
 
 ### 1.1 What You Will Build
 
@@ -884,7 +845,7 @@ http://47.128.218.223:3000
 ## Chapter 6: Hands-On Chaos Engineering & Live Traffic Failover Verification
 
 ### Executing the Automated Verification Suite:
-Open your local terminal or PowerShell prompt and run the verification script:
+Open your **Poridhi Lab Terminal** and run the verification script:
 
 ```bash
 python verify_traffic_failover.py

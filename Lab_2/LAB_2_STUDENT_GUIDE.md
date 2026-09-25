@@ -44,11 +44,7 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
 
 ## Environment Setup & Console Sign-In
 
-1. **Local Lab Directory:**
-   ```text
-   D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Lab\Lab_2
-   ```
-2. Open your web browser and navigate to the AWS Management Console sign-in page:
+1. Open your web browser and navigate to the AWS Management Console sign-in page:
    ```text
    https://<your-account-id>.signin.aws.amazon.com/console
    ```
@@ -57,6 +53,8 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
    ```text
    Asia Pacific (Singapore) ap-southeast-1
    ```
+4. In your **Poridhi Lab Terminal**:
+   - You have access to the pre-configured terminal environment for running verification scripts, curl requests, and monitoring network traffic.
 
 ---
 
@@ -847,7 +845,7 @@ http://47.128.218.223:3000
 ## Chapter 6: Hands-On Chaos Engineering & Live Traffic Failover Verification
 
 ### Executing the Automated Verification Suite:
-Open your local terminal or PowerShell prompt and run the verification script:
+Open your **Poridhi Lab Terminal** and run the verification script:
 
 ```bash
 python verify_traffic_failover.py
