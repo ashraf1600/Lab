@@ -88,42 +88,7 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
 
 ## Chapter 1: Multi-VPC Architecture & Peering Backbone Configuration
 
-![Multi-Region BGP Dynamic Failover Architecture](multi-region-bgp-failover-animated.svg)
 
-```text
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                       CLIENT NETWORK                                        │
-│                                                                                             │
-│                     Inference Client App (test audio, transcription payload)                │
-└───────────────────────────────────────────────┬─────────────────────────────────────────────┘
-                                                │ HTTP / TCP :8000
-                                                ▼
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                          BGP ROUTER & OBSERVABILITY VPC (172.16.0.0/16)                      │
-│                                                                                             │
-│    ┌──────────────────────────────────┐        ┌───────────────────────────────────────┐    │
-│    │ BGP Gateway Controller (AS 65000)│        │ Telemetry & Object Storage Hub        │    │
-│    │ Anycast VIP: 47.128.218.223:8000 │        │ • Prometheus (:9090)                  │    │
-│    │ Internal IP: 172.16.1.10         │        │ • Grafana Dashboard (:3000)           │    │
-│    │                                  │        │ • S3 Private Registry (:9000)         │    │
-│    └─────────────────┬────────────────┘        └───────────────────────────────────────┘    │
-└──────────────────────┼────────────────────────────────────────┼─────────────────────────────┘
-                       │                                        │
-         VPC Peering A │ (Active Route)           VPC Peering B │ (Standby Route)
-      [pcx-0eabd71a2e52c20ca]                        [pcx-0f2c06378721e5b49]
-      BGP Local-Pref: 200                            BGP Local-Pref: 100
-                       │                                        │
-                       ▼                                        ▼
-┌───────────────────────────────────────┐    ┌───────────────────────────────────────┐
-│ REGION A VPC: Primary (10.0.0.0/16)   │    │ REGION B VPC: Failover (10.1.0.0/16)  │
-│                                       │    │                                       │
-│  Private Subnet (10.0.1.0/24)         │    │  Private Subnet (10.1.1.0/24)         │
-│  Model Host: 10.0.1.100:8000          │    │  Model Host: 10.1.1.100:8000          │
-│  • OpenAI Whisper Model               │    │  • OpenAI Whisper Hot-Spare           │
-│  • Zero Public IP / No IGW            │    │  • Zero Public IP / No IGW            │
-│  • AS Number: 65001                   │    │  • AS Number: 65002                   │
-└───────────────────────────────────────┘    └───────────────────────────────────────┘
-```
 
 ### 1.1 What You Will Build
 
