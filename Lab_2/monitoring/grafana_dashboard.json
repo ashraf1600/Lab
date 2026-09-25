@@ -1,0 +1,141 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "BGP Multi-Region Routing Status & Health",
+      "type": "row"
+    },
+    {
+      "id": 1,
+      "title": "Region A (Primary) BGP Status",
+      "type": "stat",
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
+      "targets": [
+        {
+          "expr": "bgp_peer_status{peer=\"Region_A\"}",
+          "legendFormat": "Region A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "options": { "0": { "text": "DOWN (Withdrawn)", "color": "red" }, "1": { "text": "UP (Active)", "color": "green" } }, "type": "value" }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Region B (Failover) BGP Status",
+      "type": "stat",
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
+      "targets": [
+        {
+          "expr": "bgp_peer_status{peer=\"Region_B\"}",
+          "legendFormat": "Region B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "STANDBY / READY", "color": "blue" } }, "type": "value" }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "blue", "value": 1 }] }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Currently Active BGP Target",
+      "type": "stat",
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
+      "targets": [
+        {
+          "expr": "bgp_active_route",
+          "legendFormat": "{{peer}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Total Failover Transitions",
+      "type": "stat",
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
+      "targets": [
+        {
+          "expr": "bgp_failover_events_total",
+          "legendFormat": "Failover Count"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 5 }] }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "id": 101,
+      "title": "Inference Traffic Flow & Latency",
+      "type": "row"
+    },
+    {
+      "id": 5,
+      "title": "Inference Requests Routed (Primary vs Failover)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 7 },
+      "targets": [
+        {
+          "expr": "rate(bgp_routed_requests_total[30s])",
+          "legendFormat": "{{peer}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "BGP Health Check Probe RTT (ms)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 7 },
+      "targets": [
+        {
+          "expr": "bgp_peer_rtt_milliseconds",
+          "legendFormat": "{{peer}} RTT"
+        }
+      ]
+    }
+  ],
+  "refresh": "2s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["mlops", "networking", "bgp", "failover", "lab2"],
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": ["1s", "2s", "5s", "10s"]
+  },
+  "timezone": "browser",
+  "title": "Lab 2: Multi-Region ML Serving BGP Failover Dashboard",
+  "uid": "lab2-bgp-failover",
+  "version": 1
+}

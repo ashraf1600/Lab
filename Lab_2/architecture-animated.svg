@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 540" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="5" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.18"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <linearGradient id="gradRouter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="gradRegionA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+    <linearGradient id="gradRegionB" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+    <linearGradient id="gradActive" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="gradFailover" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowSlate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1320" height="540" fill="#f8fafc" rx="12"/>
+
+  <!-- Header Banner -->
+  <rect x="30" y="20" width="1260" height="50" rx="8" fill="#1e293b"/>
+  <text x="50" y="52" font-size="18" font-weight="700" fill="#f8fafc">AWS Lab 2: Multi-Region ML Serving with Dynamic BGP Failover &amp; Observability</text>
+  <rect x="1080" y="32" width="190" height="26" rx="13" fill="#10b981" fill-opacity="0.2"/>
+  <circle cx="1098" cy="45" r="5" fill="#10b981">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <text x="1112" y="49" font-size="12" font-weight="600" fill="#34d399">ACTIVE ARCHITECTURE</text>
+
+  <!-- ==================== LEFT: CLIENT / INTERNET ZONE ==================== -->
+  <rect x="30" y="90" width="220" height="420" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="30" y="90" width="220" height="38" rx="10" fill="#f1f5f9"/>
+  <text x="45" y="115" font-size="13" font-weight="700" fill="#334155">Inference Consumer / Client</text>
+  
+  <rect x="45" y="145" width="190" height="95" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="60" y="172" font-size="13" font-weight="600" fill="#0f172a">Client Workstation</text>
+  <text x="60" y="192" font-size="11" fill="#64748b">Automated Stress Test Suite</text>
+  <text x="60" y="208" font-size="10.5" fill="#0284c7" font-family="monospace">client_test.py</text>
+  <text x="60" y="224" font-size="10" fill="#10b981">✓ 15/15 Requests OK</text>
+
+  <rect x="45" y="255" width="190" height="110" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="60" y="280" font-size="13" font-weight="600" fill="#0f172a">Anycast Client VIP Call</text>
+  <text x="60" y="300" font-size="10.5" fill="#475569">Target: <tspan fill="#0284c7" font-weight="600">:8000/transcribe</tspan></text>
+  <text x="60" y="318" font-size="10.5" fill="#475569">Audio: <tspan fill="#334155">OpenAI Whisper Tiny</tspan></text>
+  <text x="60" y="336" font-size="10.5" fill="#475569">Chaos: <tspan fill="#dc2626">/admin/kill</tspan> injection</text>
+  <text x="60" y="352" font-size="10" fill="#16a34a">BGP Fast Convergence &lt; 3.5s</text>
+
+  <rect x="45" y="380" width="190" height="110" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="60" y="405" font-size="12.5" font-weight="600" fill="#0f172a">SLA Guarantees</text>
+  <text x="60" y="425" font-size="11" fill="#475569">• 99.999% High Availability</text>
+  <text x="60" y="443" font-size="11" fill="#475569">• Zero Downtime Failover</text>
+  <text x="60" y="461" font-size="11" fill="#475569">• Autonomous Recovery</text>
+  <text x="60" y="479" font-size="10" fill="#64748b">• Automated Route Withdrawal</text>
+
+  <!-- Flow Line 1: Client -> BGP Gateway -->
+  <path d="M 235 190 L 320 190" stroke="#0284c7" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowBlue)">
+    <animate attributeName="stroke-dashoffset" from="20" to="0" dur="1s" repeatCount="indefinite"/>
+  </path>
+  <text x="250" y="180" font-size="10" font-weight="600" fill="#0284c7">POST /transcribe</text>
+
+  <!-- ==================== CENTER: BGP GATEWAY & OBSERVABILITY VPC ==================== -->
+  <rect x="320" y="90" width="360" height="420" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="320" y="90" width="360" height="38" rx="10" fill="#1e293b"/>
+  <text x="335" y="115" font-size="13" font-weight="700" fill="#f8fafc">Router VPC (172.16.0.0/16) · AS 65000</text>
+  <text x="600" y="115" font-size="11" fill="#94a3b8">Public Gateway</text>
+
+  <!-- BGP Controller Box -->
+  <rect x="335" y="140" width="330" height="150" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <rect x="345" y="150" width="110" height="22" rx="4" fill="#3b82f6"/>
+  <text x="352" y="165" font-size="11" font-weight="700" fill="#ffffff">BGP ROUTER</text>
+  <text x="465" y="166" font-size="11.5" font-weight="700" fill="#0f172a">Dynamic Routing Engine</text>
+  
+  <text x="350" y="192" font-size="11" fill="#475569">Public VIP: <tspan font-family="monospace" fill="#0f172a" font-weight="600">52.221.224.85:8000</tspan></text>
+  <text x="350" y="210" font-size="11" fill="#475569">Private IP: <tspan font-family="monospace" fill="#0f172a">172.16.1.10</tspan> (Subnet: 172.16.1.0/24)</text>
+  <text x="350" y="228" font-size="11" fill="#475569">IGW Route: <tspan font-family="monospace" fill="#059669">0.0.0.0/0 → igw-06befdce</tspan></text>
+
+  <rect x="345" y="240" width="150" height="38" rx="4" fill="#ecfdf5" stroke="#10b981" stroke-width="1"/>
+  <text x="355" y="255" font-size="10" font-weight="700" fill="#065f46">ACTIVE ROUTE:</text>
+  <text x="355" y="270" font-size="11" font-weight="700" fill="#047857">Region A (Local-Pref 200)</text>
+
+  <rect x="505" y="240" width="150" height="38" rx="4" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="515" y="255" font-size="10" font-weight="700" fill="#1e40af">STANDBY ROUTE:</text>
+  <text x="515" y="270" font-size="11" font-weight="700" fill="#1d4ed8">Region B (Local-Pref 100)</text>
+
+  <!-- Observability Hub -->
+  <rect x="335" y="305" width="330" height="190" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="350" y="328" font-size="12" font-weight="700" fill="#0f172a">Observability &amp; Telemetry Hub</text>
+
+  <!-- Prometheus box -->
+  <rect x="345" y="340" width="310" height="65" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="355" y="350" width="90" height="20" rx="4" fill="#ea580c"/>
+  <text x="363" y="364" font-size="10" font-weight="700" fill="#ffffff">PROMETHEUS</text>
+  <text x="455" y="364" font-size="11" font-weight="600" fill="#0f172a">Port :9090 · 2s Scrape Interval</text>
+  <text x="355" y="390" font-size="10" fill="#64748b">Metrics: <tspan font-family="monospace" fill="#0f172a">bgp_peer_status, bgp_active_route, ml_inference_latency</tspan></text>
+
+  <!-- Grafana box -->
+  <rect x="345" y="415" width="310" height="68" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="355" y="425" width="75" height="20" rx="4" fill="#f59e0b"/>
+  <text x="367" y="439" font-size="10" font-weight="700" fill="#ffffff">GRAFANA</text>
+  <text x="440" y="439" font-size="11" font-weight="600" fill="#0f172a">Port :3000 · Realtime NOC Dashboard</text>
+  <text x="355" y="468" font-size="10" fill="#64748b">Visual Panels: Failover Counter, Multi-Region RTT &amp; Region Status</text>
+
+  <!-- ==================== RIGHT TOP: REGION A (PRIMARY) ==================== -->
+  <rect x="790" y="90" width="500" height="195" rx="10" fill="url(#gradRegionA)" stroke="#86efac" stroke-width="2" filter="url(#softShadow)"/>
+  <rect x="790" y="90" width="500" height="36" rx="10" fill="#15803d"/>
+  <text x="805" y="113" font-size="13" font-weight="700" fill="#ffffff">AWS Region A · Primary Cloud (10.0.0.0/16) · AS 65001</text>
+  <rect x="1195" y="97" width="85" height="22" rx="11" fill="#bbf7d0"/>
+  <text x="1208" y="112" font-size="10.5" font-weight="700" fill="#166534">PRIMARY</text>
+
+  <rect x="805" y="135" width="470" height="138" rx="8" fill="#ffffff" stroke="#bbf7d0" stroke-width="1.5"/>
+  <text x="820" y="158" font-size="13" font-weight="700" fill="#0f172a">Whisper Speech Model Server (FastAPI / Threading Server)</text>
+  
+  <text x="820" y="180" font-size="11" fill="#475569">Instance ID: <tspan font-family="monospace" fill="#0f172a">i-044791d7afc119286</tspan> · Type: <tspan font-family="monospace">t2.micro</tspan></text>
+  <text x="820" y="198" font-size="11" fill="#475569">Private IP: <tspan font-family="monospace" fill="#15803d" font-weight="700">10.0.1.100:8000</tspan> (Subnet: 10.0.1.0/24, AZ: ap-southeast-1a)</text>
+  <text x="820" y="216" font-size="11" fill="#475569">Isolation: <tspan fill="#dc2626" font-weight="600">AIR-GAPPED</tspan> (Zero Public IP, No IGW, No NAT Traverse)</text>
+  
+  <rect x="820" y="226" width="140" height="36" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="830" y="242" font-size="10" font-weight="600" fill="#166534">BGP Local Preference</text>
+  <text x="830" y="255" font-size="12" font-weight="700" fill="#14532d">200 (Highest - Active)</text>
+
+  <rect x="970" y="226" width="140" height="36" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="980" y="242" font-size="10" font-weight="600" fill="#475569">Inference Latency</text>
+  <text x="980" y="255" font-size="12" font-weight="700" fill="#0f172a">~40.0 ms</text>
+
+  <rect x="1120" y="226" width="140" height="36" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="1130" y="242" font-size="10" font-weight="600" fill="#475569">Health Check Endpoint</text>
+  <text x="1130" y="255" font-size="11" font-weight="700" fill="#059669">GET /health (HTTP 200)</text>
+
+  <!-- ==================== RIGHT BOTTOM: REGION B (FAILOVER) ==================== -->
+  <rect x="790" y="315" width="500" height="195" rx="10" fill="url(#gradRegionB)" stroke="#93c5fd" stroke-width="2" filter="url(#softShadow)"/>
+  <rect x="790" y="315" width="500" height="36" rx="10" fill="#1d4ed8"/>
+  <text x="805" y="338" font-size="13" font-weight="700" fill="#ffffff">Region B · Failover / On-Prem DR (10.1.0.0/16) · AS 65002</text>
+  <rect x="1195" y="322" width="85" height="22" rx="11" fill="#bfdbfe"/>
+  <text x="1205" y="337" font-size="10.5" font-weight="700" fill="#1e40af">FAILOVER</text>
+
+  <rect x="805" y="360" width="470" height="138" rx="8" fill="#ffffff" stroke="#bfdbfe" stroke-width="1.5"/>
+  <text x="820" y="383" font-size="13" font-weight="700" fill="#0f172a">Whisper Speech Model Server (Standby Hot-Spare)</text>
+  
+  <text x="820" y="405" font-size="11" fill="#475569">Instance ID: <tspan font-family="monospace" fill="#0f172a">i-05e4c71c8f1c0aa36</tspan> · Type: <tspan font-family="monospace">t2.micro</tspan></text>
+  <text x="820" y="423" font-size="11" fill="#475569">Private IP: <tspan font-family="monospace" fill="#1d4ed8" font-weight="700">10.1.1.100:8000</tspan> (Subnet: 10.1.1.0/24, AZ: ap-southeast-1b)</text>
+  <text x="820" y="441" font-size="11" fill="#475569">Isolation: <tspan fill="#dc2626" font-weight="600">AIR-GAPPED</tspan> (Zero Public IP, No IGW, Route back to Peering only)</text>
+  
+  <rect x="820" y="451" width="140" height="36" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="830" y="467" font-size="10" font-weight="600" fill="#1e40af">BGP Local Preference</text>
+  <text x="830" y="480" font-size="12" font-weight="700" fill="#1e3a8a">100 (Secondary Standby)</text>
+
+  <rect x="970" y="451" width="140" height="36" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="980" y="467" font-size="10" font-weight="600" fill="#475569">Inference Latency</text>
+  <text x="980" y="480" font-size="12" font-weight="700" fill="#0f172a">~40.0 ms</text>
+
+  <rect x="1120" y="451" width="140" height="36" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="1130" y="467" font-size="10" font-weight="600" fill="#475569">Failover Trigger</text>
+  <text x="1130" y="480" font-size="11" font-weight="700" fill="#2563eb">Auto Switch &lt; 3.5s</text>
+
+  <!-- ==================== PEERING CONNECTIONS & PIPELINES ==================== -->
+  <!-- Peering A body -->
+  <path d="M 680 185 L 790 185" stroke="#16a34a" stroke-width="3.5" fill="none" marker-end="url(#arrowGreen)"/>
+  <line x1="680" y1="185" x2="780" y2="185" stroke="#86efac" stroke-width="2.5" stroke-dasharray="8 6">
+    <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1s" repeatCount="indefinite"/>
+  </line>
+  
+  <rect x="685" y="152" width="100" height="24" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1"/>
+  <text x="690" y="168" font-size="9" font-weight="700" fill="#15803d">PCX: pcx-03da1ba0</text>
+
+  <!-- Peering B body -->
+  <path d="M 680 410 L 790 410" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6 4" fill="none" marker-end="url(#arrowBlue)"/>
+  
+  <rect x="685" y="377" width="100" height="24" rx="4" fill="#ffffff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="690" y="393" font-size="9" font-weight="700" fill="#1d4ed8">PCX: pcx-0ec91121</text>
+</svg>

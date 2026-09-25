@@ -1,0 +1,342 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1350 880" width="100%" height="100%" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <!-- Drop Shadows -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#16a34a" flood-opacity="0.4"/>
+    </filter>
+    <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#dc2626" flood-opacity="0.4"/>
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+
+    <linearGradient id="ec2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+
+    <linearGradient id="cwGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+
+    <linearGradient id="routerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+
+    <linearGradient id="resultGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="50%" stop-color="#fef9c3"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+
+    <!-- Markers -->
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="#16a34a"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="#dc2626"/>
+    </marker>
+    <marker id="arrowSlate" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <polygon points="0 0, 7 3, 0 6" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect x="0" y="0" width="1350" height="880" fill="url(#bgGrad)"/>
+  <rect x="12" y="12" width="1326" height="856" rx="16" fill="none" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- ==================== TOP TITLE BAR ==================== -->
+  <rect x="250" y="24" width="850" height="58" rx="8" fill="url(#headerGrad)" filter="url(#cardShadow)"/>
+  <text x="675" y="47" text-anchor="middle" font-size="19" font-weight="800" fill="#ffffff" letter-spacing="0.3">Lab 2 — Multi-Region ML Serving with BGP Failover</text>
+  <text x="675" y="67" text-anchor="middle" font-size="12" font-weight="500" fill="#94a3b8">High Availability ML Inference using BGP and Health Checks</text>
+
+  <!-- AWS Logo Badge (Top Left) -->
+  <g transform="translate(30, 24)">
+    <rect x="0" y="0" width="120" height="42" rx="6" fill="#0f172a"/>
+    <!-- AWS Text -->
+    <text x="36" y="27" font-size="17" font-weight="900" fill="#ff9900" letter-spacing="-0.5">aws</text>
+    <path d="M36 31 Q 48 37 65 31" fill="none" stroke="#ff9900" stroke-width="2" stroke-linecap="round"/>
+    <polygon points="65,31 61,28 62,33" fill="#ff9900"/>
+    <text x="135" y="27" font-size="15" font-weight="700" fill="#0f172a">AWS Cloud</text>
+  </g>
+
+  <!-- ==================== TOP CENTER: USERS / CLIENTS ==================== -->
+  <g transform="translate(675, 95)" text-anchor="middle">
+    <!-- User Icon Group -->
+    <circle cx="0" cy="12" r="9" fill="#1e293b"/>
+    <path d="M-13 32 C-13 23 -6 21 0 21 C6 21 13 23 13 32" fill="#1e293b"/>
+    <circle cx="-18" cy="15" r="7" fill="#475569"/>
+    <path d="M-28 32 C-28 25 -22 24 -18 24 C-14 24 -11 25 -10 28" fill="#475569"/>
+    <circle cx="18" cy="15" r="7" fill="#475569"/>
+    <path d="M10 28 C11 25 14 24 18 24 C22 24 28 25 28 32" fill="#475569"/>
+    
+    <text x="0" y="47" font-size="13" font-weight="700" fill="#0f172a">Users / Clients</text>
+    <text x="0" y="60" font-size="10.5" fill="#64748b">(Internet / Internal Apps)</text>
+
+    <!-- Arrow Down to BGP Router -->
+    <line x1="0" y1="65" x2="0" y2="88" stroke="#0f172a" stroke-width="2.5" marker-end="url(#arrowSlate)"/>
+  </g>
+
+  <!-- ==================== CENTER: BGP ROUTER CARD ==================== -->
+  <g transform="translate(560, 190)">
+    <rect x="0" y="0" width="230" height="96" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5" filter="url(#cardShadow)"/>
+    
+    <!-- Router Icon Circle -->
+    <circle cx="115" cy="32" r="19" fill="url(#routerGrad)"/>
+    <!-- Router Cross & Arrows inside -->
+    <circle cx="115" cy="32" r="5" fill="#ffffff"/>
+    <line x1="102" y1="32" x2="128" y2="32" stroke="#ffffff" stroke-width="2"/>
+    <line x1="115" y1="19" x2="115" y2="45" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="102" cy="32" r="2" fill="#ffffff"/>
+    <circle cx="128" cy="32" r="2" fill="#ffffff"/>
+    <circle cx="115" cy="19" r="2" fill="#ffffff"/>
+    <circle cx="115" cy="45" r="2" fill="#ffffff"/>
+
+    <text x="115" y="66" text-anchor="middle" font-size="13" font-weight="800" fill="#0f172a">BGP Router</text>
+    <text x="115" y="80" text-anchor="middle" font-size="10" font-weight="500" fill="#475569">(Route Selection + Health Check)</text>
+  </g>
+
+  <!-- ==================== CENTER BACKGROUND: GLOBAL NETWORK ==================== -->
+  <g transform="translate(675, 390)" text-anchor="middle">
+    <!-- Globe Icon -->
+    <circle cx="0" cy="0" r="25" fill="none" stroke="#64748b" stroke-width="2"/>
+    <ellipse cx="0" cy="0" rx="12" ry="25" fill="none" stroke="#64748b" stroke-width="1.8"/>
+    <line x1="-25" y1="0" x2="25" y2="0" stroke="#64748b" stroke-width="1.8"/>
+    <line x1="-21" y1="-12" x2="21" y2="-12" stroke="#64748b" stroke-width="1.4"/>
+    <line x1="-21" y1="12" x2="21" y2="12" stroke="#64748b" stroke-width="1.4"/>
+    <text x="0" y="38" font-size="12" font-weight="800" fill="#334155">Global Network</text>
+    <text x="0" y="52" font-size="10" font-weight="600" fill="#64748b">(BGP Routing)</text>
+  </g>
+
+  <!-- ==================== TRAFFIC PATHS ==================== -->
+  <!-- 1. Active Route (Green Solid) to Region A -->
+  <path d="M 560 235 L 480 235 L 260 235 L 260 380" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+  <rect x="330" y="210" width="130" height="34" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="395" y="225" text-anchor="middle" font-size="11.5" font-weight="800" fill="#15803d">Active Route</text>
+  <text x="395" y="238" text-anchor="middle" font-size="9.5" font-weight="600" fill="#16a34a">(Primary: Local-Pref 200)</text>
+
+  <!-- 2. Failover Route (Red Dashed) to Region B -->
+  <path d="M 790 235 L 870 235 L 1090 235 L 1090 380" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrowRed)"/>
+  <rect x="880" y="210" width="160" height="34" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="960" y="225" text-anchor="middle" font-size="11.5" font-weight="800" fill="#b91c1c">If Primary Fails</text>
+  <text x="960" y="238" text-anchor="middle" font-size="9.5" font-weight="600" fill="#dc2626">(Automatic Failover via BGP: LP 100)</text>
+
+  <!-- ==================== LEFT REGION: AWS REGION A (PRIMARY) ==================== -->
+  <g transform="translate(40, 260)">
+    <!-- Region Outer Container -->
+    <rect x="0" y="0" width="450" height="290" rx="10" fill="#ffffff" stroke="#15803d" stroke-width="2" filter="url(#cardShadow)"/>
+    
+    <!-- Region Header Badge -->
+    <rect x="0" y="0" width="450" height="42" rx="10" fill="#15803d"/>
+    <!-- Flag Icon -->
+    <path d="M 16 12 L 16 30 M 16 12 L 28 17 L 16 23 Z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="36" y="22" font-size="14" font-weight="800" fill="#ffffff">AWS Region A (e.g. ap-southeast-1)</text>
+    <text x="36" y="35" font-size="10" font-weight="600" fill="#bbf7d0">Primary Region (Active)</text>
+
+    <!-- VPC Container (Dashed Blue) -->
+    <g transform="translate(15, 52)">
+      <rect x="0" y="0" width="420" height="224" rx="8" fill="#f8fafc" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="5,4"/>
+      
+      <!-- VPC Badge -->
+      <rect x="12" y="10" width="30" height="24" rx="4" fill="#2563eb"/>
+      <path d="M 20 22 C 18 22 17 20 18 19 C 18 17 21 16 23 17 C 24 15 28 15 29 17 C 31 17 32 18 32 20 C 33 21 31 22 29 22 Z" fill="#ffffff"/>
+      <text x="48" y="22" font-size="12" font-weight="800" fill="#1e40af">VPC</text>
+      <text x="48" y="32" font-size="10" font-weight="600" fill="#475569">10.0.0.0/16</text>
+
+      <!-- Private Subnet Container (Dashed Blue Inner) -->
+      <g transform="translate(12, 42)">
+        <rect x="0" y="0" width="396" height="170" rx="6" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,4"/>
+        
+        <!-- Lock Icon Badge -->
+        <rect x="10" y="8" width="22" height="20" rx="4" fill="#0284c7"/>
+        <path d="M 18 14 L 18 12 C 18 10.5 24 10.5 24 12 L 24 14" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+        <rect x="16" y="14" width="10" height="8" rx="1.5" fill="#ffffff"/>
+        <text x="38" y="22" font-size="11" font-weight="700" fill="#0369a1">Private Subnet (10.0.1.0/24 - Air-Gapped)</text>
+
+        <!-- EC2 Whisper Model Server Card -->
+        <g transform="translate(130, 42)">
+          <rect x="0" y="0" width="75" height="70" rx="8" fill="url(#ec2Grad)" filter="url(#cardShadow)"/>
+          <!-- Microchip Icon -->
+          <rect x="22" y="18" width="31" height="34" rx="4" fill="#ffffff" fill-opacity="0.2" stroke="#ffffff" stroke-width="1.5"/>
+          <rect x="28" y="24" width="19" height="22" rx="2" fill="#ffffff"/>
+          <line x1="22" y1="24" x2="16" y2="24" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="22" y1="32" x2="16" y2="32" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="22" y1="40" x2="16" y2="40" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="53" y1="24" x2="59" y2="24" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="53" y1="32" x2="59" y2="32" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="53" y1="40" x2="59" y2="40" stroke="#ffffff" stroke-width="1.5"/>
+        </g>
+        <text x="167" y="125" text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a">EC2</text>
+        <text x="167" y="139" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ea580c">(Whisper Model Server)</text>
+        <text x="167" y="152" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">FastAPI + Whisper (10.0.1.100)</text>
+
+        <!-- Connecting Line to CloudWatch / Health Check -->
+        <line x1="205" y1="77" x2="265" y2="77" stroke="#334155" stroke-width="2"/>
+
+        <!-- CloudWatch / Health Probing Card -->
+        <g transform="translate(265, 47)">
+          <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#cwGrad)" filter="url(#cardShadow)"/>
+          <!-- Cloud & Search Icon -->
+          <path d="M 18 36 C 14 36 12 33 14 29 C 14 25 18 24 20 25 C 22 21 28 20 31 23 C 34 22 38 24 38 28 C 41 29 41 33 39 35 C 38 36 22 36 18 36 Z" fill="#ffffff" fill-opacity="0.3"/>
+          <circle cx="34" cy="30" r="7" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+          <line x1="39" y1="35" x2="45" y2="41" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+        </g>
+        <text x="295" y="123" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0f172a">CloudWatch</text>
+        <text x="295" y="137" text-anchor="middle" font-size="9.5" font-weight="600" fill="#e11d48">(Health Check)</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== RIGHT REGION: AWS REGION B (FAILOVER / ON-PREM) ==================== -->
+  <g transform="translate(860, 260)">
+    <!-- Region Outer Container -->
+    <rect x="0" y="0" width="450" height="290" rx="10" fill="#ffffff" stroke="#15803d" stroke-width="2" filter="url(#cardShadow)"/>
+    
+    <!-- Region Header Badge -->
+    <rect x="0" y="0" width="450" height="42" rx="10" fill="#15803d"/>
+    <!-- Flag Icon -->
+    <path d="M 16 12 L 16 30 M 16 12 L 28 17 L 16 23 Z" fill="#ffffff" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="36" y="22" font-size="14" font-weight="800" fill="#ffffff">AWS Region B (e.g. us-east-1 / On-Prem)</text>
+    <text x="36" y="35" font-size="10" font-weight="600" fill="#bbf7d0">Failover Region (Standby Hot-Spare)</text>
+
+    <!-- VPC Container (Dashed Blue) -->
+    <g transform="translate(15, 52)">
+      <rect x="0" y="0" width="420" height="224" rx="8" fill="#f8fafc" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="5,4"/>
+      
+      <!-- VPC Badge -->
+      <rect x="12" y="10" width="30" height="24" rx="4" fill="#2563eb"/>
+      <path d="M 20 22 C 18 22 17 20 18 19 C 18 17 21 16 23 17 C 24 15 28 15 29 17 C 31 17 32 18 32 20 C 33 21 31 22 29 22 Z" fill="#ffffff"/>
+      <text x="48" y="22" font-size="12" font-weight="800" fill="#1e40af">VPC</text>
+      <text x="48" y="32" font-size="10" font-weight="600" fill="#475569">10.1.0.0/16</text>
+
+      <!-- Private Subnet Container (Dashed Blue Inner) -->
+      <g transform="translate(12, 42)">
+        <rect x="0" y="0" width="396" height="170" rx="6" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,4"/>
+        
+        <!-- Lock Icon Badge -->
+        <rect x="10" y="8" width="22" height="20" rx="4" fill="#0284c7"/>
+        <path d="M 18 14 L 18 12 C 18 10.5 24 10.5 24 12 L 24 14" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+        <rect x="16" y="14" width="10" height="8" rx="1.5" fill="#ffffff"/>
+        <text x="38" y="22" font-size="11" font-weight="700" fill="#0369a1">Private Subnet (10.1.1.0/24 - Air-Gapped)</text>
+
+        <!-- EC2 Whisper Model Server Card -->
+        <g transform="translate(130, 42)">
+          <rect x="0" y="0" width="75" height="70" rx="8" fill="url(#ec2Grad)" filter="url(#cardShadow)"/>
+          <!-- Microchip Icon -->
+          <rect x="22" y="18" width="31" height="34" rx="4" fill="#ffffff" fill-opacity="0.2" stroke="#ffffff" stroke-width="1.5"/>
+          <rect x="28" y="24" width="19" height="22" rx="2" fill="#ffffff"/>
+          <line x1="22" y1="24" x2="16" y2="24" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="22" y1="32" x2="16" y2="32" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="22" y1="40" x2="16" y2="40" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="53" y1="24" x2="59" y2="24" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="53" y1="32" x2="59" y2="32" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="53" y1="40" x2="59" y2="40" stroke="#ffffff" stroke-width="1.5"/>
+        </g>
+        <text x="167" y="125" text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a">EC2</text>
+        <text x="167" y="139" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ea580c">(Whisper Model Server)</text>
+        <text x="167" y="152" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">FastAPI + Whisper (10.1.1.100)</text>
+
+        <!-- Connecting Line to CloudWatch / Health Check -->
+        <line x1="205" y1="77" x2="265" y2="77" stroke="#334155" stroke-width="2"/>
+
+        <!-- CloudWatch / Health Probing Card -->
+        <g transform="translate(265, 47)">
+          <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#cwGrad)" filter="url(#cardShadow)"/>
+          <!-- Cloud & Search Icon -->
+          <path d="M 18 36 C 14 36 12 33 14 29 C 14 25 18 24 20 25 C 22 21 28 20 31 23 C 34 22 38 24 38 28 C 41 29 41 33 39 35 C 38 36 22 36 18 36 Z" fill="#ffffff" fill-opacity="0.3"/>
+          <circle cx="34" cy="30" r="7" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+          <line x1="39" y1="35" x2="45" y2="41" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+        </g>
+        <text x="295" y="123" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0f172a">CloudWatch</text>
+        <text x="295" y="137" text-anchor="middle" font-size="9.5" font-weight="600" fill="#e11d48">(Health Check)</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== BOTTOM PANELS (3 COLUMNS) ==================== -->
+  <g transform="translate(40, 570)">
+    <!-- 1. How It Works (Blue Card) -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="410" height="210" rx="10" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1.5"/>
+      <text x="20" y="28" font-size="14" font-weight="800" fill="#0369a1">How It Works:</text>
+      <text x="20" y="52" font-size="11.5" font-weight="500" fill="#0f172a">1. Users send requests to a single VIP (BGP router)</text>
+      <text x="20" y="74" font-size="11.5" font-weight="500" fill="#0f172a">2. BGP routes traffic to healthy region (Primary: LP 200)</text>
+      <text x="20" y="96" font-size="11.5" font-weight="500" fill="#0f172a">3. Health checks monitor model servers in both regions</text>
+      <text x="20" y="118" font-size="11.5" font-weight="500" fill="#0f172a">4. If Primary fails, BGP automatically withdraws route</text>
+      <text x="35" y="136" font-size="11" font-weight="600" fill="#0284c7">&amp; diverts all traffic to Failover region (LP 100)</text>
+      <text x="20" y="160" font-size="11.5" font-weight="500" fill="#0f172a">5. Service remains 100% available with zero downtime</text>
+    </g>
+
+    <!-- 2. Key Components (Green Card) -->
+    <g transform="translate(430, 0)">
+      <rect x="0" y="0" width="410" height="210" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+      <text x="20" y="28" font-size="14" font-weight="800" fill="#15803d">Key Components:</text>
+      
+      <!-- Checkmark 1 -->
+      <circle cx="28" cy="52" r="8" fill="#16a34a"/>
+      <path d="M 24 52 L 27 55 L 32 49" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      <text x="44" y="56" font-size="11.5" font-weight="600" fill="#0f172a">Same model (Whisper) deployed in two regions</text>
+
+      <!-- Checkmark 2 -->
+      <circle cx="28" cy="80" r="8" fill="#16a34a"/>
+      <path d="M 24 80 L 27 83 L 32 77" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      <text x="44" y="84" font-size="11.5" font-weight="600" fill="#0f172a">BGP routing with health checks &amp; VPC Peering</text>
+
+      <!-- Checkmark 3 -->
+      <circle cx="28" cy="108" r="8" fill="#16a34a"/>
+      <path d="M 24 108 L 27 111 L 32 105" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      <text x="44" y="112" font-size="11.5" font-weight="600" fill="#0f172a">Automatic failover on primary region failure</text>
+
+      <!-- Checkmark 4 -->
+      <circle cx="28" cy="136" r="8" fill="#16a34a"/>
+      <path d="M 24 136 L 27 139 L 32 133" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      <text x="44" y="140" font-size="11.5" font-weight="600" fill="#0f172a">Private subnets (no public model endpoints)</text>
+
+      <!-- Checkmark 5 -->
+      <circle cx="28" cy="164" r="8" fill="#16a34a"/>
+      <path d="M 24 164 L 27 167 L 32 161" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      <text x="44" y="168" font-size="11.5" font-weight="600" fill="#0f172a">High availability &amp; telemetry (Prometheus + Grafana)</text>
+    </g>
+
+    <!-- 3. Test Scenario (Purple Card) -->
+    <g transform="translate(860, 0)">
+      <rect x="0" y="0" width="410" height="210" rx="10" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1.5"/>
+      <text x="20" y="28" font-size="14" font-weight="800" fill="#7e22ce">Test Scenario:</text>
+      <text x="20" y="52" font-size="11.5" font-weight="500" fill="#0f172a">1. Send test inference requests (routes to Region A)</text>
+      <text x="20" y="74" font-size="11.5" font-weight="500" fill="#0f172a">2. Manually kill model server in Region A (/admin/kill)</text>
+      <text x="20" y="96" font-size="11.5" font-weight="500" fill="#0f172a">3. Verify BGP withdraws route &amp; traffic shifts to Region B</text>
+      <text x="20" y="118" font-size="11.5" font-weight="500" fill="#0f172a">4. Confirm inference still 100% works from Region B</text>
+      <text x="20" y="140" font-size="11.5" font-weight="500" fill="#0f172a">5. Bring Region A back (/admin/restore) &amp; observe</text>
+      <text x="35" y="158" font-size="11" font-weight="600" fill="#7e22ce">automated fallback to Primary Cloud (LP 200)</text>
+    </g>
+  </g>
+
+  <!-- ==================== BOTTOM RESULT BANNER ==================== -->
+  <g transform="translate(200, 798)">
+    <rect x="0" y="0" width="950" height="52" rx="26" fill="url(#resultGrad)" stroke="#f59e0b" stroke-width="1.5" filter="url(#cardShadow)"/>
+    
+    <!-- Target Bullseye Icon -->
+    <circle cx="36" cy="26" r="14" fill="#ea580c"/>
+    <circle cx="36" cy="26" r="9" fill="#fef3c7"/>
+    <circle cx="36" cy="26" r="4" fill="#ea580c"/>
+
+    <text x="64" y="32" font-size="14" font-weight="800" fill="#b45309">Result:</text>
+    <text x="122" y="32" font-size="13.5" font-weight="600" fill="#0f172a">When one region fails, traffic automatically routes to the other region via BGP, ensuring continuous ML inference service.</text>
+  </g>
+
+</svg>

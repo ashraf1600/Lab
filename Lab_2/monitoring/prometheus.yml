@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+
+scrape_configs:
+  # BGP Router & Failover Controller Metrics
+  - job_name: "bgp_router"
+    static_configs:
+      - targets: ["localhost:8000"]
+        labels:
+          role: "bgp-gateway"
+          tier: "routing"
+
+  # Region A Primary Whisper Model Server
+  - job_name: "whisper_region_a"
+    static_configs:
+      - targets: ["10.0.1.100:8000"]
+        labels:
+          region: "Region A (Primary Cloud)"
+          availability_zone: "ap-southeast-1a"
+          tier: "inference"
+
+  # Region B Failover Whisper Model Server
+  - job_name: "whisper_region_b"
+    static_configs:
+      - targets: ["10.1.1.100:8000"]
+        labels:
+          region: "Region B (Failover / On-Prem)"
+          availability_zone: "ap-southeast-1b"
+          tier: "inference"
