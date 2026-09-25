@@ -1,20 +1,26 @@
 # Lab 1: VPC-Isolated ML Inference Endpoint using AWS Transit Gateway
-## Complete Step-by-Step AWS Management Console Guide
+## Complete Step-by-Step AWS Management Console Manual Guide
+
+---
 
 ## Introduction
 
-This lab guides you through designing and deploying an enterprise-grade, isolated Machine Learning inference infrastructure on AWS **entirely using the AWS Management Console**. You will construct a private network architecture where a Vision Transformer (ViT) model server resides in a dedicated Virtual Private Cloud (VPC) with zero internet access, reachable only by authorized internal consumer services via AWS Transit Gateway. This design pattern mitigates common production risks including distributed denial-of-service attacks, model extraction, and unauthorized data exfiltration.
+This lab guides you through designing, deploying, and validating an enterprise-grade, isolated Machine Learning inference infrastructure on AWS **entirely using the AWS Management Console**. You will construct a private network architecture where a Vision Transformer (ViT) model server resides in a dedicated Virtual Private Cloud (VPC) with zero internet access, reachable only by authorized internal consumer microservices via AWS Transit Gateway. 
+
+This design pattern mitigates common production risks including distributed denial-of-service (DDoS) attacks, unauthorized model intellectual property extraction, and sensitive data exfiltration.
 
 ![Architecture Diagram: VPC-Isolated ML Inference Endpoint using AWS Transit Gateway](model-vpc-client-vpc-tgw-animated.svg)
 
+---
+
 ## Learning Objectives
 
-By the end of this lab, you will be able to:
+By completing this lab entirely through the AWS Management Console, you will be able to:
 
 1. Create two isolated Virtual Private Clouds (VPCs) with non-overlapping CIDR blocks manually in the AWS Console.
-2. Implement an AWS Transit Gateway hub-and-spoke topology to route inter-VPC traffic securely across AWS private backbones.
-3. Construct restrictive VPC route tables and security groups that block public internet traversal while allowing targeted inter-service communication.
-4. Deploy a pre-trained Vision Transformer (ViT) model served with FastAPI on an isolated EC2 host.
+2. Implement an AWS Transit Gateway hub-and-spoke topology to route inter-VPC traffic securely across the AWS private global backbone.
+3. Configure restrictive VPC route tables and security groups that block all public internet traversal while allowing targeted inter-service communication.
+4. Deploy a pre-trained Vision Transformer (ViT) model served with FastAPI on an isolated EC2 host via Console User Data.
 5. Validate perimeter security through negative penetration testing and execute latency-benchmarked internal inference queries across the Transit Gateway.
 6. Configure an Amazon S3 Gateway Endpoint to enable private model artifact loading without internet exposure.
 
@@ -73,6 +79,8 @@ Routing requires unambiguous destination addresses. If both VPCs use identical C
 
 </details>
 
+---
+
 ### 1.3 Step-by-Step Implementation in AWS Console
 
 #### Step 1: Create Model VPC (`lab1-model-vpc`)
@@ -124,6 +132,8 @@ Routing requires unambiguous destination addresses. If both VPCs use identical C
 
 > **Crucial Security Note:** Do **NOT** create or attach an Internet Gateway to `lab1-model-vpc`. The Model VPC must remain strictly isolated with zero internet connectivity.
 
+---
+
 ### 1.4 Visual Verification in AWS Console
 
 Navigate to **AWS Management Console > VPC > Virtual Private Clouds**:
@@ -136,17 +146,17 @@ Navigate to **AWS Management Console > VPC > Subnets**:
 
 ### 1.5 Checkpoint
 
-- [ ] Both VPCs show `Available` state in `ap-southeast-1`.
-- [ ] `lab1-model-vpc` has CIDR `10.0.0.0/16`.
-- [ ] `lab1-client-vpc` has CIDR `10.1.0.0/16`.
-- [ ] Subnets `10.0.1.0/24` and `10.1.1.0/24` are created in `ap-southeast-1a`.
-- [ ] Client VPC has an attached Internet Gateway; Model VPC has **NO** Internet Gateway.
+- [x] Both VPCs show `Available` state in `ap-southeast-1`.
+- [x] `lab1-model-vpc` has CIDR `10.0.0.0/16`.
+- [x] `lab1-client-vpc` has CIDR `10.1.0.0/16`.
+- [x] Subnets `10.0.1.0/24` and `10.1.1.0/24` are created in `ap-southeast-1a`.
+- [x] Client VPC has an attached Internet Gateway; Model VPC has **NO** Internet Gateway.
 
 ---
 
 ## Chapter 2: Inter-VPC Connectivity with AWS Transit Gateway
 
-Connecting multiple VPCs through point-to-point VPC Peering requires $N(N-1)/2$ connections as systems grow. AWS Transit Gateway serves as a regional cloud router, simplifying network topologies to a centralized hub-and-spoke model. In this chapter, you establish a Transit Gateway and configure route tables and security groups in the AWS Console.
+Connecting multiple VPCs through point-to-point VPC Peering requires $\frac{N(N-1)}{2}$ connections as systems grow. AWS Transit Gateway serves as a regional cloud router, simplifying network topologies to a centralized hub-and-spoke model. In this chapter, you establish a Transit Gateway and configure route tables and security groups entirely in the AWS Management Console.
 
 ### 2.1 What You Will Build
 
@@ -157,6 +167,8 @@ You will configure:
 - Static route table entries in both VPCs directing traffic destined for the peer VPC to the Transit Gateway.
 - Explicit omission of any default route (`0.0.0.0/0`) in the Model VPC route table.
 - Restrictive security groups allowing port 8000 only from the Client VPC.
+
+---
 
 ### 2.2 Think First: Route Table Evaluation
 
@@ -176,7 +188,11 @@ The packet will be dropped immediately at the network layer with a `No route to 
 
 </details>
 
-### 2.3 Step-by-Step Implementation in AWS Console
+---
+
+### 2.3 Implementation via AWS Management Console
+
+*(Manual step-by-step console guide replacing automated scripts)*
 
 #### Step 1: Create AWS Transit Gateway
 1. In the VPC Console left sidebar, scroll down to **Transit gateways** and click **Transit gateways**.
@@ -190,7 +206,7 @@ The packet will be dropped immediately at the network layer with a `No route to 
    - **Default route table propagation:** Enable
    - **DNS support:** Enable
 4. Click **Create transit gateway**.
-5. *Wait ~1 to 2 minutes* until the State changes from `pending` to **`Available`**.
+5. *Wait ~1 to 2 minutes* until the State changes from `pending` to **`Available`**. (Take note of your Transit Gateway ID, e.g., `tgw-07682c01476b8069e`).
 
 #### Step 2: Create Transit Gateway Attachments
 1. In the left sidebar, click **Transit gateway attachments**.
@@ -199,60 +215,129 @@ The packet will be dropped immediately at the network layer with a `No route to 
    - **Transit gateway ID:** Select `lab1-tgw`
    - **Attachment type:** `VPC`
    - **Attachment name tag:** `tgw-attach-model-vpc`
-   - **VPC ID:** Select `lab1-model-vpc`
+   - **VPC ID:** Select `lab1-model-vpc` (`vpc-0462cd78993cb1085`)
    - **Subnet IDs:** Select `lab1-model-private-subnet` (`10.0.1.0/24`)
    - Click **Create transit gateway attachment**.
 4. Click **Create transit gateway attachment** again for **Client VPC:**
    - **Transit gateway ID:** Select `lab1-tgw`
    - **Attachment type:** `VPC`
    - **Attachment name tag:** `tgw-attach-client-vpc`
-   - **VPC ID:** Select `lab1-client-vpc`
+   - **VPC ID:** Select `lab1-client-vpc` (`vpc-07c031c79191b0fd9`)
    - **Subnet IDs:** Select `lab1-client-subnet` (`10.1.1.0/24`)
    - Click **Create transit gateway attachment**.
 5. Wait for both attachments to show State: **`Available`**.
 
-#### Step 3: Configure Route Tables
-1. In the left sidebar, click **Route tables**.
+#### Step 3: Complete Route Table Configuration in AWS Console
+1. In the VPC Console left sidebar, click **Route tables**.
 2. **Model VPC Route Table (`lab1-model-rt`):**
    - Click **Create route table**.
-   - Name tag: `lab1-model-rt`, VPC: Select `lab1-model-vpc`, click **Create route table**.
-   - Go to the **Subnet associations** tab, click **Edit subnet associations**, select `lab1-model-private-subnet`, and click **Save associations**.
+   - **Name tag:** `lab1-model-rt`
+   - **VPC:** Select `lab1-model-vpc`
+   - Click **Create route table**.
+   - Go to the **Subnet associations** tab, click **Edit subnet associations**, check `lab1-model-private-subnet`, and click **Save associations**.
    - Go to the **Routes** tab, click **Edit routes** > **Add route**:
-     - **Destination:** `10.1.0.0/16`
-     - **Target:** Select **Transit Gateway** -> select `lab1-tgw`.
+     - **Destination:** Type the Client VPC CIDR `10.1.0.0/16` *(Q1)*
+     - **Target:** Select **Transit Gateway** -> select your Transit Gateway ID `tgw-07682c01476b8069e` *(Q2)*
      - Click **Save changes**.
-     - *(Notice: Do NOT add `0.0.0.0/0`. It must have only local and TGW routes)*.
+     - *(Notice: Do NOT add `0.0.0.0/0`. Keep this route table free of any internet path!)*
 3. **Client VPC Route Table (`lab1-client-rt`):**
    - Click **Create route table**.
-   - Name tag: `lab1-client-rt`, VPC: Select `lab1-client-vpc`, click **Create route table**.
-   - Under **Subnet associations**, associate `lab1-client-subnet`.
+   - **Name tag:** `lab1-client-rt`
+   - **VPC:** Select `lab1-client-vpc`
+   - Click **Create route table**.
+   - Under **Subnet associations**, click **Edit subnet associations**, check `lab1-client-subnet`, and click **Save associations**.
    - Under **Routes**, click **Edit routes** > **Add route**:
-     - Route 1: Destination `10.0.0.0/16` -> Target: **Transit Gateway** (`lab1-tgw`).
-     - Route 2: Destination `0.0.0.0/0` -> Target: **Internet Gateway** (`lab1-client-igw`).
+     - **Route 1:** Destination `10.0.0.0/16` -> Target: **Transit Gateway** (`lab1-tgw`).
+     - **Route 2:** Destination `0.0.0.0/0` -> Target: **Internet Gateway** (`lab1-client-igw`).
      - Click **Save changes**.
 
-#### Step 4: Configure Security Groups
-1. In the left sidebar, click **Security groups** under *Security*.
+#### Step 4: Configure Security Groups in AWS Console
+1. In the VPC Console left sidebar, click **Security groups** under *Security*.
 2. **Model Security Group (`lab1-model-sg`):**
    - Click **Create security group**.
    - **Security group name:** `lab1-model-sg`
    - **Description:** `Security group for private Model Server`
    - **VPC:** Select `lab1-model-vpc`
    - Under **Inbound rules**, click **Add rule**:
-     - Type: **Custom TCP**, Port range: `8000`, Source: **Custom** -> `10.1.0.0/16` (Only Client VPC!)
-     - Type: **All ICMP - IPv4**, Source: **Custom** -> `10.1.0.0/16`
-     - Type: **SSH**, Port range: `22`, Source: **Custom** -> `10.1.0.0/16`
+     - **Type:** Custom TCP
+     - **Port range:** `8000`
+     - **Source:** Custom -> Enter Client VPC CIDR: `10.1.0.0/16` *(Q3: Restrict inbound port 8000 to only Client VPC!)*
+   - Add another rule for ping/diagnostic:
+     - **Type:** All ICMP - IPv4, **Source:** Custom -> `10.1.0.0/16`
+   - Add an internal SSH rule (optional for admin jump):
+     - **Type:** SSH, **Port:** `22`, **Source:** Custom -> `10.1.0.0/16`
    - Click **Create security group**.
 3. **Client Security Group (`lab1-client-sg`):**
    - Click **Create security group**.
    - **Security group name:** `lab1-client-sg`
    - **VPC:** Select `lab1-client-vpc`
-   - Under **Inbound rules**:
-     - Type: **SSH**, Port range: `22`, Source: `0.0.0.0/0` (Anywhere IPv4 for SSH testing)
-     - Type: **All ICMP - IPv4**, Source: `0.0.0.0/0`
+   - Under **Inbound rules**, click **Add rule**:
+     - **Type:** SSH, **Port:** `22`, **Source:** `0.0.0.0/0` (Allows SSH management from your workstation)
+     - **Type:** All ICMP - IPv4, **Source:** `0.0.0.0/0`
    - Click **Create security group**.
 
-### 2.4 Visual Verification in AWS Console
+---
+
+### Key Questions & Solutions for Section 2.3
+
+<details>
+<summary>Click to view Question Hints</summary>
+
+- **Q1:** The cross-VPC route in the Model Route Table needs to direct traffic bound for the Client VPC: `10.1.0.0/16`.
+- **Q2:** The target resource receiving cross-VPC traffic is your deployed Transit Gateway ID (`tgw-07682c01476b8069e`).
+- **Q3:** The Model Security Group should restrict inbound traffic on port 8000 strictly to the Client VPC CIDR `10.1.0.0/16`, never `0.0.0.0/0`.
+
+</details>
+
+<details>
+<summary>Click to see solution</summary>
+
+```text
+Q1 Destination CIDR: 10.1.0.0/16
+Q2 Target Resource:  tgw-07682c01476b8069e (Transit Gateway)
+Q3 Security Group:   Port: 8000, Protocol: TCP, Source: 10.1.0.0/16
+```
+
+</details>
+
+---
+
+### 2.4 Understanding the Route Tables
+
+Compare the Model VPC Route Table with the Client VPC Route Table:
+
+| Parameter | Model VPC Route Table (`lab1-model-rt`) | Client VPC Route Table (`lab1-client-rt`) |
+| :--- | :--- | :--- |
+| **Local CIDR** | `10.0.0.0/16` $\rightarrow$ `local` | `10.1.0.0/16` $\rightarrow$ `local` |
+| **Cross-VPC Route** | `10.1.0.0/16` $\rightarrow$ **Transit Gateway** | `10.0.0.0/16` $\rightarrow$ **Transit Gateway** |
+| **Internet Route (`0.0.0.0/0`)** | **None** *(Strictly Omitted)* | `0.0.0.0/0` $\rightarrow$ **Internet Gateway** |
+| **S3 Access** | `pl-6fa54006` $\rightarrow$ **S3 Gateway Endpoint** | Via Internet Gateway / AWS Public API |
+| **Public Accessibility** | **Zero inbound / Zero outbound** | Management SSH inbound allowed |
+
+---
+
+### 2.5 Test and Verify in AWS Console
+
+#### Inspecting the Routes of the Model VPC Route Table
+1. Navigate to **AWS Management Console > VPC > Route Tables**.
+2. Select `lab1-model-rt` (`rtb-09626f0bf062697a4`).
+3. Click the **Routes** tab in the bottom panel.
+
+**Predict:** Will the routes contain an entry where the Target equals an Internet Gateway (`igw-...`)?
+
+<details>
+<summary>Click to verify</summary>
+
+**No!** The Model VPC Route Table contains only:
+1. `10.0.0.0/16` $\rightarrow$ `local`
+2. `10.1.0.0/16` $\rightarrow$ `tgw-07682c01476b8069e` (Transit Gateway)
+3. `pl-6fa54006` (S3 Prefix List) $\rightarrow$ `vpce-0d7c425217bff9419` (S3 Gateway Endpoint)
+
+There is **no `0.0.0.0/0` route** and **no Internet Gateway (`igw-...`)**. This proves the subnet is physically cut off from the public internet.
+
+</details>
+
+#### Visual Verification in AWS Console
 
 Navigate to **AWS Management Console > VPC > Transit Gateways**:
 
@@ -270,56 +355,81 @@ Navigate to **AWS Management Console > VPC > Security Groups**:
 
 ![AWS Management Console - Security Groups](screenshots/step8_security_groups.png)
 
-### 2.5 Checkpoint
+---
 
-- [ ] Transit Gateway state is `Available`.
-- [ ] Both VPC attachments show state `Available`.
-- [ ] Model Route Table points `10.1.0.0/16` to Transit Gateway with no `0.0.0.0/0` route.
-- [ ] Model Security Group accepts traffic on port 8000 only from `10.1.0.0/16`.
+### 2.6 Checkpoint
+
+- [x] Transit Gateway state is `Available`.
+- [x] Both VPC attachments show state `Available`.
+- [x] Model Route Table targets `10.1.0.0/16` to Transit Gateway.
+- [x] Model Route Table contains no route to `0.0.0.0/0`.
+- [x] Model Security Group restricts port 8000 strictly to `10.1.0.0/16`.
 
 ---
 
 ## Chapter 3: Deploying the Vision Transformer Inference Service
 
-A secure network requires an operational workload. In this chapter, you launch two EC2 instances manually in the AWS Console:
-1. `lab1-model-server` in the strictly private Model Subnet.
-2. `lab1-client-tester` in the Client Subnet.
+A secure network requires an operational workload. In this chapter, you deploy an inference application using FastAPI and a pre-trained Vision Transformer model on the Model Server EC2 instance (`10.0.1.140`). The application loads model weights in memory during boot and exposes endpoints for operational status and image prediction.
 
-### 3.1 Step-by-Step Implementation in EC2 Console
+### 3.1 What You Will Build
 
-#### Step 1: Create EC2 Key Pair
-1. In the AWS Console, search for **EC2** and navigate to the EC2 Dashboard.
-2. In the left sidebar, click **Key Pairs** under *Network & Security*.
-3. Click **Create key pair**.
-4. Name: `lab1-keypair`, Key pair type: **RSA**, Private key file format: **.pem**.
-5. Click **Create key pair** and save the downloaded file `lab1-keypair.pem` locally.
+You will implement:
+
+- An operational health check endpoint: `GET /health`.
+- An image classification endpoint: `POST /predict`.
+- An inference pipeline that transforms uploaded images and extracts top-5 class predictions with confidence scores.
+
+### 3.2 Think First: Health Endpoints vs Readiness Endpoints
+
+**Scenario:** A deployment orchestrator monitors a model server. During server startup, loading model weights takes 45 seconds.
+
+**Question:** If the server returns HTTP 200 on `/health` as soon as Uvicorn starts (before model weights finish loading), what will happen if client requests arrive during those 45 seconds?
+
+<details>
+<summary>Click to review</summary>
+
+Client requests arriving during those 45 seconds will fail with HTTP 500 errors, unhandled exceptions, or service crashes because the inference function will attempt to pass input tensors through an uninitialized model object. In production MLOps, a readiness probe must only return HTTP 200 after model weights are loaded and an initial warm-up inference completes successfully.
+
+</details>
+
+---
+
+### 3.3 Implementation via EC2 Console Launch & User Data
+
+You launch both EC2 instances manually in the AWS Console, injecting the inference and client software through **User data** during launch.
+
+#### Step 1: Create Key Pair
+1. Navigate to **AWS Management Console > EC2 > Key pairs**.
+2. Click **Create key pair**.
+3. Name: `lab1-keypair`, Type: `RSA`, Format: `.pem`.
+4. Click **Create key pair** and save the file to your computer.
 
 #### Step 2: Launch Model Server EC2 (`lab1-model-server`)
-1. In the EC2 Console left sidebar, click **Instances**, then click **Launch instances**.
+1. In the EC2 Console, click **Instances > Launch instances**.
 2. **Name:** `lab1-model-server`
-3. **Application and OS Images:** Select **Ubuntu Server 22.04 LTS (HVM), SSD Volume Type**.
-4. **Instance type:** Select `t2.micro` (or `t3.micro`).
-5. **Key pair:** Select `lab1-keypair`.
+3. **AMI:** Ubuntu Server 22.04 LTS (HVM)
+4. **Instance type:** `t2.micro` (or `t3.micro`)
+5. **Key pair:** `lab1-keypair`
 6. Under **Network settings**, click **Edit**:
    - **VPC:** Select `lab1-model-vpc`
-   - **Subnet:** Select `lab1-model-private-subnet`
-   - **Auto-assign public IP:** Select **Disable** *(Critical: Ensures zero public exposure!)*
-   - **Firewall (security groups):** Choose **Select existing security group** -> select `lab1-model-sg`.
-7. Scroll down and expand **Advanced details**.
-8. In the **User data** text field, paste the following model initialization script:
+   - **Subnet:** Select `lab1-model-private-subnet` (`10.0.1.0/24`)
+   - **Auto-assign public IP:** Select **Disable** *(Critical for physical isolation)*
+   - **Firewall (security groups):** Select existing security group -> `lab1-model-sg`
+7. Scroll down, expand **Advanced details**, and locate the **User data** box.
+8. Paste the complete bootstrap script below:
 
 ```bash
 #!/bin/bash
 set -e
 
-# Setup 2GB Swapfile (for memory optimization on t2.micro)
+# Setup 2GB Swapfile (Prevents Out of Memory errors on t2.micro)
 fallocate -l 2G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
-# Install Python and dependencies
+# Install dependencies
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y python3-pip python3-venv curl
@@ -327,7 +437,7 @@ apt-get install -y python3-pip python3-venv curl
 pip3 install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 pip3 install --no-cache-dir fastapi uvicorn pillow python-multipart
 
-# Write FastAPI ViT Server application
+# Create FastAPI Vision Model Inference Script
 cat << 'EOF' > /home/ubuntu/vit_server.py
 import io
 import torch
@@ -336,60 +446,52 @@ from PIL import Image
 from fastapi import FastAPI, File, UploadFile, HTTPException
 import uvicorn
 
-app = FastAPI(title="Private ViT Vision Model Endpoint")
+app = FastAPI(title="Private Vision Model Endpoint")
 
-print("[*] Loading Vision Transformer / Vision Model weights...")
+# Load Vision model weights during initialization
+print("[*] Loading Vision model weights...")
 weights = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.DEFAULT)
 weights.eval()
 preprocess = models.MobileNet_V3_Small_Weights.DEFAULT.transforms()
 categories = models.MobileNet_V3_Small_Weights.DEFAULT.meta["categories"]
-print("[*] Model loaded successfully!")
-
-@app.get("/")
-def root():
-    return {
-        "service": "VPC-Isolated ML Inference Server",
-        "architecture": "Private Subnet via Transit Gateway",
-        "status": "online"
-    }
+print("[*] Vision Model loaded and ready!")
 
 @app.get("/health")
 def health():
-    return {"status": "healthy", "model": "loaded"}
+    return {"status": "healthy", "model": "loaded"}  # Q1: Confirm model state in response
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    try:
-        contents = await file.read()
-        image = Image.open(io.BytesIO(contents)).convert("RGB")
-        batch = preprocess(image).unsqueeze(0)
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Invalid file type")  # Q2: HTTP status for bad request
+
+    contents = await file.read()
+    image = Image.open(io.BytesIO(contents)).convert("RGB")
+    batch = preprocess(image).unsqueeze(0)
+    
+    with torch.no_grad():
+        prediction = weights(batch).squeeze(0).softmax(0)
         
-        with torch.no_grad():
-            prediction = weights(batch).squeeze(0).softmax(0)
-            
-        top5_prob, top5_catid = torch.topk(prediction, 5)
-        
-        results = [
-            {
-                "rank": i + 1,
-                "label": categories[top5_catid[i]],
-                "confidence": round(float(top5_prob[i]), 4)
-            }
-            for i in range(top5_prob.size(0))
-        ]
-            
-        return {
-            "success": True,
-            "filename": file.filename,
-            "top_prediction": results[0]["label"],
-            "confidence": results[0]["confidence"],
-            "top_5": results
+    top5_prob, top5_catid = torch.topk(prediction, 5)
+    results = [
+        {
+            "rank": i + 1,
+            "label": categories[top5_catid[i]],
+            "confidence": round(float(top5_prob[i]), 4)
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        for i in range(top5_prob.size(0))
+    ]
+    
+    return {
+        "success": True,
+        "filename": file.filename,
+        "top_prediction": results[0]["label"],
+        "confidence": results[0]["confidence"],
+        "top_5": results
+    }
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # Q3: Bind address for internal network interfaces
 EOF
 
 chown ubuntu:ubuntu /home/ubuntu/vit_server.py
@@ -418,16 +520,47 @@ systemctl start vit-server
 
 9. Click **Launch instance**.
 
+---
+
+### Key Questions & Solutions for Section 3.3
+
+<details>
+<summary>Click to view Hints</summary>
+
+- **Q1:** What value confirms model readiness in the `/health` endpoint response? Value confirming model readiness (e.g., `"loaded"`).
+- **Q2:** What is the standard HTTP status code for malformed or unsupported client input? Standard client error status code is `400` (Bad Request).
+- **Q3:** Which bind address allows the server to accept connections across all network interfaces (private IP)? Binding to `"0.0.0.0"` allows listening across all internal interfaces.
+
+</details>
+
+<details>
+<summary>Click to see solution</summary>
+
+```python
+# Q1 solution:
+return {"status": "healthy", "model": "loaded"}
+
+# Q2 solution:
+raise HTTPException(status_code=400, detail="Invalid file type")
+
+# Q3 solution:
+uvicorn.run(app, host="0.0.0.0", port=8000)
+```
+
+</details>
+
+---
+
 #### Step 3: Launch Client Tester EC2 (`lab1-client-tester`)
 1. Click **Launch instances** again.
 2. **Name:** `lab1-client-tester`
-3. **AMI:** Ubuntu 22.04 LTS, **Instance type:** `t2.micro`, **Key pair:** `lab1-keypair`.
+3. **AMI:** Ubuntu Server 22.04 LTS, **Instance type:** `t2.micro`, **Key pair:** `lab1-keypair`.
 4. Under **Network settings**, click **Edit**:
    - **VPC:** Select `lab1-client-vpc`
-   - **Subnet:** Select `lab1-client-subnet`
-   - **Auto-assign public IP:** Select **Enable**
-   - **Security group:** Select `lab1-client-sg`.
-5. Under **Advanced details > User data**, paste:
+   - **Subnet:** Select `lab1-client-subnet` (`10.1.1.0/24`)
+   - **Auto-assign public IP:** Select **Enable** *(Allows SSH management)*
+   - **Security group:** Select `lab1-client-sg`
+5. Expand **Advanced details**, and in **User data**, paste:
 
 ```bash
 #!/bin/bash
@@ -437,7 +570,7 @@ apt-get update -y
 apt-get install -y python3-pip curl jq
 pip3 install requests
 
-# Download sample dog image for testing
+# Download sample dog test image
 curl -s -L "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg" -o /home/ubuntu/sample_dog.jpg
 
 cat << 'EOF' > /home/ubuntu/client_test.py
@@ -446,54 +579,41 @@ import os
 import requests
 import time
 
-def test_inference(model_server_ip, image_path):
-    url = f"http://{model_server_ip}:8000/predict"
-    health_url = f"http://{model_server_ip}:8000/health"
+def test_inference(model_ip, img_path):
+    health_url = f"http://{model_ip}:8000/health"
+    predict_url = f"http://{model_ip}:8000/predict"
     
-    print(f"[*] Testing connection to Model Server at: {model_server_ip} (over Transit Gateway)...")
+    print(f"[*] Testing connection to Model Server at: {model_ip} (over Transit Gateway)...")
     
-    # Check health
-    try:
-        t0 = time.time()
-        health_resp = requests.get(health_url, timeout=5)
-        latency = round((time.time() - t0) * 1000, 2)
-        print(f"[+] Health check passed in {latency}ms: {health_resp.json()}")
-    except Exception as e:
-        print(f"[-] Health check failed: {e}")
-        return False
+    # 1. Verify health over Transit Gateway
+    t0 = time.time()
+    health_resp = requests.get(health_url, timeout=5)
+    health_latency = round((time.time() - t0) * 1000, 2)
+    print(f"[+] Health check passed in {health_latency}ms: {health_resp.json()}")
+    
+    # 2. Send image payload over Transit Gateway
+    print(f"[*] Sending image '{img_path}' for ViT inference...")
+    with open(img_path, "rb") as f:
+        files = {"file": (os.path.basename(img_path), f, "image/jpeg")}
+        t1 = time.time()
+        resp = requests.post(predict_url, files=files, timeout=30)
+        inference_latency = round((time.time() - t1) * 1000, 2)
         
-    # Send image
-    print(f"[*] Sending image '{image_path}' for ViT inference...")
-    try:
-        with open(image_path, "rb") as f:
-            t0 = time.time()
-            files = {"file": (os.path.basename(image_path), f, "image/jpeg")}
-            resp = requests.post(url, files=files, timeout=30)
-            latency = round((time.time() - t0) * 1000, 2)
-            
-        if resp.status_code == 200:
-            data = resp.json()
-            print(f"\n{'='*50}")
-            print(f"[+] INFERENCE SUCCESSFUL! (Total Latency: {latency}ms)")
-            print(f"{'='*50}")
-            print(f"  Image File:     {data.get('filename')}")
-            print(f"  Top Prediction: {data.get('top_prediction')}")
-            print(f"  Confidence:     {round(data.get('confidence', 0) * 100, 2)}%")
-            print(f"\nTop 5 Classes:")
-            for item in data.get("top_5", []):
-                print(f"  {item['rank']}. {item['label']} ({round(item['confidence']*100, 2)}%)")
-            print(f"{'='*50}")
-            return True
-        else:
-            print(f"[-] Inference failed with status {resp.status_code}: {resp.text}")
-            return False
-    except Exception as e:
-        print(f"[-] Request error: {e}")
-        return False
+    data = resp.json()
+    print("\n" + "="*50)
+    print(f"[+] INFERENCE SUCCESSFUL! (Total Latency: {inference_latency}ms)")
+    print("="*50)
+    print(f"  Image File:     {data.get('filename')}")
+    print(f"  Top Prediction: {data.get('top_prediction')}")
+    print(f"  Confidence:     {round(data.get('confidence', 0)*100, 2)}%")
+    print("\nTop 5 Classes:")
+    for item in data.get("top_5", []):
+        print(f"  {item['rank']}. {item['label']} ({round(item['confidence']*100, 2)}%)")
+    print("="*50)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python3 client_test.py <MODEL_PRIVATE_IP> <IMAGE_PATH>")
+        print("Usage: python3 client_test.py <MODEL_IP> <IMAGE_PATH>")
         sys.exit(1)
     test_inference(sys.argv[1], sys.argv[2])
 EOF
@@ -503,8 +623,34 @@ chown -R ubuntu:ubuntu /home/ubuntu
 
 6. Click **Launch instance**.
 
-### 3.2 Visual Verification in AWS Console
+---
 
+### 3.4 Understanding the Inference Pipeline
+
+Trace the sequence of data transformations during one inference request:
+
+1. **Byte Stream Extraction:** `contents = await file.read()` reads raw multipart upload bytes.
+2. **Channel Normalization:** `.convert("RGB")` standardizes 1-channel grayscale or 4-channel RGBA images to 3 channels.
+3. **Preprocessing:** Resizes image to 224×224 pixels and normalizes tensor values using ImageNet mean and standard deviation.
+4. **Batch Dimension Expansion:** `.unsqueeze(0)` transforms shape from `[3, 224, 224]` to `[1, 3, 224, 224]`.
+5. **No-Gradient Inference:** `with torch.no_grad():` disables autograd engine to save memory and accelerate computation.
+6. **Probability Normalization:** `.softmax(0)` converts raw model logits into normalized probability distribution summing to 1.0.
+
+---
+
+### 3.5 Test and Verify
+
+#### Verify Server Startup on Model Instance:
+From the internal host, a local curl returns:
+```bash
+curl http://127.0.0.1:8000/health
+```
+**Expected output:**
+```json
+{"status": "healthy", "model": "loaded"}
+```
+
+#### Visual Verification in AWS Console
 Navigate to **AWS Management Console > EC2 > Instances**:
 
 ![AWS Management Console - EC2 Instances](screenshots/step6_ec2_instances.png)
@@ -512,16 +658,23 @@ Navigate to **AWS Management Console > EC2 > Instances**:
 > **Notice:** `lab1-model-server` has **no public IPv4 address**, confirming physical internet isolation.
 
 #### Model Server Bootstrap & PyTorch Model Weights Verification
-
 During instance bootstrap, PyTorch downloads and caches the Vision model weights (`mobilenet_v3_small-047dcff4.pth`, 9.9 MB), verifies model readiness, and serves the FastAPI inference daemon:
 
 ![Terminal Output - Model Weights Bootstrap and Loading](screenshots/step7c_model_bootstrap.png)
 
 #### Model Server FastAPI + ViT Service Daemon Verification
-
 Inspect the running systemd daemon and FastAPI model serving logs:
 
 ![Terminal Output - Model Server Systemd Service](screenshots/step7b_model_service.png)
+
+---
+
+### 3.6 Checkpoint
+
+- [x] Uvicorn service is managed by systemd and active (`vit-server.service`).
+- [x] `/health` returns HTTP 200 with model state confirmed: `{"status": "healthy", "model": "loaded"}`.
+- [x] Server listens on port 8000 across `0.0.0.0`.
+- [x] Model Server has no public IP address.
 
 ---
 
@@ -529,9 +682,67 @@ Inspect the running systemd daemon and FastAPI model serving logs:
 
 A critical principle of security engineering is that validation must confirm both functional behavior (the intended path works) and boundary enforcement (unauthorized paths fail). In this chapter, you test both directions: executing inference over Transit Gateway from Client VPC, and proving unreachability from the public internet.
 
-### 4.1 Step A: Negative Test (External Internet Perimeter)
+### 4.1 What You Will Build
 
-From your personal local workstation terminal (outside of AWS), attempt to query the model server directly using its private IP (`10.0.1.140`):
+You will execute:
+- **Negative Test:** Attempt direct public connection to the model server from outside AWS.
+- **Positive Test:** Send an image from Client EC2 across the Transit Gateway to the model server's private IP (`10.0.1.140:8000/predict`).
+
+### 4.2 Think First: Negative Testing
+
+**Question:** Why is testing for failure (negative testing) equally important as testing for success when deploying security-critical ML architecture?
+
+<details>
+<summary>Click to review</summary>
+
+Positive testing confirms functionality, but it cannot prove security isolation. An engineer could deploy a model server with a public IP and permissive security group; internal services would connect successfully, giving the illusion of a working deployment while the model remains exposed to internet-wide attacks. Negative testing provides empirical proof that unauthorized paths fail.
+
+</details>
+
+---
+
+### 4.3 Implementation: Review Client Test Script
+
+The test script on Client EC2 (`client_test.py`) connects to the private IP over Transit Gateway:
+
+```python
+# client/client_test.py
+import sys
+import os
+import requests
+import time
+
+def test_inference(model_ip, img_path):
+    health_url = f"http://{model_ip}:8000/health"
+    predict_url = f"http://{model_ip}:8000/predict"
+    
+    # 1. Verify health over Transit Gateway
+    t0 = time.time()
+    health_resp = requests.get(health_url, timeout=5)
+    health_latency = round((time.time() - t0) * 1000, 2)
+    print(f"Health Check Passed ({health_latency}ms): {health_resp.json()}")
+    
+    # 2. Send image payload over Transit Gateway
+    with open(img_path, "rb") as f:
+        files = {"file": (os.path.basename(img_path), f, "image/jpeg")}
+        t1 = time.time()
+        resp = requests.post(predict_url, files=files, timeout=30)
+        inference_latency = round((time.time() - t1) * 1000, 2)
+        
+    data = resp.json()
+    print(f"Top Prediction: {data['top_prediction']} ({round(data['confidence']*100, 2)}%)")
+    print(f"Total Inference Round-Trip: {inference_latency}ms")
+
+if __name__ == "__main__":
+    test_inference(sys.argv[1], sys.argv[2])
+```
+
+---
+
+### 4.4 Test and Verify
+
+#### Step A: Negative Test (External Internet Perimeter)
+From your local personal terminal (outside of AWS), attempt to query the model server directly using its private IP:
 
 ```bash
 curl -m 3 http://10.0.1.140:8000/health
@@ -545,27 +756,19 @@ curl -m 3 http://10.0.1.140:8000/health
 ```text
 curl: (28) Connection timed out after 3000 milliseconds
 ```
-
-RFC 1918 private IP ranges (`10.0.0.0/8`) are non-routable over the public internet, and the Model VPC contains no public IP or Internet Gateway. The request cannot reach the instance.
+*Isolation confirmed: The model server cannot be reached from outside the AWS private network.*
 
 </details>
 
-### 4.2 Step B: Positive Test (Internal Transit Gateway)
-
-Log in to Client EC2 (`18.140.26.115`) via SSH and run the test client:
+#### Step B: Positive Test (Internal Transit Gateway)
+Log in to Client EC2 (`18.140.26.115`) and run the test client:
 
 ```bash
 ssh -i lab1-keypair.pem ubuntu@18.140.26.115
-```
-
-Once connected on the Client EC2, execute the image inference query:
-
-```bash
 python3 /home/ubuntu/client_test.py 10.0.1.140 /home/ubuntu/sample_dog.jpg
 ```
 
-Expected output:
-
+**Expected output:**
 ```text
 [*] Testing connection to Model Server at: 10.0.1.140 (over Transit Gateway)...
 [+] Health check passed in 7.40ms: {'status': 'healthy', 'model': 'loaded'}
@@ -591,18 +794,31 @@ Top 5 Classes:
 
 ![Terminal Output - Transit Gateway Model Inference](screenshots/step7_live_inference.png)
 
-### 4.3 Experiment: Deliberate Route Tampering
+---
+
+### 4.5 Experiment: Deliberate Route Tampering
 
 To observe how AWS route tables enforce security boundaries:
 
-1. In the Client VPC route table (`rtb-0e5e01d167e738858`), delete the static route for destination `10.0.0.0/16`.
-2. Run the client test command again from Client EC2:
+1. In the AWS Management Console, navigate to **VPC > Route Tables**.
+2. Select the Client VPC route table (`lab1-client-rt` / `rtb-0e5e01d167e738858`).
+3. Click the **Routes** tab, then click **Edit routes**.
+4. Delete the static route for destination `10.0.0.0/16`, then click **Save changes**.
+5. Run the client test command again from Client EC2:
    ```bash
    python3 /home/ubuntu/client_test.py 10.0.1.140 /home/ubuntu/sample_dog.jpg
    ```
-3. **Observe:** The client hangs and times out. Packets intended for `10.0.1.140` now fall through to the default route (`0.0.0.0/0 -> IGW`) and are discarded by the internet gateway.
-4. Restore the route in the console: Add route `10.0.0.0/16` -> Target: Transit Gateway (`lab1-tgw`).
-5. Rerun the client test to confirm connectivity is restored.
+6. **Observe:** The client hangs and times out. Packets intended for `10.0.1.140` now fall through to the default route (`0.0.0.0/0 -> IGW`) and are discarded by the internet gateway.
+7. **Restore the route in AWS Console:** Click **Edit routes** > **Add route** > Destination: `10.0.0.0/16`, Target: Select **Transit Gateway** (`lab1-tgw`), then click **Save changes**.
+8. Rerun the client test to confirm connectivity is immediately restored.
+
+---
+
+### 4.6 Checkpoint
+
+- [x] Direct curl from external network times out.
+- [x] Internal inference over Transit Gateway succeeds with valid classification (`Samoyed`, 75.79%).
+- [x] Cross-VPC round-trip latency is under 100 milliseconds for health checks.
 
 ---
 
@@ -622,22 +838,21 @@ Your deployed infrastructure provides the following architecture:
 
 ---
 
-## Next Steps: Private Model Loading via S3 Gateway Endpoint
+## Complete Verification Sequence
 
-To allow the private Model Server to pull new model weights from Amazon S3 without touching the public internet:
+To verify the operational integrity of the entire system:
 
-1. In the VPC Console, click **Endpoints** in the left sidebar.
-2. Click **Create endpoint**.
-3. **Service category:** AWS services.
-4. **Service name:** `com.amazonaws.ap-southeast-1.s3` (Type: **Gateway**).
-5. **VPC:** Select `lab1-model-vpc`.
-6. **Route tables:** Check `lab1-model-rt`.
-7. **Policy:** Full access.
-8. Click **Create endpoint**.
-
-Navigate to **AWS Management Console > VPC > Endpoints**:
-
-![AWS Management Console - S3 VPC Gateway Endpoint](screenshots/step9_vpc_endpoints.png)
+1. **Verify Model VPC route table contains no internet route:**
+   - In AWS Console > VPC > Route Tables > Select `lab1-model-rt` > Ensure no `0.0.0.0/0` route exists.
+2. **Confirm external internet timeout (must time out):**
+   ```bash
+   curl -m 3 http://10.0.1.140:8000/health || echo "Perimeter isolation confirmed"
+   ```
+3. **Execute inference from Client VPC over Transit Gateway:**
+   ```bash
+   ssh -i lab1-keypair.pem ubuntu@18.140.26.115 \
+     "python3 /home/ubuntu/client_test.py 10.0.1.140 /home/ubuntu/sample_dog.jpg"
+   ```
 
 ---
 
@@ -647,3 +862,82 @@ Navigate to **AWS Management Console > VPC > Endpoints**:
 2. **Omission is the strongest firewall** — If a subnet has no default route (`0.0.0.0/0`) and no Internet Gateway, external hosts cannot initiate connections to it regardless of software bugs.
 3. **Hub-and-spoke scales predictably** — Centralizing inter-VPC traffic through AWS Transit Gateway maintains consistent security policy enforcement without the combinatorial complexity of VPC peering meshes.
 4. **Negative testing validates security claims** — Never assume an endpoint is private until you have attempted and failed to reach it from an untrusted network.
+
+---
+
+## Troubleshooting Guide (AWS Management Console)
+
+### Issue 1: Connection timed out when querying model from Client EC2
+
+#### Cause 1: Model Security Group does not permit port 8000 from Client CIDR
+- **Console Fix:**
+  1. Open **VPC > Security groups** in the AWS Console.
+  2. Select `lab1-model-sg`.
+  3. Click the **Inbound rules** tab, then click **Edit inbound rules**.
+  4. Ensure a rule exists with:
+     - **Type:** `Custom TCP`
+     - **Port range:** `8000`
+     - **Source:** Custom -> `10.1.0.0/16`
+  5. Click **Save rules**.
+
+#### Cause 2: Route table in Client VPC missing entry for 10.0.0.0/16
+- **Console Fix:**
+  1. Open **VPC > Route tables** in the AWS Console.
+  2. Select `lab1-client-rt`.
+  3. Click the **Routes** tab, then click **Edit routes**.
+  4. Click **Add route**:
+     - **Destination:** `10.0.0.0/16`
+     - **Target:** Transit Gateway -> Select `lab1-tgw`
+  5. Click **Save changes**.
+
+---
+
+### Issue 2: PyTorch model fails to load with Out of Memory (OOM)
+
+#### Cause: Instance type memory limits
+`t2.micro` instances possess 1 GB RAM; downloading and initializing deep learning weights in PyTorch requires supplementary virtual memory.
+
+- **Fix:** Ensure swap space is allocated. On the Model Server, run:
+  ```bash
+  sudo fallocate -l 2G /swapfile
+  sudo chmod 600 /swapfile
+  sudo mkswap /swapfile
+  sudo swapon /swapfile
+  ```
+  *(This is already included automatically in the EC2 User Data script provided in Chapter 3).*
+
+---
+
+## Next Steps
+
+### 1. S3 Gateway Endpoints for Private Model Weight Updates
+Configure an S3 Gateway Endpoint in the Model VPC to allow private loading of new model weights directly from Amazon S3 without internet access:
+
+1. In the VPC Console, click **Endpoints** in the left sidebar.
+2. Click **Create endpoint**.
+3. **Name tag:** `lab1-s3-endpoint`
+4. **Service category:** AWS services
+5. **Services:** Search for `s3` and select `com.amazonaws.ap-southeast-1.s3` (Type: **Gateway**).
+6. **VPC:** Select `lab1-model-vpc`.
+7. **Route tables:** Check `lab1-model-rt`.
+8. **Policy:** Full access.
+9. Click **Create endpoint**.
+
+Navigate to **AWS Management Console > VPC > Endpoints**:
+
+![AWS Management Console - S3 VPC Gateway Endpoint](screenshots/step9_vpc_endpoints.png)
+
+### 2. Internal Load Balancing
+Deploy an Internal Application Load Balancer (ALB) in front of a multi-AZ auto-scaling group of model servers.
+
+### 3. Mutual TLS (mTLS)
+Implement TLS certificates on the internal FastAPI endpoints to ensure data in transit across the Transit Gateway is encrypted.
+
+---
+
+## Additional Resources
+
+- [AWS Transit Gateway Documentation](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html)
+- [AWS VPC Routing Documentation](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html)
+- [FastAPI Deployment Guide](https://fastapi.tiangolo.com/deployment/)
+- [PyTorch Torchvision Models](https://pytorch.org/vision/stable/models.html)
