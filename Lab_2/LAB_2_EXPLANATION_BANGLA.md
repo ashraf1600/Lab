@@ -23,6 +23,8 @@
 
 ## ২. আর্কিটেকচার উপাদান ও নেটওয়ার্ক ডিজাইন
 
+![Multi-Region BGP Dynamic Failover Animated Architecture](multi-region-bgp-failover-animated.svg)
+
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                       CLIENT NETWORK                                        │

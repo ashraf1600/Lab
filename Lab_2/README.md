@@ -11,7 +11,7 @@ In mission-critical enterprise environments—such as clinical speech transcript
 
 In this lab, you design, deploy, and validate a resilient, multi-region AI inference infrastructure on AWS **entirely using the AWS Management Console**. You deploy speech-to-text models across two isolated private Virtual Private Clouds (Primary Region A and Standby Region B), connected via an AWS VPC Peering backbone to a central Edge BGP Gateway Router. You implement dynamic path selection using Border Gateway Protocol (BGP) attributes (Autonomous System Numbers, Local Preference), sub-second health-check probes, fast route withdrawal, a private S3-compatible model registry, and full-stack telemetry using Prometheus and Grafana.
 
-![Lab 2 Architecture Diagram](architecture-diagram.svg)
+![Multi-Region BGP Dynamic Failover Animated Architecture](multi-region-bgp-failover-animated.svg)
 
 ---
 
@@ -89,6 +89,8 @@ Your mission is to build, configure, and verify this entire architecture in AWS 
 ---
 
 ## Chapter 1: Multi-VPC Architecture & Peering Backbone Configuration
+
+![Multi-Region BGP Dynamic Failover Architecture](multi-region-bgp-failover-animated.svg)
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐

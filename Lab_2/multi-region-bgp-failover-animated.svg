@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 940 580" width="940" height="580" font-family="'Segoe UI', Inter, Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTphNzM1ZmYzOS1mYjM3LTQ5NzEtOThjMi1iNGI4MDllMjJkZGYAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaDQfJZGwUDjX+KapmjeMPJEAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpmYWRkNDkyNy1iOWNkLTRhODktODExZC03ODlmMjNmNTM4NDhscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoFJxm6Bt+W0D9BwPDYNoQUAAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggqnTYYeuFP7ym8Rgpd+yBSdCG4q14iiKPi5Ce1yR7BUmkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaAEY8+SCRShcp2GNTEgpVVIAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIGGnorejRzwr5dnfkjco1U6xcpwGICv90aOUH6RXFSg/ZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GQEEZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmE3MzVmZjM5LWZiMzctNDk3MS05OGMyLWI0YjgwOWUyMmRkZi9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmM2NDZkOTk0LWI0OTktNDExNi04NjFhLTg3YWQwMDkxZjM5YXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCCqdNhh64U/vKbxGCl37IFJ0IbirXiKIo+LkJ7XJHsFSaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggAEW6EzAc9J/giMLKU/PvudzbmTVftB758py8HzOurYmiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggrXvvKg85NOE48bW3hmZYugmKM36UGrcDRVtRkLuc4N10Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQCrkvsRgPB9qzpEKP+CrFws2zmLw1s0TEZLrfqO80C+D26zMqLFpOLpQ44UVnjszeY6wYAWG60y/L9N/tKeOItU=</c2pa:manifest></metadata>
+
+  <title>Multi-Region Active/Failover Inference — BGP-routed Whisper model servers across AWS Region A and Region B</title>
+
+  <defs>
+    <!-- ============ HAND-DRAWN ROUGHNESS ============ -->
+    <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="3" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="roughSoft" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="19" result="n2"/>
+      <feDisplacementMap in="SourceGraphic" in2="n2" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <!-- ============ SHADOWS ============ -->
+    <filter id="sh" x="-30%" y="-30%" width="170%" height="170%">
+      <feDropShadow dx="3" dy="3" stdDeviation="2.4" flood-color="#0b1b33" flood-opacity="0.22"/>
+    </filter>
+    <filter id="shSm" x="-40%" y="-40%" width="190%" height="190%">
+      <feDropShadow dx="2" dy="2" stdDeviation="1.6" flood-color="#0b1b33" flood-opacity="0.26"/>
+    </filter>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- ============ GRADIENTS ============ -->
+    <linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3fbf63"/><stop offset="1" stop-color="#1f8f43"/>
+    </linearGradient>
+    <linearGradient id="gPurple" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9b6ff0"/><stop offset="1" stop-color="#6c3fd4"/>
+    </linearGradient>
+    <linearGradient id="gOrange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff9a4d"/><stop offset="1" stop-color="#ed6f22"/>
+    </linearGradient>
+    <linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b3a4d"/><stop offset="1" stop-color="#16202c"/>
+    </linearGradient>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="gMagenta" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0609e"/><stop offset="1" stop-color="#c2185b"/>
+    </linearGradient>
+
+    <!-- ============ ARROW HEADS ============ -->
+    <marker id="arrGreen" markerWidth="11" markerHeight="11" refX="8" refY="5.5" orient="auto">
+      <path d="M0,0.8 L9.5,5.5 L0,10.2 L2.4,5.5 Z" fill="#1f8f43"/>
+    </marker>
+    <marker id="arrRed" markerWidth="10" markerHeight="10" refX="7.5" refY="5" orient="auto">
+      <path d="M0,0.8 L8.8,5 L0,9.2 L2.2,5 Z" fill="#d0302f"/>
+    </marker>
+    <marker id="arrDark" markerWidth="9" markerHeight="9" refX="6.8" refY="4.5" orient="auto">
+      <path d="M0,0.7 L8,4.5 L0,8.3 L2,4.5 Z" fill="#2b3a4d"/>
+    </marker>
+    <marker id="arrPurple" markerWidth="10" markerHeight="10" refX="7.5" refY="5" orient="auto">
+      <path d="M0,0.8 L8.8,5 L0,9.2 L2.2,5 Z" fill="#6c3fd4"/>
+    </marker>
+
+    <path id="pPrimary"  d="M448 246 C 320 262, 190 262, 150 294"/>
+    <path id="pFailover" d="M492 246 C 620 262, 750 262, 790 294"/>
+  </defs>
+
+  <style><![CDATA[
+    .lbl      { font-size:12.5px; font-weight:700; fill:#16202c; }
+    .sub      { font-size:9.6px;  fill:#5d6b7c; }
+    .hdr      { font-size:13.5px; font-weight:700; fill:#16202c; }
+    .capG     { font-size:11px; font-weight:800; fill:#1f8f43; }
+    .capR     { font-size:11px; font-weight:800; fill:#c0272d; }
+    .regionT  { font-size:12.5px; font-weight:800; fill:#16202c; }
+    .regionS  { font-size:9.8px; fill:#5d6b7c; }
+
+    .flow      { fill:none; stroke-linecap:round; stroke-dasharray:9 7; animation:crawl 1.1s linear infinite; }
+    @keyframes crawl { to { stroke-dashoffset:-16; } }
+    .flowFast  { fill:none; stroke-linecap:round; stroke-dasharray:7 5; animation:crawl .9s linear infinite; }
+
+    .rail { fill:none; stroke:#cfd8e3; stroke-width:4.5; stroke-linecap:round; }
+    .railThin { fill:none; stroke:#e3d3f5; stroke-width:3.5; stroke-linecap:round; }
+
+    .breathe { animation:breathe 3.4s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+    @keyframes breathe { 0%,100%{transform:scale(1);} 50%{transform:scale(1.045);} }
+
+    .spin { animation:spin 9s linear infinite; transform-box:fill-box; transform-origin:center; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .pulseRing { animation:ring 2.6s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+    @keyframes ring { 0%{transform:scale(.6);opacity:.55;} 100%{transform:scale(1.7);opacity:0;} }
+
+    .blink { animation:blink 1.8s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+    .draw { stroke-dasharray:2600; stroke-dashoffset:2600; animation:draw 2.4s ease-out forwards; }
+    @keyframes draw { to { stroke-dashoffset:0; } }
+
+    .fadeUp { opacity:0; animation:fadeUp .7s ease-out forwards; }
+    @keyframes fadeUp { from{opacity:0; transform:translateY(7px);} to{opacity:1; transform:translateY(0);} }
+
+    .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}
+    .d4{animation-delay:.55s}.d5{animation-delay:.7s}.d6{animation-delay:.85s}
+    .d7{animation-delay:1s}.d8{animation-delay:1.15s}.d9{animation-delay:1.3s}
+
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important;}
+    }
+  ]]></style>
+
+  <rect width="940" height="580" fill="#ffffff"/>
+
+  <!-- ==================== FAINT WORLD-MAP WATERMARK ==================== -->
+  <g opacity="0.07" fill="#5d6b7c">
+    <ellipse cx="330" cy="410" rx="55" ry="22"/>
+    <ellipse cx="390" cy="440" rx="30" ry="14"/>
+    <ellipse cx="470" cy="400" rx="40" ry="16"/>
+    <ellipse cx="540" cy="435" rx="50" ry="20"/>
+    <ellipse cx="610" cy="405" rx="34" ry="15"/>
+    <ellipse cx="280" cy="450" rx="24" ry="10"/>
+    <ellipse cx="660" cy="450" rx="26" ry="11"/>
+  </g>
+
+  <!-- ==================== AWS CLOUD OUTER BOUNDARY ==================== -->
+  <g filter="url(#rough)">
+    <rect x="10" y="10" width="920" height="550" rx="12" fill="#ffffff" stroke="#2f4a6d" stroke-width="2.2"
+          class="draw" filter="url(#sh)"/>
+  </g>
+  <line x1="20" y1="54" x2="920" y2="54" stroke="#dfe6ee" stroke-width="1.6" class="fadeUp d1"/>
+  <g class="fadeUp d1" filter="url(#shSm)">
+    <rect x="20" y="16" width="44" height="30" rx="7" fill="url(#gDark)"/>
+    <text x="42" y="34" text-anchor="middle" font-size="11.5" font-weight="800" fill="#ffffff">aws</text>
+    <path d="M28 39 q13 5.5 24 0" stroke="#ff9a4d" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  <text x="72" y="37" class="hdr fadeUp d1">AWS Cloud</text>
+
+  <!-- ==================== USERS / CLIENTS ==================== -->
+  <g class="fadeUp d2">
+    <g class="breathe" filter="url(#shSm)">
+      <circle cx="452" cy="72" r="9" fill="url(#gDark)"/>
+      <circle cx="470" cy="68" r="11" fill="url(#gDark)"/>
+      <circle cx="488" cy="72" r="9" fill="url(#gDark)"/>
+      <path d="M440 98 q12-16 30-16 q18 0 30 16 z" fill="url(#gDark)"/>
+    </g>
+    <text x="470" y="122" text-anchor="middle" class="lbl">Users / Clients</text>
+    <text x="470" y="135" text-anchor="middle" class="sub">(Internet / Internal Apps)</text>
+  </g>
+
+  <path d="M452 116 L 452 172" class="rail" opacity=".55"/>
+  <path d="M452 116 L 452 172" class="flow" stroke="#2b3a4d" stroke-width="2.2" marker-end="url(#arrDark)"/>
+  <path d="M488 116 L 488 172" class="rail" opacity=".55"/>
+  <path d="M488 116 L 488 172" class="flow" stroke="#2b3a4d" stroke-width="2.2" marker-end="url(#arrDark)"/>
+
+  <!-- ==================== BGP ROUTER ==================== -->
+  <g class="fadeUp d3">
+    <rect x="380" y="222" width="180" height="46" rx="10" fill="#eef2fb" stroke="#c3cfe6" stroke-width="1.6" filter="url(#shSm)"/>
+    <text x="470" y="245" text-anchor="middle" class="lbl">BGP Router</text>
+    <text x="470" y="259" text-anchor="middle" class="sub">(Route Selection + Health Check)</text>
+
+    <circle cx="470" cy="196" r="30" fill="none" stroke="#9b6ff0" stroke-width="2" class="pulseRing"/>
+    <circle cx="470" cy="196" r="27" fill="url(#gPurple)" filter="url(#shSm)"/>
+    <g class="spin">
+      <circle cx="470" cy="196" r="14.5" fill="none" stroke="#ffffff" stroke-width="2.2"/>
+      <circle cx="470" cy="196" r="4.4" fill="#ffffff"/>
+      <path d="M470 181 v7 M470 204 v7 M455 196 h7 M478 196 h7
+               M460 186 l5 5 M475 201 l5 5 M480 186 l-5 5 M465 201 l-5 5"
+            stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- ==================== REGION A — PRIMARY ==================== -->
+  <g filter="url(#rough)">
+    <rect x="20" y="250" width="400" height="300" rx="12" fill="#f3fbf5" stroke="#2f9e4f" stroke-width="2.2"
+          class="draw d4" filter="url(#sh)"/>
+  </g>
+  <g class="fadeUp d4">
+    <path d="M32 258 v18 M32 258 h14 l-3 4.5 l3 4.5 h-14" fill="#1f8f43" stroke="#1f8f43" stroke-width="1.4" stroke-linejoin="round"/>
+    <text x="54" y="270" class="regionT">AWS Region A (e.g. ap-southeast-1)</text>
+    <text x="54" y="284" class="regionS">Primary Region</text>
+
+    <path d="M32 300 q9-9 18 0 q4 5 0 10 q-9 6 -18 0 q-4-5 0-10" fill="url(#gSky)"/>
+    <text x="60" y="308" class="lbl" font-size="11.5">VPC</text>
+    <text x="60" y="321" class="sub">10.0.0.0/16</text>
+  </g>
+
+  <g filter="url(#roughSoft)">
+    <rect x="40" y="336" width="364" height="152" rx="10" fill="#f5fbff" stroke="#1f6fd0" stroke-width="1.8"
+          stroke-dasharray="7 5" class="draw d5"/>
+  </g>
+  <g class="fadeUp d5">
+    <rect x="50" y="344" width="20" height="18" rx="5" fill="#1f6fd0"/>
+    <path d="M56 353 v-3 a4 4 0 0 1 8 0 v3" fill="none" stroke="#fff" stroke-width="1.6"/>
+    <rect x="57" y="353" width="6" height="5" fill="#fff"/>
+    <text x="78" y="357" font-size="10.5" font-weight="700" fill="#1f6fd0">Private Subnet</text>
+
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="90" y="378" width="68" height="68" rx="12" fill="url(#gOrange)"/>
+      <rect x="103" y="389" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+      <rect x="109" y="395" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+    </g>
+    <text x="124" y="462" text-anchor="middle" class="lbl">EC2</text>
+    <text x="124" y="475" text-anchor="middle" class="sub">(Whisper Model Server)</text>
+    <text x="124" y="487" text-anchor="middle" class="sub">FastAPI + Whisper</text>
+
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="238" y="378" width="68" height="68" rx="12" fill="url(#gMagenta)"/>
+      <path d="M250 402 q7-10 16-5 q6-8 14 0 q7 2 4 10 h-30 q-6-1-4-5" fill="none" stroke="#fff" stroke-width="1.8"/>
+      <circle cx="272" cy="412" r="6" fill="none" stroke="#fff" stroke-width="1.8"/>
+      <path d="M276 416 l5 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+    <text x="272" y="462" text-anchor="middle" class="lbl">CloudWatch</text>
+    <text x="272" y="475" text-anchor="middle" class="sub">(Health Check)</text>
+
+    <path d="M162 418 L 238 418" class="rail"/>
+    <path d="M162 418 L 238 418" class="flow" stroke="#1f6fd0" stroke-width="2.2" marker-end="url(#arrPurple)"/>
+  </g>
+
+  <!-- ==================== REGION B — FAILOVER ==================== -->
+  <g filter="url(#rough)">
+    <rect x="520" y="250" width="400" height="300" rx="12" fill="#f3fbf5" stroke="#2f9e4f" stroke-width="2.2"
+          class="draw d6" filter="url(#sh)"/>
+  </g>
+  <g class="fadeUp d6">
+    <path d="M532 258 v18 M532 258 h14 l-3 4.5 l3 4.5 h-14" fill="#1f8f43" stroke="#1f8f43" stroke-width="1.4" stroke-linejoin="round"/>
+    <text x="554" y="270" class="regionT">AWS Region B (e.g. us-east-1)</text>
+    <text x="554" y="284" class="regionS">Failover Region</text>
+
+    <path d="M532 300 q9-9 18 0 q4 5 0 10 q-9 6 -18 0 q-4-5 0-10" fill="url(#gSky)"/>
+    <text x="560" y="308" class="lbl" font-size="11.5">VPC</text>
+    <text x="560" y="321" class="sub">10.1.0.0/16</text>
+  </g>
+
+  <g filter="url(#roughSoft)">
+    <rect x="540" y="336" width="364" height="152" rx="10" fill="#f5fbff" stroke="#1f6fd0" stroke-width="1.8"
+          stroke-dasharray="7 5" class="draw d7"/>
+  </g>
+  <g class="fadeUp d7">
+    <rect x="550" y="344" width="20" height="18" rx="5" fill="#1f6fd0"/>
+    <path d="M556 353 v-3 a4 4 0 0 1 8 0 v3" fill="none" stroke="#fff" stroke-width="1.6"/>
+    <rect x="557" y="353" width="6" height="5" fill="#fff"/>
+    <text x="578" y="357" font-size="10.5" font-weight="700" fill="#1f6fd0">Private Subnet</text>
+
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="590" y="378" width="68" height="68" rx="12" fill="url(#gOrange)"/>
+      <rect x="603" y="389" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+      <rect x="609" y="395" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+    </g>
+    <text x="624" y="462" text-anchor="middle" class="lbl">EC2</text>
+    <text x="624" y="475" text-anchor="middle" class="sub">(Whisper Model Server)</text>
+    <text x="624" y="487" text-anchor="middle" class="sub">FastAPI + Whisper</text>
+
+    <g class="breathe" filter="url(#shSm)">
+      <rect x="738" y="378" width="68" height="68" rx="12" fill="url(#gMagenta)"/>
+      <path d="M750 402 q7-10 16-5 q6-8 14 0 q7 2 4 10 h-30 q-6-1-4-5" fill="none" stroke="#fff" stroke-width="1.8"/>
+      <circle cx="772" cy="412" r="6" fill="none" stroke="#fff" stroke-width="1.8"/>
+      <path d="M776 416 l5 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+    <text x="772" y="462" text-anchor="middle" class="lbl">CloudWatch</text>
+    <text x="772" y="475" text-anchor="middle" class="sub">(Health Check)</text>
+
+    <path d="M662 418 L 738 418" class="rail"/>
+    <path d="M662 418 L 738 418" class="flow" stroke="#1f6fd0" stroke-width="2.2" marker-end="url(#arrPurple)"/>
+  </g>
+
+  <!-- ==================== GLOBAL NETWORK ==================== -->
+  <g class="fadeUp d8">
+    <circle cx="470" cy="412" r="24" fill="#ffffff" stroke="#2b3a4d" stroke-width="2" filter="url(#shSm)"/>
+    <ellipse cx="470" cy="412" rx="9.5" ry="24" fill="none" stroke="#2b3a4d" stroke-width="1.5"/>
+    <path d="M446 412 h48 M449 399 h42 M449 425 h42" stroke="#2b3a4d" stroke-width="1.4" fill="none"/>
+    <text x="470" y="454" text-anchor="middle" class="lbl">Global Network</text>
+    <text x="470" y="467" text-anchor="middle" class="sub">(BGP Routing)</text>
+  </g>
+
+  <!-- ==================== BGP ROUTER -> REGIONS (drawn last, renders on top of region boxes) ==================== -->
+  <use xlink:href="#pPrimary" class="rail"/>
+  <use xlink:href="#pPrimary" class="flow" stroke="#1f8f43" stroke-width="3" marker-end="url(#arrGreen)"/>
+  <circle r="3.6" fill="#1f8f43" filter="url(#glow)">
+    <animateMotion dur="1.8s" repeatCount="indefinite"><mpath xlink:href="#pPrimary"/></animateMotion>
+  </circle>
+  <text x="228" y="196" text-anchor="middle" class="capG">Active Route</text>
+  <text x="228" y="209" text-anchor="middle" class="sub">(Primary)</text>
+
+  <use xlink:href="#pFailover" fill="none" stroke="#f2b8b8" stroke-width="3.2" stroke-dasharray="8 6"/>
+  <use xlink:href="#pFailover" class="flow blink" fill="none" stroke="#d0302f" stroke-width="2.2" stroke-dasharray="8 6" marker-end="url(#arrRed)"/>
+  <text x="712" y="196" text-anchor="middle" class="capR">If Primary Fails</text>
+  <text x="712" y="209" text-anchor="middle" class="sub">(Automatic Failover via BGP)</text>
+
+</svg>
