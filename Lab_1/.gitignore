@@ -3,4 +3,5 @@ config.py
 .browser_profile/
 __pycache__/
 lab1_state.json
-
+*.html
+scratch/
