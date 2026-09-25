@@ -224,6 +224,9 @@ Navigate to `http://47.128.218.223:3000` (Default credentials: `admin` / `admin`
 
 ![Grafana NOC Dashboard](screenshots/06_grafana_dashboard.png)
 
+#### Live Multi-Region Failover Panel View:
+![Grafana Active BGP Failover Telemetry](screenshots/07_grafana_bgp_live.png)
+
 The dashboard visualizes:
 - **Active BGP Target:** Real-time badge indicating current routing target.
 - **Peering Status Gauges:** `Region A` and `Region B` status indicators (`UP` vs `DOWN`).
@@ -240,6 +243,10 @@ Run the complete 3-phase automated verification client:
 ```bash
 python client/client_test.py
 ```
+
+### Visual Verification: BGP Health Check & Automated Failover Execution
+
+![BGP Health Check & Failover Terminal Output](screenshots/08_bgp_failover_terminal.png)
 
 ### Live Terminal Verification Output:
 

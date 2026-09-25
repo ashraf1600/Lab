@@ -117,6 +117,8 @@ $$\text{Local Preference Rule: Highest Value Wins!}$$
 - `whisper_region_a`: প্রাইমারি মডেল সার্ভারের হেলথ ও রিকোয়েস্ট সংখ্যা।
 - `whisper_region_b`: স্ট্যান্ডবাই মডেল সার্ভারের হেলথ ও রিকোয়েস্ট সংখ্যা।
 
+![Prometheus Targets](screenshots/05_prometheus_targets.png)
+
 ### ২. গ্রাফানা এনওসি ড্যাশবোর্ড (`:3000`):
 গ্রাফানায় লগইন করলেই লাইভ দেখা যায়:
 - **Active Route Gauge:** কোন অঞ্চলটি এখন লাইভ ট্র্যাফিক নিচ্ছে (`UP=1, DOWN=0`)।
@@ -124,11 +126,16 @@ $$\text{Local Preference Rule: Highest Value Wins!}$$
 - **Request Distribution Graph:** সবুজ লাইন (Region A) হঠাৎ ড্রপ করে হলুদ লাইন (Region B) স্পাইক করার রিয়েল-টাইম চার্ট।
 - **Network RTT Latency:** সাব-মিলি-সেকেন্ড ফাইবার পিং টাইম।
 
+![Grafana NOC Dashboard](screenshots/06_grafana_dashboard.png)
+![Grafana Live BGP Failover Metrics](screenshots/07_grafana_bgp_live.png)
+
 ---
 
 ## ৬. কেয়স ইঞ্জিনিয়ারিং টেস্টের বাস্তব ফলাফল
 
 আমরা যখন `python client/client_test.py` টেস্ট স্ক্রিপ্টটি রান করি, তখন ৩টি ফেজ সম্পন্ন হয়:
+
+![BGP Health Check & Failover Execution Terminal](screenshots/08_bgp_failover_terminal.png)
 
 ### ফেজ ১: সাধারণ অবস্থা (Baseline)
 - রাউটার থেকে ৫টি ইনফ্যারেন্স রিকোয়েস্ট পাঠানো হয়।
