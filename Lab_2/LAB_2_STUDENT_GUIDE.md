@@ -46,18 +46,18 @@ In this lab, you construct an enterprise-grade, multi-region resilient AI servin
 | Subnet A (Private) | `lab2-regionA-private-subnet` | `subnet-07335a4dc9ee70dd2` | `10.0.1.0/24` (AZ: `ap-southeast-1a`) | Air-gapped model compute |
 | Model A Instance | `lab2-regionA-model` | `i-05288427bf024c426` | Private: `10.0.1.100` | OpenAI Whisper (`AS 65001`, LP: `200`) |
 | Security Group A | `lab2-modelA-sg` | `sg-00743c77f49631374` | From `172.16.0.0/16` only | Ingress: Port 8000, 22, ICMP |
-| Route Table A | `lab2-regionA-rt` | `rtb-0b7f769f423992b74` | `172.16.0.0/16` $\rightarrow$ `pcx_a` | Return route only, no `0.0.0.0/0` |
+| Route Table A | `lab2-regionA-rt` | `rtb-0eba10f9e8a856555` | `172.16.0.0/16` $\rightarrow$ `pcx_a` | Return route only, no `0.0.0.0/0` |
 | **Region B VPC (Failover)** | `lab2-regionB-vpc` | `vpc-0d35ad01de41729d4` | `10.1.0.0/16` | Strictly Private (Zero IGW) |
 | Subnet B (Private) | `lab2-regionB-private-subnet` | `subnet-076500f4cdf775242` | `10.1.1.0/24` (AZ: `ap-southeast-1b`) | Multi-AZ Standby compute |
 | Model B Instance | `lab2-regionB-model` | `i-0d0c2c8eeb0cbf56e` | Private: `10.1.1.100` | OpenAI Whisper (`AS 65002`, LP: `100`) |
 | Security Group B | `lab2-modelB-sg` | `sg-0df793d0b4d5a1a67` | From `172.16.0.0/16` only | Ingress: Port 8000, 22, ICMP |
-| Route Table B | `lab2-regionB-rt` | `rtb-03903e63d6571ceea` | `172.16.0.0/16` $\rightarrow$ `pcx_b` | Return route only, no `0.0.0.0/0` |
+| Route Table B | `lab2-regionB-rt` | `rtb-06c066f136a000556` | `172.16.0.0/16` $\rightarrow$ `pcx_b` | Return route only, no `0.0.0.0/0` |
 | **Router & NOC VPC** | `lab2-router-vpc` | `vpc-031932df1df2de160` | `172.16.0.0/16` | Edge Routing & Telemetry Hub |
 | Subnet Router (Public) | `lab2-router-public-subnet` | `subnet-024db66bad6285bbb` | `172.16.1.0/24` (AZ: `ap-southeast-1a`) | Public management & BGP VIP |
 | Router Instance | `lab2-bgp-router` | `i-053ce5f7118432664` | Private: `172.16.1.10`<br>Public: `47.128.218.223` | BGP Router (`AS 65000`), Prom, Grafana |
 | Security Group Router | `lab2-router-sg` | `sg-0a8cd54aa9cb4ef05` | Ports `22`, `8000`, `9090`, `3000`, `9000` | Internet accessible management |
 | Internet Gateway | `lab2-router-igw` | `igw-0dfc0677fbe38480f` | Attached to `vpc-031932df1df2de160` | Default route for Router VPC |
-| Route Table Router | `lab2-router-rt` | `rtb-08278e9d0feccaea8` | `0.0.0.0/0` $\rightarrow$ `igw`<br>`10.0.0.0/16` $\rightarrow$ `pcx_a`<br>`10.1.0.0/16` $\rightarrow$ `pcx_b` | Full mesh internal peering |
+| Route Table Router | `lab2-router-rt` | `rtb-0442268b4e0824d39` | `0.0.0.0/0` $\rightarrow$ `igw`<br>`10.0.0.0/16` $\rightarrow$ `pcx_a`<br>`10.1.0.0/16` $\rightarrow$ `pcx_b` | Full mesh internal peering |
 | Peering Connection A | `lab2-peering-router-to-regionA` | `pcx-0eabd71a2e52c20ca` | Active | Router VPC $\leftrightarrow$ Region A |
 | Peering Connection B | `lab2-peering-router-to-regionB` | `pcx-0f2c06378721e5b49` | Active | Router VPC $\leftrightarrow$ Region B |
 | Private Model Registry | S3-Compatible Object Store | Port `9000` | Endpoint: `http://47.128.218.223:9000` | Bucket: `whisper-models` |
@@ -108,15 +108,93 @@ All three Virtual Private Clouds are created with distinct non-overlapping CIDR 
 
 ![AWS Management Console - VPCs](screenshots/01_aws_vpcs.png)
 
+> ### 🛠️ How to Create & View in AWS Management Console:
+> 1. Sign in to the **AWS Management Console** and ensure your region is set to **Singapore (`ap-southeast-1`)** in the upper right header.
+> 2. Open the search bar (`Alt+S`), type `VPC`, and select the **VPC** service.
+> 3. In the left navigation menu, click **Your VPCs**, then click the orange **Create VPC** button.
+> 4. Under **VPC settings**, choose **VPC only**.
+> 5. Create each of the three VPCs sequentially:
+>    - **Primary Region A VPC:**
+>      - **Name tag:** `lab2-regionA-vpc`
+>      - **IPv4 CIDR block:** `10.0.0.0/16`
+>      - Leave Tenancy as **Default** and click **Create VPC**.
+>    - **Failover Region B VPC:**
+>      - Click **Create VPC** again.
+>      - **Name tag:** `lab2-regionB-vpc`
+>      - **IPv4 CIDR block:** `10.1.0.0/16`
+>      - Click **Create VPC**.
+>    - **Router & Observability Hub VPC:**
+>      - Click **Create VPC** again.
+>      - **Name tag:** `lab2-router-vpc`
+>      - **IPv4 CIDR block:** `172.16.0.0/16`
+>      - Click **Create VPC**.
+> 6. Create the corresponding Subnets (Left menu: **Subnets** $\rightarrow$ **Create subnet**):
+>    - **Region A Subnet:** VPC: `lab2-regionA-vpc` | Name: `lab2-regionA-private-subnet` | AZ: `ap-southeast-1a` | CIDR: `10.0.1.0/24`. Click **Create subnet**.
+>    - **Region B Subnet:** VPC: `lab2-regionB-vpc` | Name: `lab2-regionB-private-subnet` | AZ: `ap-southeast-1b` | CIDR: `10.1.1.0/24`. Click **Create subnet**.
+>    - **Router Subnet:** VPC: `lab2-router-vpc` | Name: `lab2-router-public-subnet` | AZ: `ap-southeast-1a` | CIDR: `172.16.1.0/24`. Click **Create subnet**.
+> 7. Create and Attach the Internet Gateway (Left menu: **Internet Gateways** $\rightarrow$ **Create internet gateway**):
+>    - Name tag: `lab2-router-igw` $\rightarrow$ Click **Create internet gateway**.
+>    - Click **Actions** $\rightarrow$ **Attach to VPC**, choose `lab2-router-vpc`, and click **Attach internet gateway**.
+
+---
+
 #### 2. VPC Peering Connections
 Bidirectional VPC Peering connections (`pcx-0eabd71a2e52c20ca` and `pcx-0f2c06378721e5b49`) show state **Active**:
 
 ![AWS Management Console - VPC Peering Connections](screenshots/02_aws_vpc_peering.png)
 
+> ### 🛠️ How to Create & View in AWS Management Console:
+> 1. In the VPC Console left navigation menu, scroll to **Virtual private cloud** and select **Peering connections**.
+> 2. Click the orange **Create peering connection** button.
+> 3. **Create Peering Connection A (Router $\leftrightarrow$ Region A):**
+>    - **Name tag:** `lab2-peering-router-to-regionA`
+>    - **VPC ID (Requester):** Select `lab2-router-vpc` (`172.16.0.0/16`).
+>    - **Select another VPC to peer with:**
+>      - Select **My account**.
+>      - Select **This region (`ap-southeast-1`)**.
+>      - **VPC ID (Accepter):** Select `lab2-regionA-vpc` (`10.0.0.0/16`).
+>    - Click **Create peering connection**.
+>    - In the confirmation banner, click **Actions** $\rightarrow$ **Accept request**, and click **Accept request**.
+> 4. **Create Peering Connection B (Router $\leftrightarrow$ Region B):**
+>    - Click **Create peering connection** again.
+>    - **Name tag:** `lab2-peering-router-to-regionB`
+>    - **VPC ID (Requester):** Select `lab2-router-vpc` (`172.16.0.0/16`).
+>    - **VPC ID (Accepter):** Select `lab2-regionB-vpc` (`10.1.0.0/16`).
+>    - Click **Create peering connection**.
+>    - Select `lab2-peering-router-to-regionB`, click **Actions** $\rightarrow$ **Accept request**, and confirm.
+> 5. Filter the table by typing `lab2` in the search box to verify both peering connections display **Status: Active**.
+
+---
+
 #### 3. VPC Route Tables
 Each route table directs traffic across the peering links while keeping the model VPCs strictly free of any internet gateway route (`0.0.0.0/0`):
 
 ![AWS Management Console - Route Tables](screenshots/03_aws_route_tables.png)
+
+> ### 🛠️ How to Create & View in AWS Management Console:
+> 1. In the VPC Console left navigation menu, click **Route tables**.
+> 2. **Configure Router Route Table:**
+>    - Click **Create route table**, Name: `lab2-router-rt`, VPC: `lab2-router-vpc`. Click **Create route table**.
+>    - In the **Routes** tab, click **Edit routes** $\rightarrow$ **Add route**:
+>      - Destination: `0.0.0.0/0` | Target: Select **Internet Gateway** $\rightarrow$ `lab2-router-igw`.
+>      - Destination: `10.0.0.0/16` | Target: Select **Peering Connection** $\rightarrow$ `lab2-peering-router-to-regionA`.
+>      - Destination: `10.1.0.0/16` | Target: Select **Peering Connection** $\rightarrow$ `lab2-peering-router-to-regionB`.
+>    - Click **Save changes**.
+>    - In the **Subnet associations** tab, click **Edit subnet associations**, select `lab2-router-public-subnet`, and click **Save associations**.
+> 3. **Configure Region A Route Table (Isolated):**
+>    - Click **Create route table**, Name: `lab2-regionA-rt`, VPC: `lab2-regionA-vpc`. Click **Create route table**.
+>    - In the **Routes** tab, click **Edit routes** $\rightarrow$ **Add route**:
+>      - Destination: `172.16.0.0/16` | Target: Select **Peering Connection** $\rightarrow$ `lab2-peering-router-to-regionA`.
+>      - *(Critical Security Rule: Do NOT add a 0.0.0.0/0 route!)*
+>    - Click **Save changes**.
+>    - In the **Subnet associations** tab, click **Edit subnet associations**, select `lab2-regionA-private-subnet`, and click **Save associations**.
+> 4. **Configure Region B Route Table (Isolated):**
+>    - Click **Create route table**, Name: `lab2-regionB-rt`, VPC: `lab2-regionB-vpc`. Click **Create route table**.
+>    - In the **Routes** tab, click **Edit routes** $\rightarrow$ **Add route**:
+>      - Destination: `172.16.0.0/16` | Target: Select **Peering Connection** $\rightarrow$ `lab2-peering-router-to-regionB`.
+>      - *(Critical Security Rule: Do NOT add a 0.0.0.0/0 route!)*
+>    - Click **Save changes**.
+>    - In the **Subnet associations** tab, click **Edit subnet associations**, select `lab2-regionB-private-subnet`, and click **Save associations**.
 
 ---
 
@@ -125,6 +203,57 @@ Each route table directs traffic across the peering links while keeping the mode
 The three compute hosts run Ubuntu 22.04 LTS on `t2.micro` instances:
 
 ![AWS Management Console - EC2 Instances](screenshots/04_aws_ec2_instances.png)
+
+> ### 🛠️ How to Create & View in AWS Management Console:
+> 1. In the AWS Console top search bar, type `EC2` and select the **EC2** service.
+> 2. **Step A: Provision Security Groups:**
+>    - In the left pane under **Network & Security**, click **Security Groups** $\rightarrow$ **Create security group**:
+>      - **Group 1 (`lab2-router-sg`):** VPC: `lab2-router-vpc`. Under **Inbound rules**, add:
+>        - SSH: Port `22`, Source: `0.0.0.0/0`
+>        - Custom TCP: Port `8000` (BGP VIP Inference API), Source: `0.0.0.0/0`
+>        - Custom TCP: Port `9090` (Prometheus UI), Source: `0.0.0.0/0`
+>        - Custom TCP: Port `3000` (Grafana Dashboard), Source: `0.0.0.0/0`
+>        - Custom TCP: Port `9000` (MinIO/S3 API), Source: `0.0.0.0/0`
+>        - All ICMP - IPv4: Port `All`, Source: `0.0.0.0/0`
+>        - Click **Create security group**.
+>      - **Group 2 (`lab2-modelA-sg`):** VPC: `lab2-regionA-vpc`. Under **Inbound rules**, add:
+>        - Custom TCP: Port `8000` (Whisper API), Source: `172.16.0.0/16` (Router CIDR only!)
+>        - SSH: Port `22`, Source: `172.16.0.0/16`
+>        - All ICMP - IPv4: Source: `172.16.0.0/16`
+>        - Click **Create security group**.
+>      - **Group 3 (`lab2-modelB-sg`):** VPC: `lab2-regionB-vpc`. Under **Inbound rules**, add:
+>        - Custom TCP: Port `8000`, Source: `172.16.0.0/16`
+>        - SSH: Port `22`, Source: `172.16.0.0/16`
+>        - All ICMP - IPv4: Source: `172.16.0.0/16`
+>        - Click **Create security group**.
+> 3. **Step B: Launch EC2 Compute Instances:**
+>    - In the left pane, click **Instances** $\rightarrow$ orange **Launch instances** button.
+>    - **Instance 1 (`lab2-bgp-router`):**
+>      - **Name:** `lab2-bgp-router`
+>      - **Application and OS Images:** Ubuntu 22.04 LTS (Jammy)
+>      - **Instance type:** `t2.micro`
+>      - **Key pair:** Select `lab2-keypair`
+>      - **Network settings (Click Edit):**
+>        - VPC: `lab2-router-vpc`
+>        - Subnet: `lab2-router-public-subnet`
+>        - Auto-assign public IP: **Enable**
+>        - Firewalls: **Select existing security group** $\rightarrow$ choose `lab2-router-sg`
+>      - **Advanced network configuration:** Primary IP: `172.16.1.10`
+>      - **Advanced details (Scroll to User data):** Paste router setup script. Click **Launch instance**.
+>    - **Instance 2 (`lab2-regionA-model`):**
+>      - **Name:** `lab2-regionA-model` | OS: Ubuntu 22.04 LTS | Type: `t2.micro` | Key: `lab2-keypair`
+>      - **Network settings:** VPC: `lab2-regionA-vpc`, Subnet: `lab2-regionA-private-subnet`
+>      - Auto-assign public IP: **Disable**
+>      - Security group: `lab2-modelA-sg`
+>      - Primary IP: `10.0.1.100`
+>      - User data: Paste Whisper Region A script. Click **Launch instance**.
+>    - **Instance 3 (`lab2-regionB-model`):**
+>      - **Name:** `lab2-regionB-model` | OS: Ubuntu 22.04 LTS | Type: `t2.micro` | Key: `lab2-keypair`
+>      - **Network settings:** VPC: `lab2-regionB-vpc`, Subnet: `lab2-regionB-private-subnet`
+>      - Auto-assign public IP: **Disable**
+>      - Security group: `lab2-modelB-sg`
+>      - Primary IP: `10.1.1.100`
+>      - User data: Paste Whisper Region B script. Click **Launch instance**.
 
 - **`lab2-regionA-model` (`10.0.1.100`):** Has **no public IPv4 address**, confirming physical isolation.
 - **`lab2-regionB-model` (`10.1.1.100`):** Has **no public IPv4 address**, confirming physical isolation.
@@ -215,9 +344,15 @@ Navigate to `http://47.128.218.223:9090/targets`:
 
 ![Prometheus Targets](screenshots/05_prometheus_targets.png)
 
-- **`bgp_router` (`1/1 up`):** Scrapes router-level BGP session status and failover counters from `localhost:8000/metrics`.
-- **`whisper_region_a` (`1/1 up`):** Scrapes primary Whisper model metrics over Peering A (`10.0.1.100:8000/metrics`).
-- **`whisper_region_b` (`1/1 up`):** Scrapes standby Whisper model metrics over Peering B (`10.1.1.100:8000/metrics`).
+> ### 🛠️ How to Access & Verify in Prometheus Web UI:
+> 1. Open your web browser and navigate to `http://<ROUTER_PUBLIC_IP>:9090/targets` (e.g., `http://47.128.218.223:9090/targets`).
+> 2. In the top navigation bar, click on **Status** $\rightarrow$ **Targets**.
+> 3. Verify that all 3 scrape targets display green **UP (1/1)** badges:
+>    - **`bgp_router` (`1/1 up`):** Scrapes router-level BGP session status and failover counters from `localhost:8000/metrics`.
+>    - **`whisper_region_a` (`1/1 up`):** Scrapes primary Whisper model metrics over Peering A (`10.0.1.100:8000/metrics`).
+>    - **`whisper_region_b` (`1/1 up`):** Scrapes standby Whisper model metrics over Peering B (`10.1.1.100:8000/metrics`).
+
+---
 
 ### 2. Real-Time Grafana NOC Dashboard
 Navigate to `http://47.128.218.223:3000` (Default credentials: `admin` / `admin`):
@@ -227,20 +362,31 @@ Navigate to `http://47.128.218.223:3000` (Default credentials: `admin` / `admin`
 #### Live Multi-Region Failover Panel View:
 ![Grafana Active BGP Failover Telemetry](screenshots/07_grafana_bgp_live.png)
 
-The dashboard visualizes:
-- **Active BGP Target:** Real-time badge indicating current routing target.
-- **Peering Status Gauges:** `Region A` and `Region B` status indicators (`UP` vs `DOWN`).
-- **Cumulative Failover Transitions:** Live counter showing automated failovers.
-- **Traffic Routing Distribution:** Dynamic graph showing traffic diverting between regions.
-- **Health Check RTT:** Sub-millisecond round-trip latency across the AWS VPC Peering backbone.
+> ### 🛠️ How to Access & View in Grafana:
+> 1. Open your web browser and navigate to `http://<ROUTER_PUBLIC_IP>:3000` (e.g., `http://47.128.218.223:3000`).
+> 2. Log in using default credentials:
+>    - **Username:** `admin`
+>    - **Password:** `admin`
+> 3. In the left navigation bar, click **Dashboards** $\rightarrow$ **Browse** (or press `Ctrl+K` to search).
+> 4. Select the dashboard titled **"Lab 2: Multi-Region BGP ML Serving & Telemetry"**.
+> 5. In the top-right corner, click the refresh dropdown and choose **5s** auto-refresh to observe sub-second metric updates in real-time.
+> 6. Watch the live panels:
+>    - **Active BGP Target:** Real-time badge indicating current routing target.
+>    - **Peering Status Gauges:** `Region A` and `Region B` status indicators (`UP` vs `DOWN`).
+>    - **Cumulative Failover Transitions:** Live counter showing automated failovers.
+>    - **Traffic Routing Distribution:** Dynamic graph showing traffic diverting between regions.
+>    - **Health Check RTT:** Sub-millisecond round-trip latency across the AWS VPC Peering backbone.
 
 ---
 
 ## Chapter 6: Hands-On Verification & Chaos Engineering
 
+### Automated Live Verification Script:
 Run the complete 3-phase automated verification client:
 
 ```bash
+python verify_traffic_failover.py
+# Or run the client test suite:
 python client/client_test.py
 ```
 
@@ -248,62 +394,68 @@ python client/client_test.py
 
 ![BGP Health Check & Failover Terminal Output](screenshots/08_bgp_failover_terminal.png)
 
+> ### 🛠️ How to Execute & Verify from Your Terminal:
+> 1. Open your terminal or PowerShell prompt and navigate to the `Lab_2` directory.
+> 2. Execute the verification suite:
+>    ```bash
+>    python verify_traffic_failover.py
+>    ```
+> 3. Observe the 4-phase real-time failover sequence:
+>    - **Phase 1 (Baseline):** 3 inference requests sent to `http://47.128.218.223:8000/transcribe` are handled by `Region-A-Primary-Cloud` (`Local-Pref: 200`, `Failover: false`).
+>    - **Phase 2 (Outage Trigger & Route Withdrawal):** A kill signal is sent via `POST /admin/kill`. Within 2 seconds, BGP health check probes detect the failure, withdraw Region A, and switch `active_route` to `Region_B`.
+>    - **Phase 3 (Failover Traffic Verification):** 4 subsequent inference requests sent to the Anycast VIP are handled 100% by `Region-B-Failover-On-Prem` (`Local-Pref: 100`, `Failover: true`) with zero dropped requests.
+>    - **Phase 4 (Automatic Failback):** A restore signal is sent via `POST /admin/restore`. BGP probes re-establish peering and automatically revert traffic back to Region A because its `local_pref` is higher (`200 > 100`).
+
 ### Live Terminal Verification Output:
 
 ```text
-========================================================================
- Lab 2 Verification: Multi-Region ML Serving with Dynamic BGP Failover 
- Target BGP Gateway VIP: http://47.128.218.223:8000 
-========================================================================
+================================================================================
+          AWS MULTI-REGION ML SERVING: AUTOMATIC BGP FAILOVER VERIFICATION
+          Target Anycast VIP Gateway: http://47.128.218.223:8000
+================================================================================
 
---- [Phase 1: Baseline Primary Region Routing] ---
-[*] Probing BGP status...
-[+] BGP Active Route: Region_A (Target: AWS Region A (Primary Cloud))
-[*] Sending 5 Inference Requests to BGP Anycast VIP...
-  Req #1: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #2: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #3: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #4: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #5: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
+[PHASE 1: BASELINE INFERENCE - PRIMARY REGION A]
+  BGP Active Route   : Region_A (AWS Region A (Primary Cloud))
+  Region A Status    : UP (Local-Pref: 200)
+  Region B Status    : UP (Local-Pref: 100)
+  -> Sending 3 Inference Requests through Anycast Gateway...
+    Req #1: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false | Output: "Patient history indicates normal cardiovascular rhythm and clear lungs. No acute distress observed."
+    Req #2: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false | Output: "Patient history indicates normal cardiovascular rhythm and clear lungs. No acute distress observed."
+    Req #3: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false | Output: "Patient history indicates normal cardiovascular rhythm and clear lungs. No acute distress observed."
 
---- [Phase 2: Primary Region Outage Simulation & BGP Failover] ---
-[*] Triggering outage in Region A (Simulating model server crash / link failure)...
-[+] Outage Trigger Response: {'status': 'killed', 'region': 'Region-A-Primary-Cloud'}
-[*] Waiting 3.5 seconds for BGP Health-Check probe to detect outage and withdraw route...
-[*] Probing BGP status post-outage...
-[+] Current BGP Active Route: Region_B (Target: AWS Region B (Failover / On-Prem))
-[+] Region A Status: DOWN | Region B Status: UP
-[*] Sending 5 Inference Requests during Region A Outage...
-  Req #1: HTTP 200 | Target: AWS Region B (Failover / On-Prem) | LocalPref: 100 | Failover: true
-  Req #2: HTTP 200 | Target: AWS Region B (Failover / On-Prem) | LocalPref: 100 | Failover: true
-  Req #3: HTTP 200 | Target: AWS Region B (Failover / On-Prem) | LocalPref: 100 | Failover: true
-  Req #4: HTTP 200 | Target: AWS Region B (Failover / On-Prem) | LocalPref: 100 | Failover: true
-  Req #5: HTTP 200 | Target: AWS Region B (Failover / On-Prem) | LocalPref: 100 | Failover: true
+[PHASE 2: TRIGGERING OUTAGE IN PRIMARY REGION A]
+  -> Sending kill signal to Primary Model Endpoint: POST /admin/kill ...
+  -> Kill Trigger Response: {'status': 'killed', 'region': 'Region-A-Primary-Cloud', 'message': 'Simulated regional outage activated'}
+  -> Waiting for BGP Health Check probes to detect failure and withdraw route (sub-second detection)...
+    [T+1s Probe] Region A: UP   | Region B: UP | Active Route: Region_A
+    [T+2s Probe] Region A: DOWN | Region B: UP | Active Route: Region_B
 
---- [Phase 3: Primary Region Recovery & BGP Route Restoration] ---
-[*] Restoring Region A...
-[+] Recovery Signal Response: {'status': 'restored', 'region': 'Region-A-Primary-Cloud'}
-[*] Waiting 3.5 seconds for BGP Health-Check probe to re-establish peering and reinstate Local-Pref 200...
-[*] Probing BGP status post-recovery...
-[+] Current BGP Active Route: Region_A (Target: AWS Region A (Primary Cloud))
-[*] Sending 5 Inference Requests post-recovery...
-  Req #1: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #2: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #3: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #4: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
-  Req #5: HTTP 200 | Target: AWS Region A (Primary Cloud) | LocalPref: 200 | Failover: false
+  [>>>] CONFIRMED: BGP Route WITHDRAWN for Region A! Traffic routed to Region_B!
 
-========================================================================
-                      FAILOVER VERIFICATION SUMMARY                     
-========================================================================
-  Component                     State          Validation
-  ----------------------------------------------------------------------
-  Region A (Primary Cloud)      ONLINE         Pre-failover Active (LP: 200)
-  Region B (Failover / On-Prem) ONLINE         Standby Hot-Spare   (LP: 100)
-  BGP Route Withdrawal          TRIGGERED      Automated on Health Check Failure
-  Traffic Diversion             SEAMLESS       100% Requests Diverted to Region B
-  Route Restoration             REINSTATED     Automated on Health Recovery
-========================================================================
+[PHASE 3: VERIFYING INFERENCE TRAFFIC SHIFT TO REGION B (FAILOVER)]
+  -> Sending 4 Inference Requests during Region A Outage...
+    Failover Req #1: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal cardiovascular rhythm and clear lungs. No acute distress observed."
+    Failover Req #2: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal cardiovascular rhythm and clear lungs. No acute distress observed."
+    Failover Req #3: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal cardiovascular rhythm and clear lungs. No acute distress observed."
+    Failover Req #4: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal cardiovascular rhythm and clear lungs. No acute distress observed."
+
+  [VERIFIED] 100% of user traffic successfully and automatically routed to Region B without drop!
+
+[PHASE 4: RESTORING PRIMARY REGION A (AUTOMATIC FAILBACK)]
+  -> Sending restore signal: POST /admin/restore ...
+  -> Restore Trigger Response: {'status': 'restored', 'region': 'Region-A-Primary-Cloud', 'message': 'Regional service back online'}
+  -> Waiting for BGP Health Check to reinstate Region A peering (Local-Pref 200 > 100)...
+    [T+1s Probe] Region A: UP | Active Route: Region_A
+
+  [<<<] CONFIRMED: BGP Session RE-ESTABLISHED! Traffic reverted to Primary Region_A!
+
+  -> Verifying post-recovery inference requests...
+    Post-Recovery Req #1: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false
+    Post-Recovery Req #2: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false
+
+================================================================================
+  FINAL RESULT: BGP DYNAMIC FAILOVER & FAILBACK VERIFIED WITH 100% ACCURACY
+================================================================================
 ```
 
 ---

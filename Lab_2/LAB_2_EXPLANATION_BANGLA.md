@@ -67,7 +67,83 @@
 
 ---
 
-## ৩. BGP (Border Gateway Protocol) ও পাথ সিলেকশনের জাদু
+## ৩. AWS ম্যানেজমেন্ট কনসোলে ধাপে ধাপে তৈরি করার গাইড (Console Directions)
+
+### ১. ৩টি পৃথক VPC তৈরি করা
+![AWS Management Console - VPCs](screenshots/01_aws_vpcs.png)
+
+> **🛠️ AWS কনসোলে যেভাবে তৈরি করবেন:**
+> 1. AWS Management Console-এ লগইন করে উপরে ডানপাশে রিজিয়ন **Singapore (`ap-southeast-1`)** নির্বাচন করুন।
+> 2. সার্চ বারে `VPC` লিখে VPC ড্যাশবোর্ডে প্রবেশ করুন।
+> 3. বাঁপাশের মেনু থেকে **Your VPCs**-এ ক্লিক করে **Create VPC** বাটনে চাপ দিন।
+> 4. **VPC only** সিলেক্ট করে ৩টি VPC তৈরি করুন:
+>    - **Region A VPC:** Name tag: `lab2-regionA-vpc`, IPv4 CIDR: `10.0.0.0/16` $\rightarrow$ **Create VPC**
+>    - **Region B VPC:** Name tag: `lab2-regionB-vpc`, IPv4 CIDR: `10.1.0.0/16` $\rightarrow$ **Create VPC**
+>    - **Router VPC:** Name tag: `lab2-router-vpc`, IPv4 CIDR: `172.16.0.0/16` $\rightarrow$ **Create VPC**
+> 5. **Subnets** মেনুতে গিয়ে ৩টি সাবনেট তৈরি করুন:
+>    - `lab2-regionA-private-subnet` (VPC: `lab2-regionA-vpc`, AZ: `ap-southeast-1a`, CIDR: `10.0.1.0/24`)
+>    - `lab2-regionB-private-subnet` (VPC: `lab2-regionB-vpc`, AZ: `ap-southeast-1b`, CIDR: `10.1.1.0/24`)
+>    - `lab2-router-public-subnet` (VPC: `lab2-router-vpc`, AZ: `ap-southeast-1a`, CIDR: `172.16.1.0/24`)
+> 6. **Internet Gateways** মেনু থেকে `lab2-router-igw` তৈরি করে শুধুমাত্র `lab2-router-vpc`-তে Attach করুন। (বাকি দুটো মডেল ভিপিসিতে কোনো ইন্টারনেট গেটওয়ে থাকবে না)।
+
+---
+
+### ২. VPC Peering কানেকশন তৈরি ও অ্যাকসেপ্ট করা
+![AWS Management Console - VPC Peering Connections](screenshots/02_aws_vpc_peering.png)
+
+> **🛠️ AWS কনসোলে যেভাবে তৈরি করবেন:**
+> 1. VPC কনসোলের বাঁপাশের মেনু থেকে **Peering connections**-এ যান।
+> 2. **Create peering connection** বাটনে ক্লিক করুন।
+> 3. **Peering A (Router $\leftrightarrow$ Region A):**
+>    - Name: `lab2-peering-router-to-regionA`
+>    - Requester VPC: `lab2-router-vpc` (`172.16.0.0/16`)
+>    - Accepter VPC: `lab2-regionA-vpc` (`10.0.0.0/16`)
+>    - **Create peering connection**-এ ক্লিক করুন।
+>    - লিস্ট থেকে এটি সিলেক্ট করে **Actions** $\rightarrow$ **Accept request**-এ ক্লিক করে এক্টিভ করুন।
+> 4. একইভাবে **Peering B** তৈরি করুন:
+>    - Name: `lab2-peering-router-to-regionB`
+>    - Requester VPC: `lab2-router-vpc` এবং Accepter VPC: `lab2-regionB-vpc` (`10.1.0.0/16`)
+>    - **Actions** $\rightarrow$ **Accept request** দিয়ে এক্টিভ করুন।
+> 5. উভয় পেয়ারিং কানেকশনের স্ট্যাটাস **Active** নিশ্চিত করুন।
+
+---
+
+### ৩. রাউট টেবিল (Route Tables) কনফিগারেশন
+![AWS Management Console - Route Tables](screenshots/03_aws_route_tables.png)
+
+> **🛠️ AWS কনসোলে যেভাবে তৈরি করবেন:**
+> 1. বাঁপাশের মেনু থেকে **Route tables**-এ যান।
+> 2. **Router Route Table (`lab2-router-rt`):**
+>    - তৈরি করে `lab2-router-vpc`-র সাথে যুক্ত করুন।
+>    - **Edit routes**-এ গিয়ে ৩টি রুট যোগ করুন:
+>      - `0.0.0.0/0` $\rightarrow$ Target: **Internet Gateway** (`lab2-router-igw`)
+>      - `10.0.0.0/16` $\rightarrow$ Target: **Peering Connection** (`lab2-peering-router-to-regionA`)
+>      - `10.1.0.0/16` $\rightarrow$ Target: **Peering Connection** (`lab2-peering-router-to-regionB`)
+>    - সাবনেট অ্যাসোসিয়েশনে `lab2-router-public-subnet` যোগ করুন।
+> 3. **Region A Route Table (`lab2-regionA-rt`):**
+>    - তৈরি করে রুট যোগ করুন: `172.16.0.0/16` $\rightarrow$ Target: **Peering Connection** (`lab2-peering-router-to-regionA`)
+>    - সাবনেট অ্যাসোসিয়েশনে `lab2-regionA-private-subnet` যুক্ত করুন। *(এখানে কোনো 0.0.0.0/0 রুট থাকবে না!)*
+> 4. **Region B Route Table (`lab2-regionB-rt`):**
+>    - তৈরি করে রুট যোগ করুন: `172.16.0.0/16` $\rightarrow$ Target: **Peering Connection** (`lab2-peering-router-to-regionB`)
+>    - সাবনেট অ্যাসোসিয়েশনে `lab2-regionB-private-subnet` যুক্ত করুন।
+
+---
+
+### ৪. EC2 ইন্সট্যান্স ও সিকিউরিটি গ্রুপ ডিপ্লয়মেন্ট
+![AWS Management Console - EC2 Instances](screenshots/04_aws_ec2_instances.png)
+
+> **🛠️ AWS কনসোলে যেভাবে তৈরি করবেন:**
+> 1. EC2 ড্যাশবোর্ডে প্রবেশ করে **Security Groups**-এ যান:
+>    - `lab2-router-sg`: ইনবাউন্ড পোর্ট `22`, `8000`, `9090`, `3000`, `9000` এবং ICMP `0.0.0.0/0` এর জন্য ওপেন করুন।
+>    - `lab2-modelA-sg` এবং `lab2-modelB-sg`: ইনবাউন্ড পোর্ট `8000`, `22`, এবং ICMP শুধুমাত্র রাউটার সিআইডিআর `172.16.0.0/16` এর জন্য ওপেন করুন।
+> 2. **Launch Instances** থেকে ৩টি ইন্সট্যান্স চালু করুন (Ubuntu 22.04 LTS, `t2.micro`):
+>    - **`lab2-bgp-router`:** Subnet: `lab2-router-public-subnet`, Public IP: **Enable**, IP: `172.16.1.10`, SG: `lab2-router-sg`.
+>    - **`lab2-regionA-model`:** Subnet: `lab2-regionA-private-subnet`, Public IP: **Disable**, Private IP: `10.0.1.100`, SG: `lab2-modelA-sg`.
+>    - **`lab2-regionB-model`:** Subnet: `lab2-regionB-private-subnet`, Public IP: **Disable**, Private IP: `10.1.1.100`, SG: `lab2-modelB-sg`.
+
+---
+
+## ৪. BGP পাথ সিলেকশনের জাদু
 
 ### BGP কী?
 সহজ কথায়, **BGP হলো গোটা ইন্টারনেটের জিপিএস (Google Maps)**। এটি নির্ধারণ করে একটি ডাটা প্যাকেট কোন পথ দিয়ে গেলে সবচেয়ে দ্রুত এবং নিরাপদে গন্তব্যে পৌঁছাবে।
@@ -96,20 +172,7 @@ $$\text{Local Preference Rule: Highest Value Wins!}$$
 
 ---
 
-## ৪. প্রাইভেট S3-Compatible মডেল রেজিস্ট্রি (Port 9000)
-
-প্রোডাকশন স্যান্ডবক্স বা এয়ার-গ্যাপড ব্যাংকিং/হেলথকেয়ার পরিবেশে অনেক সময় সরাসরি পাবলিক AWS S3-তে বাকেট তৈরির পারমিশন থাকে না। 
-
-আমরা এই ল্যাবে রাউটার নোডে একটি অত্যন্ত হালকা, লাইভ S3-সামঞ্জস্যপূর্ণ অবজেক্ট স্টোরেজ সার্ভার ডিপ্লয় করেছি (`http://47.128.218.223:9000`):
-- এটি সরাসরি স্ট্যান্ডার্ড **Python Boto3 S3 Client** দিয়ে কাজ করে।
-- এতে `whisper-models` নামক বাকেট তৈরি করে চেকপয়েন্ট ও টেস্ট অডিও ফাইল নিরাপদে সংরক্ষণ করা যায়।
-- Region A ও Region B উভয় মডেল সার্ভার ইন্টারনেট ছাড়াই অভ্যন্তরীণ প্রাইভেট আইপি দিয়ে মডেল আপডেট নামিয়ে নিতে পারে।
-
----
-
 ## ৫. রিয়েল-টাইম টেলিমეტ্রি: প্রমিথিউস ও গ্রাফানা
-
-একটি সফল আর্কিটেকচার কেবল ফেইলওভার করলেই চলে না, নেটওয়ার্ক ইঞ্জিনিয়ারদের কাছে তার লাইভ ভিজিবিলিটি থাকতে হয়।
 
 ### ১. প্রমিথিউস স্ক্র্যাপ টার্গেটস (`:9090`):
 প্রমিথিউস প্রতি ২ সেকেন্ড পরপর তিনটি উপাদান থেকে মেট্রিক্স স্ক্র্যাপ করে:
@@ -118,6 +181,11 @@ $$\text{Local Preference Rule: Highest Value Wins!}$$
 - `whisper_region_b`: স্ট্যান্ডবাই মডেল সার্ভারের হেলথ ও রিকোয়েস্ট সংখ্যা।
 
 ![Prometheus Targets](screenshots/05_prometheus_targets.png)
+
+> **🛠️ যেভাবে ভেরিফাই করবেন:**
+> ব্রাউজারে `http://47.128.218.223:9090/targets` ওপেন করে **Status** $\rightarrow$ **Targets**-এ যান এবং তিনটি টার্গেটই সবুজ **UP (1/1)** অবস্থায় দেখতে পাবেন।
+
+---
 
 ### ২. গ্রাফানা এনওসি ড্যাশবোর্ড (`:3000`):
 গ্রাফানায় লগইন করলেই লাইভ দেখা যায়:
@@ -129,33 +197,71 @@ $$\text{Local Preference Rule: Highest Value Wins!}$$
 ![Grafana NOC Dashboard](screenshots/06_grafana_dashboard.png)
 ![Grafana Live BGP Failover Metrics](screenshots/07_grafana_bgp_live.png)
 
+> **🛠️ যেভাবে ড্যাশবোর্ড দেখবেন:**
+> ব্রাউজারে `http://47.128.218.223:3000` ওপেন করে ইউজারনেম `admin` ও পাসওয়ার্ড `admin` দিয়ে লগইন করুন। বাঁপাশের **Dashboards** $\rightarrow$ **Browse** থেকে **"Lab 2: Multi-Region BGP ML Serving & Telemetry"** ড্যাশবোর্ডে প্রবেশ করে উপরে ডানপাশে রিফ্রেশ রেট **5s** সেট করুন।
+
 ---
 
 ## ৬. কেয়স ইঞ্জিনিয়ারিং টেস্টের বাস্তব ফলাফল
 
-আমরা যখন `python client/client_test.py` টেস্ট স্ক্রিপ্টটি রান করি, তখন ৩টি ফেজ সম্পন্ন হয়:
+আমরা যখন `python verify_traffic_failover.py` রান করি, তখন ৪টি ফেজে লাইভ প্রমাণ দেখা যায়:
 
 ![BGP Health Check & Failover Execution Terminal](screenshots/08_bgp_failover_terminal.png)
 
-### ফেজ ১: সাধারণ অবস্থা (Baseline)
-- রাউটার থেকে ৫টি ইনফ্যারেন্স রিকোয়েস্ট পাঠানো হয়।
-- প্রতিটি রিকোয়েস্টে হেডার আসে:
-  - `X-BGP-Active-Region: AWS Region A (Primary Cloud)`
-  - `X-BGP-Local-Pref: 200`
-  - `X-BGP-Failover-Active: false`
+> **🛠️ টার্মিনালে যেভাবে রান করবেন:**
+> ```powershell
+> python verify_traffic_failover.py
+> ```
 
-### ফেজ ২: ডিজাস্টার সিমুলেশন (Outage Injection)
-- আমরা `/admin/kill` এন্ডপয়েন্টে হিট করে Region A-কে ডাউন করে দিই।
-- ৩.৫ সেকেন্ডের মধ্যে BGP কন্ট্রোলার Region A-কে `DOWN` ঘোষণা করে এবং রুট প্রত্যাহার করে।
-- পরবর্তী ৫টি রিকোয়েস্ট কোনো ফেইলিওর ছাড়াই Region B প্রসেস করে:
-  - `X-BGP-Active-Region: AWS Region B (Failover / On-Prem)`
-  - `X-BGP-Local-Pref: 100`
-  - `X-BGP-Failover-Active: true`
+```text
+================================================================================
+          AWS MULTI-REGION ML SERVING: AUTOMATIC BGP FAILOVER VERIFICATION
+          Target Anycast VIP Gateway: http://47.128.218.223:8000
+================================================================================
 
-### ফেজ ৩: স্বয়ংক্রিয় পুনরুদ্ধার (Self-Healing Recovery)
-- Region A-কে `/admin/restore` দিয়ে আবার চালু করা হয়।
-- BGP কন্ট্রোলার দেখে Region A ব্যাক এসেছে এবং এর প্রায়োরিটি বেশি (`200 > 100`)।
-- সঙ্গে সঙ্গে ট্র্যাফিক কোনো মানুষের হস্তক্ষেপ ছাড়াই আবার Region A-তে চলে আসে!
+[PHASE 1: BASELINE INFERENCE - PRIMARY REGION A]
+  BGP Active Route   : Region_A (AWS Region A (Primary Cloud))
+  Region A Status    : UP (Local-Pref: 200)
+  Region B Status    : UP (Local-Pref: 100)
+  -> Sending 3 Inference Requests through Anycast Gateway...
+    Req #1: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false | Output: "Patient history indicates normal..."
+    Req #2: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false | Output: "Patient history indicates normal..."
+    Req #3: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false | Output: "Patient history indicates normal..."
+
+[PHASE 2: TRIGGERING OUTAGE IN PRIMARY REGION A]
+  -> Sending kill signal to Primary Model Endpoint: POST /admin/kill ...
+  -> Kill Trigger Response: {'status': 'killed', 'region': 'Region-A-Primary-Cloud', 'message': 'Simulated regional outage activated'}
+  -> Waiting for BGP Health Check probes to detect failure and withdraw route (sub-second detection)...
+    [T+1s Probe] Region A: UP   | Region B: UP | Active Route: Region_A
+    [T+2s Probe] Region A: DOWN | Region B: UP | Active Route: Region_B
+
+  [>>>] CONFIRMED: BGP Route WITHDRAWN for Region A! Traffic routed to Region_B!
+
+[PHASE 3: VERIFYING INFERENCE TRAFFIC SHIFT TO REGION B (FAILOVER)]
+  -> Sending 4 Inference Requests during Region A Outage...
+    Failover Req #1: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal..."
+    Failover Req #2: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal..."
+    Failover Req #3: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal..."
+    Failover Req #4: HTTP 200 | Handled By: Region-B-Failover-On-Prem | Local-Pref: 100 | Failover: true | Output: "Patient history indicates normal..."
+
+  [VERIFIED] 100% of user traffic successfully and automatically routed to Region B without drop!
+
+[PHASE 4: RESTORING PRIMARY REGION A (AUTOMATIC FAILBACK)]
+  -> Sending restore signal: POST /admin/restore ...
+  -> Restore Trigger Response: {'status': 'restored', 'region': 'Region-A-Primary-Cloud', 'message': 'Regional service back online'}
+  -> Waiting for BGP Health Check to reinstate Region A peering (Local-Pref 200 > 100)...
+    [T+1s Probe] Region A: UP | Active Route: Region_A
+
+  [<<<] CONFIRMED: BGP Session RE-ESTABLISHED! Traffic reverted to Primary Region_A!
+
+  -> Verifying post-recovery inference requests...
+    Post-Recovery Req #1: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false
+    Post-Recovery Req #2: HTTP 200 | Handled By: Region-A-Primary-Cloud | Local-Pref: 200 | Failover: false
+
+================================================================================
+  FINAL RESULT: BGP DYNAMIC FAILOVER & FAILBACK VERIFIED WITH 100% ACCURACY
+================================================================================
+```
 
 ---
 
