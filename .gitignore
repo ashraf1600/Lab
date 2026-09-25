@@ -4,6 +4,7 @@
 *.pem
 *.key
 *.token
+*.xml
 *_state.json
 __pycache__/
 *.pyc

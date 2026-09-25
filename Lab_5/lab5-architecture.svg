@@ -1,0 +1,308 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="100%" height="100%" style="background:#090d16; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1120" />
+      <stop offset="100%" stop-color="#060911" />
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <linearGradient id="onPremGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9" />
+    </linearGradient>
+    <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#022c22" stop-opacity="0.35" />
+    </linearGradient>
+    <linearGradient id="vpnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+    
+    <!-- Markers -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+    </marker>
+    <marker id="arrowhead-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa" />
+    </marker>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1200" height="760" fill="url(#bgGrad)" />
+
+  <!-- Grid Overlay -->
+  <g opacity="0.05" stroke="#ffffff" stroke-width="1">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" />
+    </pattern>
+    <rect width="1200" height="760" fill="url(#grid)" />
+  </g>
+
+  <!-- Title & Subtitle Header -->
+  <g transform="translate(600, 48)" text-anchor="middle">
+    <text font-size="28" font-weight="800" fill="url(#primaryGrad)" letter-spacing="-0.5">Lab 5 — End-to-End Encrypted ML Pipeline with BGP + VPN</text>
+    <text y="28" font-size="14" font-weight="500" fill="#94a3b8">
+      Secure data ingestion → ML processing → encrypted results <tspan fill="#38bdf8">|</tspan> BGP VPN from on-prem to cloud
+    </text>
+  </g>
+
+  <!-- ==================== ON-PREMISES CONTAINER ==================== -->
+  <g transform="translate(40, 105)">
+    <!-- Container Box -->
+    <rect width="320" height="380" rx="16" fill="url(#onPremGrad)" stroke="#3b82f6" stroke-width="1.8" filter="url(#shadow)" />
+    
+    <!-- Header -->
+    <g transform="translate(20, 28)">
+      <rect x="0" y="-18" width="34" height="34" rx="8" fill="#1e3a8a" />
+      <path d="M7 -7 h20 v20 h-20 z M11 -2 h4 v4 h-4 z M19 -2 h4 v4 h-4 z M11 6 h4 v4 h-4 z M19 6 h4 v4 h-4 z" fill="#60a5fa" />
+      <text x="44" y="0" font-size="17" font-weight="700" fill="#f8fafc">On-Premises</text>
+      <text x="44" y="16" font-size="12" font-weight="500" fill="#93c5fd">(Your Corporate Network)</text>
+    </g>
+
+    <!-- Sub-Box 1: On-Prem Data Source -->
+    <g transform="translate(20, 75)">
+      <rect width="280" height="85" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="14" y="14" width="32" height="32" rx="6" fill="#1e293b" />
+      <circle cx="30" cy="30" r="6" fill="#38bdf8" />
+      <text x="56" y="28" font-size="14" font-weight="700" fill="#e2e8f0">On-Prem Data Source</text>
+      <text x="56" y="44" font-size="11" font-weight="500" fill="#64748b">(Simulated EC2: 192.168.1.50)</text>
+      <text x="56" y="60" font-size="11" fill="#94a3b8">• Raw text data ingestion</text>
+      <text x="56" y="74" font-size="11" fill="#94a3b8">• Auto-send payloads to cloud</text>
+    </g>
+
+    <!-- Sub-Box 2: On-Prem Dashboard -->
+    <g transform="translate(20, 175)">
+      <rect width="280" height="85" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="14" y="14" width="32" height="32" rx="6" fill="#1e293b" />
+      <path d="M22 36 l6 -10 l4 5 l6 -10" stroke="#38bdf8" stroke-width="2" fill="none" />
+      <text x="56" y="28" font-size="14" font-weight="700" fill="#e2e8f0">On-Prem Dashboard</text>
+      <text x="56" y="44" font-size="11" font-weight="500" fill="#64748b">(Web App / Port 8501)</text>
+      <text x="56" y="60" font-size="11" fill="#94a3b8">• Live telemetry &amp; latency view</text>
+      <text x="56" y="74" font-size="11" fill="#94a3b8">• Decrypted inference result audit</text>
+    </g>
+
+    <!-- Sub-Box 3: BGP VPN Gateway -->
+    <g transform="translate(20, 275)">
+      <rect width="280" height="85" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.4" />
+      <rect x="14" y="14" width="32" height="32" rx="6" fill="#312e81" />
+      <path d="M22 30 h16 M30 22 v16" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" />
+      <text x="56" y="28" font-size="14" font-weight="700" fill="#c7d2fe">BGP VPN Gateway Router</text>
+      <text x="56" y="44" font-size="11" font-weight="500" fill="#818cf8">(StrongSwan + FRR | AS 65000)</text>
+      <text x="56" y="60" font-size="11" fill="#a5b4fc">• Private: 192.168.1.10</text>
+      <text x="56" y="74" font-size="11" fill="#a5b4fc">• Public: EIP (52.220.40.120)</text>
+    </g>
+  </g>
+
+  <!-- ==================== BGP VPN CONNECTION (CENTER) ==================== -->
+  <g transform="translate(400, 160)">
+    <!-- Cloud Internet Icon -->
+    <path d="M160 30 c-8 -15 -25 -25 -45 -25 c-25 0 -45 15 -50 38 c-18 2 -32 17 -32 35 c0 20 16 36 36 36 h170 c22 0 40 -18 40 -40 c0 -20 -15 -37 -35 -40 c-2 -18 -18 -32 -36 -32 c-18 0 -33 11 -38 28 z" fill="#1e293b" opacity="0.6" stroke="#475569" stroke-dasharray="4 4" />
+    <text x="175" y="85" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="middle">Internet (Public WAN)</text>
+
+    <!-- Main VPN Tunnel Box -->
+    <rect x="20" y="125" width="310" height="150" rx="14" fill="#18182b" stroke="#8b5cf6" stroke-width="1.8" filter="url(#shadow)" />
+    
+    <g transform="translate(40, 150)">
+      <circle cx="16" cy="16" r="16" fill="url(#vpnGrad)" />
+      <!-- Lock Icon -->
+      <path d="M12 15 v-4 c0 -2.2 1.8 -4 4 -4 s4 1.8 4 4 v4 M10 15 h12 v10 h-12 z" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linejoin="round" />
+      <text x="44" y="13" font-size="15" font-weight="700" fill="#ede9fe">BGP Site-to-Site VPN</text>
+      <text x="44" y="28" font-size="11" font-weight="500" fill="#c4b5fd">Dynamic IPsec ESP Tunnel (IKEv2)</text>
+    </g>
+
+    <!-- Dual directional tunnel indicator -->
+    <g transform="translate(40, 195)">
+      <!-- Line 1: Forward Ingestion -->
+      <path d="M 0 10 L 270 10" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowhead)" />
+      <text x="135" y="4" font-size="11" font-weight="600" fill="#38bdf8" text-anchor="middle">Raw Ingestion Payloads (Encrypted)</text>
+
+      <!-- Line 2: Return Predictions -->
+      <path d="M 270 35 L 0 35" stroke="#34d399" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowhead-green)" />
+      <text x="135" y="50" font-size="11" font-weight="600" fill="#34d399" text-anchor="middle">Inference Results &amp; DB Audits</text>
+    </g>
+
+    <!-- Tunnel attributes badge -->
+    <g transform="translate(45, 252)">
+      <text font-size="10.5" font-weight="600" fill="#a78bfa">Inside CIDR: 169.254.10.0/30 | ASN 65000 &harr; ASN 64512</text>
+    </g>
+  </g>
+
+  <!-- ==================== AWS CLOUD - PRIVATE VPC ==================== -->
+  <g transform="translate(750, 105)">
+    <!-- Cloud Container Box -->
+    <rect width="410" height="380" rx="16" fill="url(#cloudGrad)" stroke="#10b981" stroke-width="1.8" filter="url(#shadow)" />
+
+    <!-- AWS VPC Header -->
+    <g transform="translate(24, 28)">
+      <rect x="0" y="-18" width="34" height="34" rx="8" fill="#065f46" />
+      <!-- Cloud with lock icon -->
+      <path d="M8 8 h18 M12 4 v4 M22 4 v4" stroke="#34d399" stroke-width="2" />
+      <text x="44" y="0" font-size="17" font-weight="700" fill="#ecfdf5">AWS Cloud — Private VPC</text>
+      <text x="44" y="16" font-size="12" font-weight="600" fill="#34d399">10.50.0.0/16 (Zero Internet Gateway / Air-Gapped)</text>
+    </g>
+
+    <!-- AWS VGW Sub-box -->
+    <g transform="translate(24, 65)">
+      <rect width="362" height="50" rx="8" fill="#064e3b" stroke="#059669" stroke-width="1.2" />
+      <text x="16" y="24" font-size="13" font-weight="700" fill="#a7f3d0">Virtual Private Gateway (AWS VGW)</text>
+      <text x="16" y="40" font-size="11" fill="#6ee7b7">vgw-0610144236ec1ab7a &bull; ASN: 64512 &bull; Route Propagation ENABLED</text>
+    </g>
+
+    <!-- Private Subnet Tier Box -->
+    <g transform="translate(24, 125)">
+      <rect width="362" height="235" rx="12" fill="#022c22" stroke="#047857" stroke-width="1.4" stroke-dasharray="4 2" />
+      <text x="16" y="24" font-size="13" font-weight="700" fill="#34d399">Private Subnet (10.50.1.0/24 &bull; ap-southeast-1a)</text>
+      <text x="260" y="24" font-size="11" font-weight="600" fill="#f87171">[NO PUBLIC IP]</text>
+
+      <!-- Host Container: 10.50.1.100 -->
+      <g transform="translate(14, 38)">
+        <rect width="334" height="182" rx="8" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+        <text x="14" y="22" font-size="12.5" font-weight="700" fill="#ffffff">ML Pipeline Host (10.50.1.100:8000)</text>
+
+        <!-- Pipeline Step 1: Preprocessor -->
+        <g transform="translate(14, 32)">
+          <rect width="94" height="136" rx="6" fill="#022c22" stroke="#059669" stroke-width="1" />
+          <text x="47" y="22" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">Preprocessor</text>
+          <path d="M47 34 v12 M41 40 h12" stroke="#34d399" stroke-width="2" />
+          <text x="8" y="70" font-size="9.5" fill="#6ee7b7">• Regex Clean</text>
+          <text x="8" y="85" font-size="9.5" fill="#6ee7b7">• Lowercase</text>
+          <text x="8" y="100" font-size="9.5" fill="#6ee7b7">• Stopwords</text>
+          <text x="8" y="115" font-size="9.5" fill="#6ee7b7">• Tokenize</text>
+        </g>
+
+        <!-- Pipeline Step 2: NLP Model -->
+        <g transform="translate(120, 32)">
+          <rect width="94" height="136" rx="6" fill="#022c22" stroke="#8b5cf6" stroke-width="1" />
+          <text x="47" y="22" font-size="11" font-weight="700" fill="#c4b5fd" text-anchor="middle">NLP Classifier</text>
+          <circle cx="47" cy="40" r="8" fill="#7c3aed" opacity="0.6" />
+          <text x="8" y="70" font-size="9.5" fill="#a78bfa">• 4-Class Topic</text>
+          <text x="8" y="85" font-size="9.5" fill="#a78bfa">• Sentiment</text>
+          <text x="8" y="100" font-size="9.5" fill="#a78bfa">• Conf Score</text>
+          <text x="8" y="115" font-size="9.5" fill="#a78bfa">• Latency RTT</text>
+        </g>
+
+        <!-- Pipeline Step 3: Encrypted DB -->
+        <g transform="translate(226, 32)">
+          <rect width="94" height="136" rx="6" fill="#022c22" stroke="#38bdf8" stroke-width="1" />
+          <text x="47" y="22" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">Results DB</text>
+          <!-- DB icon -->
+          <ellipse cx="47" cy="38" rx="10" ry="4" fill="none" stroke="#38bdf8" stroke-width="1.5" />
+          <path d="M37 38 v8 c0 2.2 4.5 4 10 4 s10 -1.8 10 -4 v-8" fill="none" stroke="#38bdf8" stroke-width="1.5" />
+          <text x="8" y="70" font-size="9.5" fill="#38bdf8">• SQLite Local</text>
+          <text x="8" y="85" font-size="9.5" fill="#38bdf8">• AES-256 PBKDF</text>
+          <text x="8" y="100" font-size="9.5" fill="#38bdf8">• HMAC Audit</text>
+          <text x="8" y="115" font-size="9.5" fill="#38bdf8">• Zero-Knowledge</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== WORKFLOW NUMBERS (1 - 4) ==================== -->
+  <g transform="translate(40, 510)">
+    <!-- Card 1 -->
+    <g transform="translate(0, 0)">
+      <rect width="265" height="120" rx="10" fill="#0f172a" stroke="#1e293b" />
+      <circle cx="28" cy="28" r="14" fill="#0284c7" />
+      <text x="28" y="33" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">1</text>
+      <text x="52" y="32" font-size="14" font-weight="700" fill="#f8fafc">On-Prem Data Ingestion</text>
+      <text x="18" y="62" font-size="11.5" fill="#94a3b8">• Simulated EC2 acts as data source</text>
+      <text x="18" y="80" font-size="11.5" fill="#94a3b8">• Transmits raw text over private LAN</text>
+      <text x="18" y="98" font-size="11.5" fill="#94a3b8">• Routed into BGP Gateway</text>
+    </g>
+
+    <!-- Card 2 -->
+    <g transform="translate(285, 0)">
+      <rect width="265" height="120" rx="10" fill="#0f172a" stroke="#1e293b" />
+      <circle cx="28" cy="28" r="14" fill="#6366f1" />
+      <text x="28" y="33" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">2</text>
+      <text x="52" y="32" font-size="14" font-weight="700" fill="#f8fafc">BGP VPN Connection</text>
+      <text x="18" y="62" font-size="11.5" fill="#94a3b8">• Dynamic BGP route exchange</text>
+      <text x="18" y="80" font-size="11.5" fill="#94a3b8">• IPsec ESP 256-bit encryption</text>
+      <text x="18" y="98" font-size="11.5" fill="#94a3b8">• On-prem router &harr; AWS VGW</text>
+    </g>
+
+    <!-- Card 3 -->
+    <g transform="translate(570, 0)">
+      <rect width="265" height="120" rx="10" fill="#0f172a" stroke="#1e293b" />
+      <circle cx="28" cy="28" r="14" fill="#059669" />
+      <text x="28" y="33" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">3</text>
+      <text x="52" y="32" font-size="14" font-weight="700" fill="#f8fafc">Private VPC &bull; ML Pipeline</text>
+      <text x="18" y="62" font-size="11.5" fill="#94a3b8">• Preprocessor cleans input</text>
+      <text x="18" y="80" font-size="11.5" fill="#94a3b8">• NLP Model classifies text</text>
+      <text x="18" y="98" font-size="11.5" fill="#94a3b8">• Stores payload in encrypted DB</text>
+    </g>
+
+    <!-- Card 4 -->
+    <g transform="translate(855, 0)">
+      <rect width="265" height="120" rx="10" fill="#0f172a" stroke="#1e293b" />
+      <circle cx="28" cy="28" r="14" fill="#7c3aed" />
+      <text x="28" y="33" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">4</text>
+      <text x="52" y="32" font-size="14" font-weight="700" fill="#f8fafc">Return to On-Prem</text>
+      <text x="18" y="62" font-size="11.5" fill="#94a3b8">• Encrypted inference return</text>
+      <text x="18" y="80" font-size="11.5" fill="#94a3b8">• Rendered in on-prem dashboard</text>
+      <text x="18" y="98" font-size="11.5" fill="#94a3b8">• Complete end-to-end security</text>
+    </g>
+  </g>
+
+  <!-- ==================== BOTTOM FEATURE PILLS ==================== -->
+  <g transform="translate(40, 660)">
+    <rect width="1120" height="70" rx="12" fill="#0b1329" stroke="#1e293b" />
+
+    <!-- Pill 1 -->
+    <g transform="translate(25, 18)">
+      <circle cx="17" cy="17" r="16" fill="#1e293b" />
+      <path d="M12 17 v-3 c0 -2.5 2 -4 5 -4 s5 1.5 5 4 v3 M10 17 h14 v10 h-14 z" stroke="#38bdf8" stroke-width="1.8" fill="none" />
+      <text x="42" y="16" font-size="12" font-weight="700" fill="#f1f5f9">End-to-End Encryption</text>
+      <text x="42" y="28" font-size="10.5" fill="#94a3b8">BGP + IPsec VPN</text>
+    </g>
+
+    <!-- Pill 2 -->
+    <g transform="translate(250, 18)">
+      <circle cx="17" cy="17" r="16" fill="#1e293b" />
+      <path d="M17 9 l8 8 l-8 8 l-8 -8 z" stroke="#818cf8" stroke-width="1.8" fill="none" />
+      <text x="42" y="16" font-size="12" font-weight="700" fill="#f1f5f9">Dynamic Routing</text>
+      <text x="42" y="28" font-size="10.5" fill="#94a3b8">Autonomous System BGP</text>
+    </g>
+
+    <!-- Pill 3 -->
+    <g transform="translate(470, 18)">
+      <circle cx="17" cy="17" r="16" fill="#1e293b" />
+      <path d="M10 17 c0 -4 3 -7 7 -7 c3 0 5 2 6 5 c1 -0.5 2 -0.8 3 -0.8 c3.3 0 6 2.7 6 6" stroke="#34d399" stroke-width="1.8" fill="none" />
+      <line x1="8" y1="28" x2="26" y2="10" stroke="#f87171" stroke-width="1.8" />
+      <text x="42" y="16" font-size="12" font-weight="700" fill="#f1f5f9">No Direct Internet</text>
+      <text x="42" y="28" font-size="10.5" fill="#94a3b8">Private Air-Gapped VPC</text>
+    </g>
+
+    <!-- Pill 4 -->
+    <g transform="translate(690, 18)">
+      <circle cx="17" cy="17" r="16" fill="#1e293b" />
+      <circle cx="17" cy="17" r="7" stroke="#c084fc" stroke-width="1.8" fill="none" />
+      <text x="42" y="16" font-size="12" font-weight="700" fill="#f1f5f9">Secure ML Pipeline</text>
+      <text x="42" y="28" font-size="10.5" fill="#94a3b8">Preprocess → Model → DB</text>
+    </g>
+
+    <!-- Pill 5 -->
+    <g transform="translate(920, 18)">
+      <circle cx="17" cy="17" r="16" fill="#1e293b" />
+      <path d="M17 8 l9 4 v6 c0 6 -4 10 -9 12 c-5 -2 -9 -6 -9 -12 v-6 z" stroke="#38bdf8" stroke-width="1.8" fill="none" />
+      <text x="42" y="16" font-size="12" font-weight="700" fill="#f1f5f9">On-Prem Control</text>
+      <text x="42" y="28" font-size="10.5" fill="#94a3b8">Data Stays in Your Network</text>
+    </g>
+  </g>
+</svg>
