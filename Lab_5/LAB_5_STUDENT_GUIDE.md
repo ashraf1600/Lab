@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This lab teaches you how to design, deploy, and validate a secure, end-to-end encrypted hybrid-cloud machine learning architecture on AWS. You will interconnect an air-gapped private Virtual Private Cloud (VPC) hosting an isolated NLP inference service to an on-premises enterprise environment using an IPsec Virtual Private Network (VPN) with dynamic Border Gateway Protocol (BGP) routing. Through hands-on configuration, active retrieval, and chaos testing, you will enforce cryptographic protection for data in transit and data at rest without exposing model workloads to the public internet.
+This lab teaches you how to design, deploy, and validate a secure, end-to-end encrypted hybrid-cloud machine learning architecture on AWS using the AWS Management Console. You will interconnect an air-gapped private Virtual Private Cloud (VPC) hosting an isolated NLP inference service to an on-premises enterprise environment using an IPsec Virtual Private Network (VPN) with dynamic Border Gateway Protocol (BGP) routing. Through hands-on configuration in the console, active retrieval, and chaos testing, you will enforce cryptographic protection for data in transit and data at rest without exposing model workloads to the public internet.
 
 ![Lab 5 Architecture](lab5-architecture.svg)
 
@@ -12,11 +12,11 @@ This lab teaches you how to design, deploy, and validate a secure, end-to-end en
 
 By the end of this lab, you will be able to:
 
-1. Design an air-gapped AWS VPC topology with zero Internet Gateways and zero public IP addresses.
+1. Design an air-gapped AWS VPC topology with zero Internet Gateways and zero public IP addresses using the AWS Management Console.
 2. Configure hybrid cloud connectivity using an AWS Virtual Private Gateway, Customer Gateway, and Site-to-Site VPN with dynamic BGP routing.
 3. Configure IPsec encryption (IKEv2/ESP) and BGP peering on a Linux enterprise edge router.
 4. Implement a zero-dependency NLP classification microservice with salted HMAC and stream encryption for data persistence.
-5. Execute positive, negative, and chaos tampering experiments to prove traffic isolation and network self-healing.
+5. Execute positive, negative, and chaos route tampering experiments in the AWS Management Console to prove traffic isolation and network self-healing.
 
 **Prerequisites:** Proficiency with basic Linux command-line operations, foundational AWS networking concepts (VPC, CIDR, subnets, route tables), and Python programming.
 
@@ -24,7 +24,7 @@ By the end of this lab, you will be able to:
 
 You join the machine learning platform team at a healthcare financial technology enterprise. The organization analyzes patient clinical records and sensitive transactional metadata to detect fraudulent billing claims. Under regulatory frameworks including HIPAA and PCI-DSS, transmitting raw patient text across the public internet or placing model inference clusters in internet-facing subnets is strictly prohibited.
 
-The current system relies on manual batch data transfers over removable media, causing significant processing backlogs and audit compliance risks. Your task is to build a continuous, real-time hybrid cloud pipeline. You must establish an air-gapped model inference environment in AWS, connect it to the on-premises facility through an IPsec tunnel using dynamic BGP route exchanges, and verify that all inferences are securely classified and encrypted at rest in a zero-knowledge audit store.
+The current system relies on manual batch data transfers over removable media, causing significant processing backlogs and audit compliance risks. Your task is to build a continuous, real-time hybrid cloud pipeline entirely through the AWS Management Console. You must establish an air-gapped model inference environment in AWS, connect it to the on-premises facility through an IPsec tunnel using dynamic BGP route exchanges, and verify that all inferences are securely classified and encrypted at rest in a zero-knowledge audit store.
 
 ## Environment Setup
 
@@ -57,11 +57,11 @@ net.ipv4.ip_forward = 1
 
 ## Chapter 1: Cloud and On-Premises Network Foundation
 
-Air-gapped architectures require strict separation of concerns at the network boundary. Placing machine learning models in a subnet without an Internet Gateway guarantees that data cannot be exfiltrated directly to external command-and-control servers. In this chapter, you create the two non-overlapping VPC networks representing the cloud inference zone and the corporate data center.
+Air-gapped architectures require strict separation of concerns at the network boundary. Placing machine learning models in a subnet without an Internet Gateway guarantees that data cannot be exfiltrated directly to external command-and-control servers. In this chapter, you create the two non-overlapping VPC networks in the AWS Management Console representing the cloud inference zone and the corporate data center.
 
 ### 1.1 What You Will Build
 
-You will provision:
+You will configure in the AWS Management Console:
 - A private cloud VPC (`10.50.0.0/16`) containing one private subnet (`10.50.1.0/24`) with no Internet Gateway.
 - A simulated on-premises VPC (`192.168.0.0/16`) containing a public edge subnet (`192.168.1.0/24`) and an Internet Gateway for WAN connectivity.
 
@@ -80,36 +80,44 @@ Without an Internet Gateway or NAT Gateway, the host kernel has no default route
 
 ### 1.3 Implementation
 
-Complete the AWS CLI commands to create the isolated cloud VPC and private subnet:
+Complete the configuration parameters required in the AWS Management Console:
 
-```bash
-# Q1: What CIDR block defines the cloud network?
-aws ec2 create-vpc --cidr-block ___ --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=lab5-cloud-vpc}]'
+```text
+Cloud VPC Settings:
+- Name tag: lab5-cloud-vpc
+- IPv4 CIDR manual input: ___ (Q1: What CIDR block defines the cloud network?)
+- Tenancy: Default
+- DNS settings: Enable DNS resolution = True, Enable DNS hostnames = ___ (Q2: True or False?)
 
-# Q2: Which VPC attribute must be enabled for internal domain name resolution?
-aws ec2 modify-vpc-attribute --vpc-id <CLOUD_VPC_ID> --___ '{"Value": true}'
-
-# Q3: What subnet CIDR provides 256 addresses inside 10.50.0.0/16?
-aws ec2 create-subnet --vpc-id <CLOUD_VPC_ID> --cidr-block ___ --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=lab5-cloud-private-subnet}]'
+Cloud Subnet Settings:
+- VPC ID: lab5-cloud-vpc
+- Subnet name: lab5-cloud-private-subnet
+- Availability Zone: ap-southeast-1a
+- IPv4 subnet CIDR block: ___ (Q3: What subnet CIDR provides 256 addresses inside 10.50.0.0/16?)
+- Auto-assign public IPv4: False
 ```
 
 Hints:
 - Q1: The cloud VPC uses a `/16` network prefix starting with `10.50`.
-- Q2: The attribute name controls DNS hostnames resolution.
-- Q3: The subnet uses a `/24` prefix within the `10.50` block.
+- Q2: DNS hostnames must be enabled for internal name resolution.
+- Q3: The private subnet uses a `/24` prefix within the `10.50` block.
 
 <details>
 <summary>Click to see solution</summary>
 
-```bash
-# Create Cloud VPC
-aws ec2 create-vpc --cidr-block 10.50.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=lab5-cloud-vpc}]'
+```text
+Cloud VPC Settings:
+- Name tag: lab5-cloud-vpc
+- IPv4 CIDR manual input: 10.50.0.0/16
+- Tenancy: Default
+- DNS settings: Enable DNS resolution = True, Enable DNS hostnames = True
 
-# Enable DNS hostnames
-aws ec2 modify-vpc-attribute --vpc-id <CLOUD_VPC_ID> --enable-dns-hostnames '{"Value": true}'
-
-# Create Cloud Subnet
-aws ec2 create-subnet --vpc-id <CLOUD_VPC_ID> --cidr-block 10.50.1.0/24 --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=lab5-cloud-private-subnet}]'
+Cloud Subnet Settings:
+- VPC ID: lab5-cloud-vpc
+- Subnet name: lab5-cloud-private-subnet
+- Availability Zone: ap-southeast-1a
+- IPv4 subnet CIDR block: 10.50.1.0/24
+- Auto-assign public IPv4: False
 ```
 
 </details>
@@ -143,36 +151,28 @@ Match each network component to its architectural role:
 
 ### 1.5 Test and Verify
 
-**Predict:** What route destination will be displayed if you query the cloud private route table?
-
-```bash
-aws ec2 describe-route-tables --filters "Name=vpc-id,Values=<CLOUD_VPC_ID>" --query "RouteTables[].Routes"
-```
-
-<details>
-<summary>Click to verify</summary>
-
-```json
-[
-    [
-        {
-            "DestinationCidrBlock": "10.50.0.0/16",
-            "GatewayId": "local",
-            "Origin": "CreateRouteTable",
-            "State": "active"
-        }
-    ]
-]
-```
-The table contains only the local target route and has no default route (`0.0.0.0/0`).
-
-</details>
-
-Review the visual verification from the AWS Management Console:
+**AWS Console Step-by-Step Guide for Creating VPCs:**
+1. Sign in to the AWS Management Console and navigate to **VPC > Your VPCs**.
+2. Click **Create VPC**. Under **VPC settings**, select **VPC only**.
+3. Set **Name tag** to `lab5-cloud-vpc`, select **IPv4 CIDR manual input**, and enter `10.50.0.0/16`.
+4. Keep Tenancy as **Default** and click **Create VPC**.
+5. Select `lab5-cloud-vpc` in the list, click **Actions > Edit VPC settings**, check both **Enable DNS resolution** and **Enable DNS hostnames**, and click **Save changes**.
+6. Repeat the process to create `lab5-onprem-vpc` with IPv4 CIDR `192.168.0.0/16`. Enable both DNS resolution and hostnames.
+7. Return to **Your VPCs** to verify both VPCs display **Available** state.
 
 ![AWS VPC Topology](screenshots/01_aws_vpc_topology.png)
 
 > **Note:** Displays the dual VPC configuration showing the isolated cloud network (`10.50.0.0/16`) and simulated on-premises network (`192.168.0.0/16`).
+
+**AWS Console Step-by-Step Guide for Subnets and Internet Gateway:**
+1. In the left navigation pane under **Virtual Private Cloud**, click **Subnets**, then click **Create subnet**.
+2. In the **VPC ID** dropdown, select `lab5-cloud-vpc`.
+3. Under **Subnet settings**, enter **Subnet name** `lab5-cloud-private-subnet`, select Availability Zone `ap-southeast-1a`, and set **IPv4 subnet CIDR block** to `10.50.1.0/24`. Click **Create subnet**.
+4. Click **Create subnet** again. Select **VPC ID** `lab5-onprem-vpc`, enter **Subnet name** `lab5-onprem-public-subnet`, select Availability Zone `ap-southeast-1a`, and set **IPv4 subnet CIDR block** to `192.168.1.0/24`. Click **Create subnet**.
+5. Navigate to **Internet gateways** in the left navigation pane and click **Create internet gateway**.
+6. Set **Name tag** to `lab5-onprem-igw` and click **Create internet gateway**. On the confirmation banner, click **Actions > Attach to VPC**, choose `lab5-onprem-vpc`, and click **Attach internet gateway**.
+7. Navigate to **Route tables**, select the table associated with `lab5-onprem-vpc` (or create `lab5-onprem-rt`), click **Actions > Edit routes**, add route `0.0.0.0/0` targeted to `lab5-onprem-igw`, and click **Save changes**.
+8. In the **Subnets** list, verify both subnets display **Available** status.
 
 ![AWS Subnets](screenshots/02_aws_subnets.png)
 
@@ -190,11 +190,11 @@ Review the visual verification from the AWS Management Console:
 
 ## Chapter 2: Hybrid Connectivity via Site-to-Site VPN and BGP
 
-Static routing across cloud networks requires manual interventions whenever subnets change. Border Gateway Protocol (BGP) dynamically advertises reachable prefixes between autonomous systems and automatically recalculates routes during network changes. In this chapter, you establish an AWS Site-to-Site VPN with BGP route propagation.
+Static routing across cloud networks requires manual interventions whenever subnets change. Border Gateway Protocol (BGP) dynamically advertises reachable prefixes between autonomous systems and automatically recalculates routes during network changes. In this chapter, you establish an AWS Site-to-Site VPN with BGP route propagation using the AWS Management Console.
 
 ### 2.1 What You Will Build
 
-You will provision:
+You will configure in the AWS Management Console:
 - An AWS Virtual Private Gateway (VGW) attached to the Cloud VPC using Amazon ASN `64512`.
 - An AWS Customer Gateway (CGW) referencing the on-premises router public IP with ASN `65000`.
 - An AWS Site-to-Site VPN Connection with dynamic routing and VPC route propagation enabled.
@@ -212,41 +212,48 @@ Route propagation allows the Virtual Private Gateway to automatically inject rou
 
 ### 2.3 Implementation
 
-Complete the configuration to provision the Virtual Private Gateway and enable route propagation:
+Complete the AWS Console parameter values for the hybrid connectivity setup:
 
-```bash
-# Q1: What Amazon-side ASN is commonly used for private BGP peering?
-aws ec2 create-vpn-gateway --type ipsec.1 --amazon-side-asn ___ --tag-specifications 'ResourceType=vpn-gateway,Tags=[{Key=Name,Value=lab5-cloud-vgw}]'
+```text
+Virtual Private Gateway Settings:
+- Name tag: lab5-cloud-vgw
+- ASN: ___ (Q1: What Amazon default ASN is selected?)
+- Attached VPC: lab5-cloud-vpc
 
-# Attach VGW to the Cloud VPC
-aws ec2 attach-vpn-gateway --vpn-gateway-id <VGW_ID> --vpc-id <CLOUD_VPC_ID>
+Route Table Propagation:
+- Route Table: lab5-cloud-private-rt
+- Propagation: Enable route propagation = ___ (Q2: True or False?)
 
-# Q2: Which command parameter enables automatic route injection from the VGW?
-aws ec2 enable-vgw-route-propagation --route-table-id <CLOUD_RT_ID> --___ <VGW_ID>
-
-# Create the Customer Gateway
-aws ec2 create-customer-gateway --type ipsec.1 --public-ip <ONPREM_ROUTER_EIP> --bgp-asn 65000
+Customer Gateway Settings:
+- Name tag: lab5-onprem-cgw
+- Routing: Dynamic
+- BGP ASN: ___ (Q3: What private ASN represents the on-premise gateway?)
+- IP Address: <ONPREM_ROUTER_PUBLIC_EIP>
 ```
 
 Hints:
-- Q1: Private ASN reserved for the AWS side in this lab is 64512.
-- Q2: The parameter specifies the gateway ID to propagate from.
+- Q1: Amazon default private ASN is 64512.
+- Q2: Route propagation must be enabled so that BGP routes are automatically added.
+- Q3: The private customer ASN configured in this lab is 65000.
 
 <details>
 <summary>Click to see solution</summary>
 
-```bash
-# Create Virtual Private Gateway
-aws ec2 create-vpn-gateway --type ipsec.1 --amazon-side-asn 64512 --tag-specifications 'ResourceType=vpn-gateway,Tags=[{Key=Name,Value=lab5-cloud-vgw}]'
+```text
+Virtual Private Gateway Settings:
+- Name tag: lab5-cloud-vgw
+- ASN: 64512
+- Attached VPC: lab5-cloud-vpc
 
-# Attach VGW to Cloud VPC
-aws ec2 attach-vpn-gateway --vpn-gateway-id <VGW_ID> --vpc-id <CLOUD_VPC_ID>
+Route Table Propagation:
+- Route Table: lab5-cloud-private-rt
+- Propagation: Enable route propagation = True
 
-# Enable route propagation
-aws ec2 enable-vgw-route-propagation --route-table-id <CLOUD_RT_ID> --gateway-id <VGW_ID>
-
-# Create Customer Gateway
-aws ec2 create-customer-gateway --type ipsec.1 --public-ip <ONPREM_ROUTER_EIP> --bgp-asn 65000
+Customer Gateway Settings:
+- Name tag: lab5-onprem-cgw
+- Routing: Dynamic
+- BGP ASN: 65000
+- IP Address: <ONPREM_ROUTER_PUBLIC_EIP>
 ```
 
 </details>
@@ -280,34 +287,37 @@ Match each protocol setting to its definition:
 
 ### 2.5 Test and Verify
 
-**Predict:** What state will the Site-to-Site VPN connection report before the on-premises router establishes Phase 1 IKE?
-
-```bash
-aws ec2 describe-vpn-connections --vpn-connection-ids <VPN_ID> --query "VpnConnections[].VgwTelemetry[].Status"
-```
-
-<details>
-<summary>Click to verify</summary>
-
-```json
-[
-    "DOWN",
-    "DOWN"
-]
-```
-Both tunnel endpoints report `DOWN` until the on-premises StrongSwan service initiates key exchange.
-
-</details>
-
-Review the visual verification from the AWS Management Console:
+**AWS Console Step-by-Step Guide for Virtual Private Gateway:**
+1. In the VPC Console, scroll down the left navigation pane to **Virtual Private Network (VPN)** and click **Virtual private gateways**.
+2. Click **Create virtual private gateway**.
+3. Under **Name tag**, enter `lab5-cloud-vgw`. Under **Autonomous System Number (ASN)**, select **Amazon default ASN (64512)**.
+4. Click **Create virtual private gateway**.
+5. Select `lab5-cloud-vgw`, click **Actions > Attach to VPC**, choose `lab5-cloud-vpc`, and click **Attach to VPC**.
+6. Navigate to **Route tables**, select `lab5-cloud-private-rt`, click the **Route propagation** tab, click **Edit route propagation**, check **Enable** for `lab5-cloud-vgw`, and click **Save**.
 
 ![AWS Virtual Private Gateway Attached](screenshots/03_aws_vgw_attached.png)
 
 > **Note:** Confirms Virtual Private Gateway `lab5-cloud-vgw` in state Available and attached to `lab5-cloud-vpc` with ASN `64512`.
 
+**AWS Console Step-by-Step Guide for Customer Gateway:**
+1. In the left navigation pane under **Virtual Private Cloud**, click **Elastic IPs** and click **Allocate Elastic IP address**.
+2. Verify Network Border Group is `ap-southeast-1`, tag with Key `Name` and Value `lab5-onprem-router-eip`, click **Allocate**, and record the allocated IP.
+3. In the left navigation pane under **Virtual Private Network (VPN)**, click **Customer gateways**.
+4. Click **Create customer gateway**.
+5. Set **Name tag** to `lab5-onprem-cgw`. Select **Routing** as **Dynamic**, set **BGP ASN** to `65000`, enter the allocated Elastic IP into **IP address**, and click **Create customer gateway**.
+
 ![AWS Customer Gateway](screenshots/04_aws_customer_gateway.png)
 
 > **Note:** Confirms Customer Gateway `lab5-onprem-cgw` configured with ASN `65000` and the on-premises public Elastic IP.
+
+**AWS Console Step-by-Step Guide for Site-to-Site VPN Connection:**
+1. In the left navigation pane under **Virtual Private Network (VPN)**, click **Site-to-Site VPN connections**.
+2. Click **Create VPN connection**.
+3. Enter **Name tag** `lab5-bgp-vpn`. Under **Target gateway type**, select **Virtual private gateway** and choose `lab5-cloud-vgw`.
+4. Under **Customer gateway**, choose **Existing**, then select `lab5-onprem-cgw`.
+5. Under **Routing options**, select **Dynamic (requires BGP)**. Under **Tunnel inside IP version**, select **IPv4**.
+6. Click **Create VPN connection**.
+7. Once state reaches **Available**, select `lab5-bgp-vpn` and click **Download configuration**. Choose Vendor **Generic**, Platform **Generic**, and Software **Vendor Agnostic**, then download the configuration text.
 
 ![AWS Site-to-Site VPN Connection](screenshots/05_aws_vpn_connection.png)
 
@@ -325,12 +335,12 @@ Review the visual verification from the AWS Management Console:
 
 ## Chapter 3: On-Premises BGP VPN Router Configuration
 
-The on-premises gateway terminates the encrypted tunnel and runs the dynamic routing protocol. Standard EC2 instances drop packets if the source or destination IP does not match the instance network interface. In this chapter, you disable source/destination checking and configure StrongSwan and BIRD routing daemons.
+The on-premises gateway terminates the encrypted tunnel and runs the dynamic routing protocol. Standard EC2 instances drop packets if the source or destination IP does not match the instance network interface. In this chapter, you launch the router in the AWS Management Console, disable source/destination checking, and configure StrongSwan and BIRD routing daemons.
 
 ### 3.1 What You Will Build
 
 You will configure:
-- An EC2 gateway instance with source/destination checks disabled.
+- An EC2 gateway instance with source/destination checks disabled in the AWS Management Console.
 - StrongSwan IPsec configuration (`/etc/ipsec.conf`) for route-based VPN over a Virtual Tunnel Interface (VTI).
 - BIRD routing daemon (`/etc/bird/bird.conf`) to peer with AWS BGP neighbor `169.254.10.1`.
 
@@ -457,26 +467,25 @@ BGP communicates over TCP port 179. If the security group or local firewall drop
 
 ### 3.5 Test and Verify
 
-**Predict:** What command verifies that the BGP peering session has moved to the `Established` state in BIRD?
-
-```bash
-sudo birdc show protocols
-```
-
-<details>
-<summary>Click to verify</summary>
-
-Expected output:
-```text
-Name         Proto      Table      State  Since         Info
-device1      Device     master4    up     10:00:00
-kernel1      Kernel     master4    up     10:00:00
-aws_tunnel1  BGP        ---        up     10:00:05      Established
-```
-
-</details>
-
-Review the visual verification from the AWS Management Console:
+**AWS Console Step-by-Step Guide for On-Premises Router EC2 Instance:**
+1. In the AWS Management Console, navigate to **EC2 > Security groups** and click **Create security group**.
+2. Name it `lab5-onprem-router-sg`, select VPC `lab5-onprem-vpc`, and add the following inbound rules:
+   - Custom UDP, Port `500`, Source `0.0.0.0/0` (IKE key exchange)
+   - Custom UDP, Port `4500`, Source `0.0.0.0/0` (NAT-Traversal)
+   - Custom TCP, Port `8501`, Source `0.0.0.0/0` (Streamlit Dashboard)
+   - SSH, Port `22`, Source your IP address
+3. Click **Create security group**.
+4. Navigate to **EC2 > Instances** and click **Launch instances**.
+5. Name the instance `lab5-onprem-router`, select **Ubuntu Server 22.04 LTS**, instance type `t3.medium`, and select your SSH key pair.
+6. Under **Network settings**, click **Edit**:
+   - VPC: `lab5-onprem-vpc`
+   - Subnet: `lab5-onprem-public-subnet`
+   - Auto-assign public IP: Disable
+   - Select existing security group: `lab5-onprem-router-sg`
+   - Primary IP: `192.168.1.10`
+7. Click **Launch instance**.
+8. Navigate to **EC2 > Network & Security > Elastic IPs**, select `lab5-onprem-router-eip`, click **Actions > Associate Elastic IP address**, select `lab5-onprem-router`, and click **Associate**.
+9. In **Instances**, select `lab5-onprem-router`, click **Actions > Networking > Change source/destination check**, select **Stop**, and click **Save**.
 
 ![AWS EC2 Instances Console](screenshots/06_aws_ec2_instances.png)
 
@@ -494,7 +503,7 @@ Review the visual verification from the AWS Management Console:
 
 ## Chapter 4: Air-Gapped Private ML Pipeline and Encrypted Storage
 
-In regulated environments, model predictions and sensitive input payloads must be cryptographically protected at rest. Plaintext persistence exposes organizations to insider threats and unauthorized storage snapshot inspection. In this chapter, you deploy a zero-dependency NLP classification microservice with encrypted SQLite persistence in the air-gapped Cloud VPC.
+In regulated environments, model predictions and sensitive input payloads must be cryptographically protected at rest. Plaintext persistence exposes organizations to insider threats and unauthorized storage snapshot inspection. In this chapter, you launch the private compute host via the AWS Management Console and deploy an NLP classification service with encrypted SQLite persistence in the air-gapped Cloud VPC.
 
 ### 4.1 What You Will Build
 
@@ -611,30 +620,38 @@ Match each database column to its security or inference function:
 
 ### 4.5 Test and Verify
 
-**Predict:** What response structure will the health endpoint return when queried locally on port 8000?
-
-```bash
-curl -s http://127.0.0.1:8000/health
-```
-
-<details>
-<summary>Click to verify</summary>
-
-```json
-{
-    "service": "AWS Air-Gapped NLP Pipeline",
-    "status": "HEALTHY",
-    "port": 8000
-}
-```
-
-</details>
-
-Review the visual verification from the cloud compute and database audit:
+**AWS Console Step-by-Step Guide for Private ML Compute Instance:**
+1. In the AWS Management Console, navigate to **VPC > Security groups** and click **Create security group**.
+2. Name it `lab5-cloud-ml-sg`, assign it to `lab5-cloud-vpc`, and create the following inbound rules:
+   - Custom TCP, Port `8000`, Source `192.168.0.0/16` (Inference API restricted to on-premise)
+   - SSH, Port `22`, Source `192.168.0.0/16`
+   - All ICMP - IPv4, Source `192.168.0.0/16`
+   - Ensure strictly no rule allows `0.0.0.0/0`.
+3. Click **Create security group**.
+4. Navigate to **EC2 > Instances** and click **Launch instances**.
+5. Name the instance `lab5-cloud-ml-host`, select **Ubuntu Server 22.04 LTS**, instance type `t3.medium`, and select your SSH key pair.
+6. Under **Network settings**, click **Edit**:
+   - VPC: `lab5-cloud-vpc`
+   - Subnet: `lab5-cloud-private-subnet`
+   - Auto-assign public IP: Disable
+   - Select existing security group: `lab5-cloud-ml-sg`
+   - Primary IP: `10.50.1.100`
+7. Click **Launch instance**. Verify in the instances list that `lab5-cloud-ml-host` has no Public IPv4 address assigned.
 
 ![Cloud ML Compute Host Console](screenshots/cloud_ml_screen.jpg)
 
 > **Note:** Screenshot verifies the isolated `lab5-cloud-ml-host` running in private subnet `10.50.1.0/24` with zero public IP address.
+
+**Step-by-Step Inspection Guide for Encrypted SQLite Audit Storage:**
+1. Connect to the on-premises router via SSH, then access the private cloud host across the tunnel:
+   ```bash
+   ssh -i lab5-keypair.pem ubuntu@10.50.1.100
+   ```
+2. Query the SQLite audit table at `/opt/ml-pipeline/encrypted_results.db`:
+   ```bash
+   sqlite3 /opt/ml-pipeline/encrypted_results.db "SELECT id, text_hash, topic, ciphertext FROM inference_audit_log ORDER BY id DESC LIMIT 1;"
+   ```
+3. Verify that the `ciphertext` column contains salted hex tokens and that zero plaintext is written to disk.
 
 ![Encrypted SQLite Database Records](screenshots/10_cloud_db_records.png)
 
@@ -652,7 +669,7 @@ Review the visual verification from the cloud compute and database audit:
 
 ## Chapter 5: Ingestion Telemetry and Security Verification
 
-Enterprise security controls require empirical validation through positive, negative, and chaos testing. You must mathematically prove that inference requests cross the private IPsec tunnel, that internet access is blocked, and that the architecture exhibits fail-safe self-healing. In this chapter, you run the end-to-end ingestion pipeline and execute chaos route tampering.
+Enterprise security controls require empirical validation through positive, negative, and chaos testing. You must mathematically prove that inference requests cross the private IPsec tunnel, that internet access is blocked, and that the architecture exhibits fail-safe self-healing. In this chapter, you run the end-to-end ingestion pipeline and execute chaos route tampering in the AWS Management Console.
 
 ### 5.1 What You Will Build
 
@@ -662,7 +679,7 @@ You will operate:
 - A three-stage security test suite:
   1. Positive validation: Cross-VPC private latency and throughput verification.
   2. Negative validation: Direct public internet blocking proof.
-  3. Chaos tampering: Route withdrawal and automatic self-healing recovery.
+  3. Chaos tampering: Route withdrawal and automatic self-healing recovery in the AWS Console.
 
 ### 5.2 Think First: Chaos Engineering
 
@@ -675,33 +692,40 @@ A fail-safe security posture dictates that if the encrypted path becomes unavail
 
 </details>
 
-### 5.3 Implementation
+### 5.3 Implementation and Visual Telemetry
 
-From the on-premises router, transmit test payloads across the VPN tunnel to the air-gapped ML host:
-
-```bash
-python3 /opt/onprem/data_ingestion.py
-```
-
-Expected output:
-```text
-[INGEST] Sending payload 1/5 -> http://10.50.1.100:8000/predict
-[RESPONSE] 200 OK | Topic: Technical Support | Latency: 14.8ms | Encrypted: True
-[INGEST] Sending payload 2/5 -> http://10.50.1.100:8000/predict
-[RESPONSE] 200 OK | Topic: Account Security   | Latency: 16.2ms | Encrypted: True
-```
-
-Review the live operational telemetry from the dashboard and terminal:
+**Step-by-Step Guide for Live Dashboard Telemetry:**
+1. Open your web browser and navigate to the on-premises dashboard URL:
+   ```text
+   http://<ONPREM_ROUTER_PUBLIC_EIP>:8501/
+   ```
+2. Verify the top status banner displays:
+   ```text
+   BGP VPN IPsec: CONNECTED (AS 65000 ↔ AS 64512)
+   ```
+3. In the **Live Text Data Ingestion** box, enter a sample customer support message and click **Send Over BGP Tunnel**.
+4. Verify that the response renders the classification category, confidence score, and confirmation that the record was encrypted in the private cloud database.
 
 ![On-Premises Telemetry Dashboard](screenshots/07_onprem_dashboard_live.png)
 
 > **Note:** Screenshot shows the on-premises telemetry web UI at port 8501 streaming real-time predictions and displaying BGP VPN connected status.
 
+**Step-by-Step Guide for Terminal Batch Ingestion:**
+1. Connect to the on-premises router terminal:
+   ```bash
+   ssh -i lab5-keypair.pem ubuntu@<ONPREM_ROUTER_PUBLIC_EIP>
+   ```
+2. Run the batch data ingestion client:
+   ```bash
+   python3 /opt/onprem/data_ingestion.py
+   ```
+3. Observe that all 5 payloads succeed with `Status: SUCCESS (200 OK)` and an average latency under 20ms across the private IPsec tunnel.
+
 ![Terminal Batch Ingestion](screenshots/08_terminal_batch_ingestion.png)
 
 > **Note:** Screenshot confirms batch data ingestion transmitting payloads across the private IPsec tunnel with sub-20ms round-trip latency.
 
-### 5.4 Test and Verify: Positive, Negative, and Chaos Suite
+### 5.4 Test and Verify: Positive and Negative Tests
 
 #### Test 1: Positive Test (Private Verification)
 Run an inference request directly from the on-premises router terminal:
@@ -747,31 +771,25 @@ The connection times out because RFC 1918 private IP addresses are non-routable 
 
 ### 5.5 Experiment: Chaos Route Tampering and Self-Healing
 
-Verify that the system drops traffic safely when routes are manipulated, and self-heals when connectivity is restored.
-
-1. **Simulate Route Failure:** In the AWS Console, remove the propagated route to `192.168.0.0/16` or temporarily shut down BIRD on the on-premises router:
-   ```bash
-   sudo systemctl stop bird
-   ```
-
-2. **Observe Fail-Safe Behavior:** Run a curl request from the on-premises host:
+**AWS Console Step-by-Step Guide for Chaos Route Tampering:**
+1. Open the AWS Management Console and navigate to **VPC > Route tables**.
+2. Select `lab5-onprem-rt`. Click the **Routes** tab, then click **Edit routes**.
+3. Locate the route targeting `10.50.0.0/16` and click **Remove**. Click **Save changes**.
+4. In your on-premises terminal, attempt to reach the ML pipeline:
    ```bash
    curl -s --connect-timeout 2 http://10.50.1.100:8000/health || echo "FAIL_SAFE_TIMEOUT_CONFIRMED"
    ```
-   **Observe:** The request terminates with `FAIL_SAFE_TIMEOUT_CONFIRMED`. Traffic does not leak to the internet.
-
-3. **Restore Routing:** Restart the BIRD routing service:
-   ```bash
-   sudo systemctl start bird
-   ```
-
-4. **Verify Autonomous Self-Healing:** Check the health endpoint within 5 seconds:
+   **Observe:** The command outputs `FAIL_SAFE_TIMEOUT_CONFIRMED`. Traffic is dropped immediately without leaking unencrypted.
+5. In the AWS Management Console, restore the route:
+   - Click **Edit routes > Add route**.
+   - Destination: `10.50.0.0/16`
+   - Target: Select the tunnel/gateway interface.
+   - Click **Save changes**.
+6. Re-run the health check command in your terminal:
    ```bash
    curl -s --connect-timeout 2 http://10.50.1.100:8000/health
    ```
-   **Observe:** BGP peering re-establishes and the endpoint immediately responds with `{"service": "AWS Air-Gapped NLP Pipeline", "status": "HEALTHY"}`.
-
-Review the chaos engineering validation execution:
+   **Observe:** The service responds with `{"service": "AWS Air-Gapped NLP Pipeline", "status": "HEALTHY"}`, proving autonomous recovery.
 
 ![Chaos Route Tampering and Self-Healing Verification](screenshots/09_chaos_tampering_experiment.png)
 
@@ -841,7 +859,7 @@ ssh -i lab5-keypair.pem ubuntu@10.50.1.100 "sqlite3 /opt/ml-pipeline/encrypted_r
 **Cause:** Pre-shared key mismatch, security group dropping UDP 500/4500, or incorrect remote gateway IP.
 
 **Solution:**
-Check the StrongSwan daemon logs and verify that UDP ports 500 and 4500 are allowed:
+Check the StrongSwan daemon logs and verify that UDP ports 500 and 4500 are allowed in `lab5-onprem-router-sg`:
 ```bash
 sudo ipsec statusall
 sudo journalctl -u strongswan -n 50 --no-pager
@@ -864,10 +882,7 @@ sudo birdc show protocols all aws_tunnel1
 **Cause:** Source/destination checking remains enabled on the on-premises router instance.
 
 **Solution:**
-Disable source/destination checking via the AWS CLI:
-```bash
-aws ec2 modify-instance-attribute --instance-id <ROUTER_INSTANCE_ID> --no-source-dest-check
-```
+In the AWS Management Console, navigate to **EC2 > Instances**, select `lab5-onprem-router`, click **Actions > Networking > Change source/destination check**, select **Stop**, and save.
 
 ### Error: Model server reports SQLite database locked
 
