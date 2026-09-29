@@ -4,7 +4,7 @@
 
 This lab teaches you how to design, deploy, and validate a secure, end-to-end encrypted hybrid-cloud machine learning architecture on AWS using the AWS Management Console. You will interconnect an air-gapped private Virtual Private Cloud (VPC) hosting an isolated NLP inference service to an on-premises enterprise environment using an IPsec Virtual Private Network (VPN) with dynamic Border Gateway Protocol (BGP) routing. Through hands-on configuration in the console, active retrieval, and chaos testing, you will enforce cryptographic protection for data in transit and data at rest without exposing model workloads to the public internet.
 
-![Lab 5 Architecture](lab5-architecture.svg)
+![Lab 5 Architecture](lab_5.svg)
 
 > **Note:** Diagram illustrates the air-gapped cloud VPC (`10.50.0.0/16`) connected to the simulated on-premises network (`192.168.0.0/16`) via an IPsec VPN tunnel with dynamic BGP route exchanges.
 
