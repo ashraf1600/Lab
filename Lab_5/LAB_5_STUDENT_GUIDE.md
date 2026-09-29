@@ -6,6 +6,8 @@ This lab teaches you how to design, deploy, and validate a secure, end-to-end en
 
 ![Lab 5 Architecture](lab5-architecture.svg)
 
+> **Note:** Diagram illustrates the air-gapped cloud VPC (`10.50.0.0/16`) connected to the simulated on-premises network (`192.168.0.0/16`) via an IPsec VPN tunnel with dynamic BGP route exchanges.
+
 ## Learning Objectives
 
 By the end of this lab, you will be able to:
@@ -166,6 +168,16 @@ The table contains only the local target route and has no default route (`0.0.0.
 
 </details>
 
+Review the visual verification from the AWS Management Console:
+
+![AWS VPC Topology](screenshots/01_aws_vpc_topology.png)
+
+> **Note:** Displays the dual VPC configuration showing the isolated cloud network (`10.50.0.0/16`) and simulated on-premises network (`192.168.0.0/16`).
+
+![AWS Subnets](screenshots/02_aws_subnets.png)
+
+> **Note:** Confirms the cloud private subnet (`10.50.1.0/24`) and on-premises edge subnet (`192.168.1.0/24`) in available status with zero auto-assigned public IP addresses in the private tier.
+
 ### 1.6 Checkpoint
 
 **Self-Assessment:**
@@ -286,6 +298,20 @@ aws ec2 describe-vpn-connections --vpn-connection-ids <VPN_ID> --query "VpnConne
 Both tunnel endpoints report `DOWN` until the on-premises StrongSwan service initiates key exchange.
 
 </details>
+
+Review the visual verification from the AWS Management Console:
+
+![AWS Virtual Private Gateway Attached](screenshots/03_aws_vgw_attached.png)
+
+> **Note:** Confirms Virtual Private Gateway `lab5-cloud-vgw` in state Available and attached to `lab5-cloud-vpc` with ASN `64512`.
+
+![AWS Customer Gateway](screenshots/04_aws_customer_gateway.png)
+
+> **Note:** Confirms Customer Gateway `lab5-onprem-cgw` configured with ASN `65000` and the on-premises public Elastic IP.
+
+![AWS Site-to-Site VPN Connection](screenshots/05_aws_vpn_connection.png)
+
+> **Note:** Displays Site-to-Site VPN connection `lab5-bgp-vpn` in Available state with dynamic BGP routing enabled.
 
 ### 2.6 Checkpoint
 
@@ -450,6 +476,12 @@ aws_tunnel1  BGP        ---        up     10:00:05      Established
 
 </details>
 
+Review the visual verification from the AWS Management Console:
+
+![AWS EC2 Instances Console](screenshots/06_aws_ec2_instances.png)
+
+> **Note:** Confirms both compute instances running: `lab5-onprem-router` (with public Elastic IP) and `lab5-cloud-ml-host` (strictly private IP `10.50.1.100`).
+
 ### 3.6 Checkpoint
 
 **Self-Assessment:**
@@ -598,6 +630,16 @@ curl -s http://127.0.0.1:8000/health
 
 </details>
 
+Review the visual verification from the cloud compute and database audit:
+
+![Cloud ML Compute Host Console](screenshots/cloud_ml_screen.jpg)
+
+> **Note:** Screenshot verifies the isolated `lab5-cloud-ml-host` running in private subnet `10.50.1.0/24` with zero public IP address.
+
+![Encrypted SQLite Database Records](screenshots/10_cloud_db_records.png)
+
+> **Note:** Screenshot confirms zero-knowledge ciphertext, HMAC authentication tags, and SHA-256 hashes recorded inside `/opt/ml-pipeline/encrypted_results.db`.
+
 ### 4.6 Checkpoint
 
 **Self-Assessment:**
@@ -648,6 +690,16 @@ Expected output:
 [INGEST] Sending payload 2/5 -> http://10.50.1.100:8000/predict
 [RESPONSE] 200 OK | Topic: Account Security   | Latency: 16.2ms | Encrypted: True
 ```
+
+Review the live operational telemetry from the dashboard and terminal:
+
+![On-Premises Telemetry Dashboard](screenshots/07_onprem_dashboard_live.png)
+
+> **Note:** Screenshot shows the on-premises telemetry web UI at port 8501 streaming real-time predictions and displaying BGP VPN connected status.
+
+![Terminal Batch Ingestion](screenshots/08_terminal_batch_ingestion.png)
+
+> **Note:** Screenshot confirms batch data ingestion transmitting payloads across the private IPsec tunnel with sub-20ms round-trip latency.
 
 ### 5.4 Test and Verify: Positive, Negative, and Chaos Suite
 
@@ -718,6 +770,12 @@ Verify that the system drops traffic safely when routes are manipulated, and sel
    curl -s --connect-timeout 2 http://10.50.1.100:8000/health
    ```
    **Observe:** BGP peering re-establishes and the endpoint immediately responds with `{"service": "AWS Air-Gapped NLP Pipeline", "status": "HEALTHY"}`.
+
+Review the chaos engineering validation execution:
+
+![Chaos Route Tampering and Self-Healing Verification](screenshots/09_chaos_tampering_experiment.png)
+
+> **Note:** Screenshot demonstrates the chaos route tampering experiment: route withdrawal causes fail-safe packet drops without unencrypted fallback, and immediate self-healing occurs when connectivity is restored.
 
 ### 5.6 Checkpoint
 
