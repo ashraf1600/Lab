@@ -8,9 +8,25 @@ Your team lead has tasked you with building an automated, robust **Extract, Tran
 
 Below is the end-to-end architecture of the data pipeline you will construct for QuickCart:
 
+```text
+                           QUICKCART ETL ARCHITECTURE
+                           
+    Incoming Orders             Transformation               Validation                 Storage & Ops
+    ┌───────────────┐         ┌─────────────────┐        ┌─────────────────┐        ┌───────────────────┐
+    │  orders.csv   │ ──────> │  Pandas Engine  │ ─────> │ Quality Checks  │ ─────> │ orders_clean.     │
+    │  (Raw CSV)    │ Extract │ • Clean Strings │        │ • Non-null IDs  │ Valid  │   parquet         │
+    └───────────────┘         │ • Parse Dates   │        │ • Qty > 0       │        └───────────────────┘
+                              │ • Calc Revenue  │        │ • Price >= 0    │                  │
+                              └─────────────────┘        └────────┬────────┘                  ▼
+                                                                  │ Invalid            Downstream BI &
+                                                                  ▼                     ML Pipelines
+                                                         ┌─────────────────┐
+                                                         │  pipeline.log   │
+                                                         │ (Structured Log)│
+                                                         └─────────────────┘
+```
 
->
-> ![QuickCart Order Data Pipeline Architecture](assets/ETL.drawio.svg)
+![QuickCart Order Data Pipeline Architecture](assets/ETL.drawio.svg)
 
 The architecture diagram outlines the complete lifecycle of QuickCart's operational order data. Raw CSV files are first extracted into memory where Pandas cleans text anomalies and calculates order totals. Validated records meeting all business constraints are persisted into optimized Parquet files, while erroneous records trigger structured warning logs. This blueprint ensures that downstream machine learning models and analytics dashboards consume only reliable, high-quality data.
 
@@ -39,8 +55,6 @@ quickcart-data-pipeline/
 └── requirements.txt            # Project dependencies (pandas, pyarrow)
 ```
 
-> **[Show Image: Initial Project File Structure in VS Code Server]**
-
 The project structure cleanly separates business logic from raw and generated artifacts. Storing raw CSV data in an isolated `data/` folder safeguards the original restaurant uploads against accidental in-place modification. The `src/` directory houses modular application scripts, while analytical results and operational telemetry are systematically written to `output/` and `logs/`. This standard structure mirrors production-grade data engineering repository standards.
 
 ---
@@ -64,9 +78,7 @@ Students will build the entire pipeline using **VS Code Server**. All files are 
    - `output`
    - `logs`
 
-> **[Show Image: Project Directory Structure in VS Code Server Explorer]**
->
-> ![Project Directory Structure in VS Code Server Explorer](assets/step1_project_structure.png)
+![Project Directory Structure in VS Code Server Explorer](assets/step1_project_structure.png)
 
 The VS Code Server Explorer displays the newly scaffolded project directories. Each directory represents a dedicated layer in the data processing lifecycle. Establishing this directory skeleton up front prevents runtime path resolution errors during file extraction and loading.
 
@@ -86,9 +98,7 @@ The VS Code Server Explorer displays the newly scaffolded project directories. E
    *(Note: If working locally on Windows PowerShell, run: `.venv\Scripts\Activate.ps1`)*
 4. Verify that `(.venv)` appears at the beginning of your terminal prompt.
 
-> **[Show Image: Python Virtual Environment Activated in VS Code Terminal]**
->
-> ![Python Virtual Environment Activated in VS Code Terminal](assets/step2_virtual_environment.png)
+![Python Virtual Environment Activated in VS Code Terminal](assets/step2_virtual_environment.png)
 
 The activated virtual environment provides an isolated runtime sandbox for the QuickCart data pipeline. Sandboxing ensures that specific library versions do not conflict with system-wide Python packages. The `(.venv)` prompt prefix visually confirms that subsequent package installations will reside exclusively inside this workspace.
 
@@ -115,9 +125,7 @@ The activated virtual environment provides an isolated runtime sandbox for the Q
    pip list
    ```
 
-> **[Show Image: Installed Dependencies in VS Code Terminal]**
->
-> ![Installed Dependencies in VS Code Terminal](assets/step3_dependencies_installed.png)
+![Installed Dependencies in VS Code Terminal](assets/step3_dependencies_installed.png)
 
 The package manager successfully installs Pandas for data transformations and PyArrow for Parquet serialization. Defining requirements in a standalone file ensures the pipeline can be deterministically reproduced across different cloud environments. The terminal output confirms that the correct library versions are active in the virtual environment.
 
@@ -161,9 +169,7 @@ The package manager successfully installs Pandas for data transformations and Py
    ```
 4. Save the file by clicking **File > Save**.
 
-> **[Show Image: Raw orders.csv File in VS Code Editor]**
->
-> ![Raw orders.csv File in VS Code Editor](assets/step4_raw_orders_csv.png)
+![Raw orders.csv File in VS Code Editor](assets/step4_raw_orders_csv.png)
 
 The raw CSV file reflects realistic daily operational data submitted by QuickCart's restaurant partners. It contains vital business fields such as order identifiers, customer IDs, menu items, prices, and timestamps. Creating this sample batch allows us to test transformation rules and validation checks before deploying to production feeds.
 
@@ -300,9 +306,7 @@ The pipeline code organizes the ETL workflow into independent, modular functions
    ```
 2. The terminal executes cleanly without noisy stdout output because all metrics are routed to the structured log file.
 
-> **[Show Image: Clean Pipeline Execution in VS Code Terminal]**
->
-> ![Clean Pipeline Execution in VS Code Terminal](assets/step6_pipeline_execution.png)
+![Clean Pipeline Execution in VS Code Terminal](assets/step6_pipeline_execution.png)
 
 The command runs the end-to-end pipeline against the raw order dataset. Because professional data engineering workflows avoid printing raw output directly to the terminal, silence indicates smooth execution. The resulting data and execution traces are written to their respective disk directories.
 
@@ -338,9 +342,7 @@ The command runs the end-to-end pipeline against the raw order dataset. Because 
    python src/check_output.py
    ```
 
-> **[Show Image: Parquet Data and Schema in Terminal Output]**
->
-> ![Parquet Data and Schema in Terminal Output](assets/step7_parquet_output.png)
+![Parquet Data and Schema in Terminal Output](assets/step7_parquet_output.png)
 
 The inspection script confirms that the Parquet dataset was created with proper data types and schemas. The newly derived `total_amount` column is accurately calculated as `quantity * unit_price` for every record. Downstream analytics queries on this Parquet file will run significantly faster and consume less storage than the original CSV.
 
@@ -364,9 +366,7 @@ The inspection script confirms that the Parquet dataset was created with proper 
    2026-10-04 12:30:01 | INFO | ========== Pipeline Completed Successfully ==========
    ```
 
-> **[Show Image: Structured Logs in VS Code Editor]**
->
-> ![Structured Logs in VS Code Editor](assets/step8_structured_logs.png)
+![Structured Logs in VS Code Editor](assets/step8_structured_logs.png)
 
 The structured log file preserves a complete, timestamped history of each ETL milestone. It records incoming batch sizes, transformation progress, and final record counts loaded into storage. In a production setting, centralized log monitoring tools parse these structured logs to trigger alerts if batch sizes drop unexpectedly.
 
@@ -390,9 +390,7 @@ The structured log file preserves a complete, timestamped history of each ETL mi
    INFO | Validation completed | valid=24 | rejected=1
    ```
 
-> **[Show Image: Data Validation Warning in pipeline.log]**
->
-> ![Data Validation Warning in pipeline.log](assets/step9_validation_warning.png)
+![Data Validation Warning in pipeline.log](assets/step9_validation_warning.png)
 
 The pipeline successfully flags the negative quantity record and prevents it from contaminating analytical reports. The invalid order is quarantined, leaving exactly 24 verified records to be loaded into the Parquet output. The log records a detailed warning indicating how many records were rejected, ensuring full data auditability.
 
@@ -418,9 +416,7 @@ The pipeline successfully flags the negative quantity record and prevents it fro
 4. In the Explorer, right-click `data/orders_missing.csv`, select **Rename**, and restore the name to `orders.csv`.
 5. Restore the original quantity `2` for order `1003` in `data/orders.csv`, save, and re-run `python src/pipeline.py` to leave the lab in a clean state.
 
-> **[Show Image: Exception Stack Trace Captured in pipeline.log]**
->
-> ![Exception Stack Trace Captured in pipeline.log](assets/step10_pipeline_error.png)
+![Exception Stack Trace Captured in pipeline.log](assets/step10_pipeline_error.png)
 
 This test proves the pipeline's resilience against sudden environmental failures, such as delayed or missing upstream files. Rather than terminating silently, the script records the exact exception details and traceback in the log file. Data engineering teams rely on these detailed stack traces to quickly diagnose and resolve infrastructure issues.
 
