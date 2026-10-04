@@ -9,8 +9,6 @@ Your team lead has tasked you with building an automated, robust **Extract, Tran
 Below is the end-to-end architecture of the data pipeline you will construct for QuickCart:
 
 
-> **[Show Image: QuickCart Data Pipeline Architecture Diagram]**
->
 > ![QuickCart Order Data Pipeline Architecture](assets/quickcart-order-data-pipeline-architecture.png)
 
 The architecture diagram outlines the complete lifecycle of QuickCart's operational order data. Raw CSV files are first extracted into memory where Pandas cleans text anomalies and calculates order totals. Validated records meeting all business constraints are persisted into optimized Parquet files, while erroneous records trigger structured warning logs. This blueprint ensures that downstream machine learning models and analytics dashboards consume only reliable, high-quality data.
