@@ -8,7 +8,26 @@ Your team lead has tasked you with building an automated, robust **Extract, Tran
 
 Below is the end-to-end architecture of the data pipeline you will construct for QuickCart:
 
+```text
+                           QUICKCART ETL ARCHITECTURE
+                           
+    Incoming Orders             Transformation               Validation                 Storage & Ops
+    ┌───────────────┐         ┌─────────────────┐        ┌─────────────────┐        ┌───────────────────┐
+    │  orders.csv   │ ──────> │  Pandas Engine  │ ─────> │ Quality Checks  │ ─────> │ orders_clean.     │
+    │  (Raw CSV)    │ Extract │ • Clean Strings │        │ • Non-null IDs  │ Valid  │   parquet         │
+    └───────────────┘         │ • Parse Dates   │        │ • Qty > 0       │        └───────────────────┘
+                              │ • Calc Revenue  │        │ • Price >= 0    │                  │
+                              └─────────────────┘        └────────┬────────┘                  ▼
+                                                                  │ Invalid            Downstream BI &
+                                                                  ▼                     ML Pipelines
+                                                         ┌─────────────────┐
+                                                         │  pipeline.log   │
+                                                         │ (Structured Log)│
+                                                         └─────────────────┘
+```
 
+> **[Show Image: QuickCart Data Pipeline Architecture Diagram]**
+>
 > ![QuickCart Order Data Pipeline Architecture](assets/quickcart-order-data-pipeline-architecture.png)
 
 The architecture diagram outlines the complete lifecycle of QuickCart's operational order data. Raw CSV files are first extracted into memory where Pandas cleans text anomalies and calculates order totals. Validated records meeting all business constraints are persisted into optimized Parquet files, while erroneous records trigger structured warning logs. This blueprint ensures that downstream machine learning models and analytics dashboards consume only reliable, high-quality data.
@@ -38,6 +57,7 @@ quickcart-data-pipeline/
 └── requirements.txt            # Project dependencies (pandas, pyarrow)
 ```
 
+> **[Show Image: Initial Project File Structure in VS Code Server]**
 
 The project structure cleanly separates business logic from raw and generated artifacts. Storing raw CSV data in an isolated `data/` folder safeguards the original restaurant uploads against accidental in-place modification. The `src/` directory houses modular application scripts, while analytical results and operational telemetry are systematically written to `output/` and `logs/`. This standard structure mirrors production-grade data engineering repository standards.
 
@@ -45,6 +65,7 @@ The project structure cleanly separates business logic from raw and generated ar
 
 ## 3. Project Implementation
 
+Students will build the entire pipeline using **VS Code Server**. All files are created, edited, and managed directly through the VS Code Server user interface—**no `cat` commands are used**.
 
 ---
 
@@ -71,7 +92,7 @@ The VS Code Server Explorer displays the newly scaffolded project directories. E
 
 ### Step 2: Initialize and Activate Python Virtual Environment
 
-1. In VS Code Server, open an integrated terminal by clicking **Terminal > New Terminal** (or pressing `` Ctrl+` `` / `` Cmd+` ``).
+1. In VS Code Server, open an integrated terminal by clicking **Terminal > New Terminal**.
 2. Create an isolated virtual environment named `.venv`:
    ```bash
    python3 -m venv .venv
@@ -83,7 +104,8 @@ The VS Code Server Explorer displays the newly scaffolded project directories. E
    *(Note: If working locally on Windows PowerShell, run: `.venv\Scripts\Activate.ps1`)*
 4. Verify that `(.venv)` appears at the beginning of your terminal prompt.
 
-
+> **[Show Image: Python Virtual Environment Activated in VS Code Terminal]**
+>
 > ![Python Virtual Environment Activated in VS Code Terminal](assets/step2_virtual_environment.png)
 
 The activated virtual environment provides an isolated runtime sandbox for the QuickCart data pipeline. Sandboxing ensures that specific library versions do not conflict with system-wide Python packages. The `(.venv)` prompt prefix visually confirms that subsequent package installations will reside exclusively inside this workspace.
@@ -101,7 +123,7 @@ The activated virtual environment provides an isolated runtime sandbox for the Q
    pandas>=2.0.0
    pyarrow>=14.0.0
    ```
-3. Save the file   
+3. Save the file by clicking **File > Save**.
 4. In your activated terminal, install the dependencies:
    ```bash
    pip install -r requirements.txt
@@ -111,6 +133,7 @@ The activated virtual environment provides an isolated runtime sandbox for the Q
    pip list
    ```
 
+> **[Show Image: Installed Dependencies in VS Code Terminal]**
 >
 > ![Installed Dependencies in VS Code Terminal](assets/step3_dependencies_installed.png)
 
@@ -154,9 +177,9 @@ The package manager successfully installs Pandas for data transformations and Py
    1024,C024,Pizza Paradiso,Cheesy Garlic Bread,2,170,2026-10-03
    1025,C025,Royal Kitchen,Gulab Jamun,4,75,2026-10-03
    ```
-4. Save the file
+4. Save the file by clicking **File > Save**.
 
-
+> **[Show Image: Raw orders.csv File in VS Code Editor]**
 >
 > ![Raw orders.csv File in VS Code Editor](assets/step4_raw_orders_csv.png)
 
@@ -166,7 +189,7 @@ The raw CSV file reflects realistic daily operational data submitted by QuickCar
 
 ### Step 5: Implement the ETL Pipeline Script
 
-1. In the VS Code Explorer, right-click the `src/` folder and create pipeline.py
+1. In the VS Code Explorer, right-click the `src/` folder and select **New File**. Name it:
    ```text
    pipeline.py
    ```
@@ -177,9 +200,6 @@ import logging
 from pathlib import Path
 import pandas as pd
 
-# ---------------------------------------------------------------------------
-# Project Paths
-# ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 INPUT_FILE = BASE_DIR / "data" / "orders.csv"
@@ -187,13 +207,9 @@ OUTPUT_FILE = BASE_DIR / "output" / "orders_clean.parquet"
 REJECTED_FILE = BASE_DIR / "output" / "rejected_orders.csv"
 LOG_FILE = BASE_DIR / "logs" / "pipeline.log"
 
-# Ensure output and log directories exist before logging setup
 OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
 LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-# ---------------------------------------------------------------------------
-# Logging Configuration
-# ---------------------------------------------------------------------------
 logging.basicConfig(
     filename=LOG_FILE,
     level=logging.INFO,
@@ -203,7 +219,6 @@ logger = logging.getLogger(__name__)
 
 
 def extract_data() -> pd.DataFrame:
-    """Step 1 (Extract): Read raw CSV file into a DataFrame and handle read errors."""
     logger.info("Starting data extraction")
     if not INPUT_FILE.exists():
         raise FileNotFoundError(f"Input file not found at {INPUT_FILE}")
@@ -214,28 +229,22 @@ def extract_data() -> pd.DataFrame:
 
 
 def transform_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Step 2 (Transform): Clean data, handle missing values, convert data types, remove duplicates, and calculate total_amount."""
     logger.info("Starting data transformation")
     df = df.copy()
 
-    # Clean text data and strip whitespace
     df["restaurant"] = df["restaurant"].astype(str).str.strip()
     df["item"] = df["item"].astype(str).str.strip()
 
-    # Remove duplicate order entries
     initial_count = len(df)
     df = df.drop_duplicates(subset=["order_id"])
     if len(df) < initial_count:
         logger.info("Duplicates removed | count=%d", initial_count - len(df))
 
-    # Convert data types & handle missing values via coercion
     df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce")
     df["unit_price"] = pd.to_numeric(df["unit_price"], errors="coerce")
 
-    # Standardize formats (e.g., dates)
     df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
 
-    # Calculate derived business feature: total_amount
     df["total_amount"] = df["quantity"] * df["unit_price"]
 
     logger.info("Data transformation completed")
@@ -243,7 +252,6 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def validate_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Step 3 (Validate): Check required fields, validate data types, check ranges (qty > 0, price >= 0), and separate valid vs rejected."""
     logger.info("Starting data validation")
 
     required_columns = ["order_id", "customer_id", "restaurant", "item", "quantity", "unit_price", "order_date"]
@@ -251,11 +259,6 @@ def validate_data(df: pd.DataFrame) -> pd.DataFrame:
     if missing_columns:
         raise ValueError(f"Schema validation failed. Missing required columns: {missing_columns}")
 
-    # Quality constraints per architecture:
-    # 1. Non-null identifiers
-    # 2. Check quantity > 0
-    # 3. Check price >= 0
-    # 4. Valid parsed order date
     invalid_rows = (
         df["order_id"].isna()
         | df["customer_id"].isna()
@@ -272,7 +275,6 @@ def validate_data(df: pd.DataFrame) -> pd.DataFrame:
 
     if rejected_count > 0:
         logger.warning("Invalid records detected | rejected_count=%d", rejected_count)
-        # Save rejected records as CSV for manual inspection (as indicated in architecture)
         rejected_df.to_csv(REJECTED_FILE, index=False)
         logger.info("Rejected records saved for inspection | destination=%s", REJECTED_FILE)
 
@@ -281,14 +283,12 @@ def validate_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_data(df: pd.DataFrame) -> None:
-    """Step 4 (Load): Write cleaned data to Parquet in efficient columnar format for downstream consumers."""
     logger.info("Starting data loading")
     df.to_parquet(OUTPUT_FILE, index=False)
     logger.info("Data loading completed | destination=%s | rows=%d", OUTPUT_FILE, len(df))
 
 
 def main():
-    """Execute the end-to-end QuickCart ETL pipeline."""
     try:
         logger.info("========== Pipeline Started ==========")
         df_raw = extract_data()
@@ -304,7 +304,7 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-3. Save the file (`Ctrl+S` / `Cmd+S`).
+3. Save the file by clicking **File > Save**.
 
 The pipeline code organizes the ETL workflow into independent, modular functions. Extraction loads the raw order file, transformation cleans strings and derives the `total_amount` metric, and validation removes corrupted rows. Wrapping the execution in a `try/except` block guarantees that unhandled errors are automatically captured in the operational log.
 
@@ -318,6 +318,7 @@ The pipeline code organizes the ETL workflow into independent, modular functions
    ```
 2. The terminal executes cleanly without noisy stdout output because all metrics are routed to the structured log file.
 
+> **[Show Image: Clean Pipeline Execution in VS Code Terminal]**
 >
 > ![Clean Pipeline Execution in VS Code Terminal](assets/step6_pipeline_execution.png)
 
@@ -354,6 +355,8 @@ The command runs the end-to-end pipeline against the raw order dataset. Because 
    ```bash
    python src/check_output.py
    ```
+
+> **[Show Image: Parquet Data and Schema in Terminal Output]**
 >
 > ![Parquet Data and Schema in Terminal Output](assets/step7_parquet_output.png)
 
@@ -379,6 +382,7 @@ The inspection script confirms that the Parquet dataset was created with proper 
    2026-10-04 12:30:01 | INFO | ========== Pipeline Completed Successfully ==========
    ```
 
+> **[Show Image: Structured Logs in VS Code Editor]**
 >
 > ![Structured Logs in VS Code Editor](assets/step8_structured_logs.png)
 
@@ -391,9 +395,9 @@ The structured log file preserves a complete, timestamped history of each ETL mi
 1. In the VS Code Explorer, open `data/orders.csv`.
 2. Edit line 4 (order `1003`) by changing the quantity from `2` to `-2` (simulating a corrupted cancellation entry):
    ```csv
-   1003,C003,FoodHub,Pizza,-2,450,2026-10-01
+   1003,C003,Pizza Paradiso,Margherita Pizza,-2,450,2026-10-01
    ```
-3. Save the file .
+3. Save the file by clicking **File > Save**.
 4. Re-run the pipeline in your terminal:
    ```bash
    python src/pipeline.py
@@ -401,10 +405,10 @@ The structured log file preserves a complete, timestamped history of each ETL mi
 5. Re-open `logs/pipeline.log` to observe the data quality warning:
    ```text
    WARNING | Invalid records detected | rejected_count=1
-   INFO | Validation completed | valid=7 | rejected=1
+   INFO | Validation completed | valid=24 | rejected=1
    ```
 
-
+> **[Show Image: Data Validation Warning in pipeline.log]**
 >
 > ![Data Validation Warning in pipeline.log](assets/step9_validation_warning.png)
 
@@ -431,6 +435,8 @@ The pipeline successfully flags the negative quantity record and prevents it fro
    ```
 4. In the Explorer, right-click `data/orders_missing.csv`, select **Rename**, and restore the name to `orders.csv`.
 5. Restore the original quantity `2` for order `1003` in `data/orders.csv`, save, and re-run `python src/pipeline.py` to leave the lab in a clean state.
+
+> **[Show Image: Exception Stack Trace Captured in pipeline.log]**
 >
 > ![Exception Stack Trace Captured in pipeline.log](assets/step10_pipeline_error.png)
 
@@ -440,4 +446,4 @@ This test proves the pipeline's resilience against sudden environmental failures
 
 ## 4. Conclusion
 
-QuickCart's daily restaurant orders are now seamlessly ingested, validated, and transformed from messy CSV files into high-performance Parquet datasets. By establishing clear modular stages for extraction, transformation, validation, and loading, the pipeline guarantees that only high-quality data reaches downstream business dashboards. The inclusion of structured logging and exception handling provides vital operational visibility whenever corrupted records or system failures arise. This architecture forms the foundational pattern utilized by modern data platforms to power business intelligence and automated machine learning workflows.
+QuickCart's daily restaurant orders are now seamlessly ingested, validated, and transformed from messy CSV files into high-performance Parquet datasets. By establishing clear modular stages for extraction, transformation, validation, and loading, the pipeline guarantees that only high-quality data reaches downstream business dashboards. The inclusion of structured logging and exception handling provides vital operational visibility whenever corrupted records or system failures arise. This architecture forms the foundational pattern utilized by modern data platforms to power business intelligence and automated machine learning workflows. In the upcoming lab, we will expand this architecture by transitioning from batch-scheduled file processing to real-time event streaming with Apache Kafka.
