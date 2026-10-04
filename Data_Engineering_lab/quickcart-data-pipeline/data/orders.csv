@@ -1,0 +1,26 @@
+order_id,customer_id,restaurant,item,quantity,unit_price,order_date
+1001,C001,FoodHub,Classic Burger,2,250,2026-10-01
+1002,C002,Spice Kitchen,Chicken Biryani,1,320,2026-10-01
+1003,C003,Pizza Paradiso,Margherita Pizza,2,450,2026-10-01
+1004,C004,Royal Kitchen,Mutton Kacchi,1,480,2026-10-01
+1005,C005,Spice Kitchen,Garlic Naan,4,60,2026-10-01
+1006,C006,FoodHub,Crispy Fries,2,120,2026-10-01
+1007,C007,Royal Kitchen,Butter Chicken,1,380,2026-10-01
+1008,C008,Pizza Paradiso,Pasta Alfredo,2,340,2026-10-01
+1009,C009,Wok & Roll,Egg Fried Rice,2,220,2026-10-02
+1010,C010,Green Bowl,Caesar Salad,1,280,2026-10-02
+1011,C011,Wok & Roll,Chicken Chowmein,1,260,2026-10-02
+1012,C012,Cafe Mocha,Iced Caramel Latte,2,210,2026-10-02
+1013,C013,FoodHub,BBQ Wings,3,190,2026-10-02
+1014,C014,Spice Kitchen,Paneer Butter Masala,1,290,2026-10-02
+1015,C015,Green Bowl,Avocado Toast,2,240,2026-10-02
+1016,C016,Cafe Mocha,Chocolate Brownie,2,150,2026-10-02
+1017,C017,Pizza Paradiso,Pepperoni Pizza,1,520,2026-10-03
+1018,C018,Royal Kitchen,Beef Rezala,1,420,2026-10-03
+1019,C019,FoodHub,Smoky Chicken Wrap,2,230,2026-10-03
+1020,C020,Green Bowl,Detox Green Juice,1,160,2026-10-03
+1021,C021,Wok & Roll,Steamed Momos,3,180,2026-10-03
+1022,C022,Cafe Mocha,Cappuccino,2,190,2026-10-03
+1023,C023,Spice Kitchen,Hyderabadi Pulao,2,310,2026-10-03
+1024,C024,Pizza Paradiso,Cheesy Garlic Bread,2,170,2026-10-03
+1025,C025,Royal Kitchen,Gulab Jamun,4,75,2026-10-03

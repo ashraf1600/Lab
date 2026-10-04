@@ -1,0 +1,51 @@
+2026-10-04 14:30:41,843 | INFO | ========== Pipeline Started ==========
+2026-10-04 14:30:41,843 | INFO | Starting data extraction
+2026-10-04 14:30:41,859 | INFO | Data extraction completed | rows=25
+2026-10-04 14:30:41,859 | INFO | Starting data transformation
+2026-10-04 14:30:41,887 | INFO | Data transformation completed
+2026-10-04 14:30:41,887 | INFO | Starting data validation
+2026-10-04 14:30:41,897 | INFO | Validation completed | valid=25 | rejected=0
+2026-10-04 14:30:41,897 | INFO | Starting data loading
+2026-10-04 14:30:42,256 | INFO | Data loading completed | destination=D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\output\orders_clean.parquet | rows=25
+2026-10-04 14:30:42,256 | INFO | ========== Pipeline Completed Successfully ==========
+2026-10-04 14:37:21,598 | INFO | ========== Pipeline Started ==========
+2026-10-04 14:37:21,598 | INFO | Starting data extraction
+2026-10-04 14:37:21,614 | INFO | Data extraction completed | rows=25
+2026-10-04 14:37:21,614 | INFO | Starting data transformation
+2026-10-04 14:37:21,614 | INFO | Data transformation completed
+2026-10-04 14:37:21,614 | INFO | Starting data validation
+2026-10-04 14:37:21,630 | WARNING | Invalid records detected | rejected_count=1
+2026-10-04 14:37:21,630 | INFO | Validation completed | valid=24 | rejected=1
+2026-10-04 14:37:21,630 | INFO | Starting data loading
+2026-10-04 14:37:21,662 | INFO | Data loading completed | destination=D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\output\orders_clean.parquet | rows=24
+2026-10-04 14:37:21,662 | INFO | ========== Pipeline Completed Successfully ==========
+2026-10-04 14:41:53,320 | INFO | ========== Pipeline Started ==========
+2026-10-04 14:41:53,320 | INFO | Starting data extraction
+2026-10-04 14:41:53,321 | ERROR | Pipeline failed with unexpected error | error=Input file not found at D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\data\orders.csv
+Traceback (most recent call last):
+  File "D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\src\pipeline.py", line 103, in main
+    df_raw = extract_data()
+             ^^^^^^^^^^^^^^
+  File "D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\src\pipeline.py", line 33, in extract_data
+    raise FileNotFoundError(f"Input file not found at {INPUT_FILE}")
+FileNotFoundError: Input file not found at D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\data\orders.csv
+2026-10-04 14:44:35,356 | INFO | ========== Pipeline Started ==========
+2026-10-04 14:44:35,356 | INFO | Starting data extraction
+2026-10-04 14:44:35,383 | INFO | Data extraction completed | rows=25
+2026-10-04 14:44:35,383 | INFO | Starting data transformation
+2026-10-04 14:44:35,408 | INFO | Data transformation completed
+2026-10-04 14:44:35,408 | INFO | Starting data validation
+2026-10-04 14:44:35,415 | INFO | Validation completed | valid=25 | rejected=0
+2026-10-04 14:44:35,415 | INFO | Starting data loading
+2026-10-04 14:44:35,493 | INFO | Data loading completed | destination=D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\output\orders_clean.parquet | rows=25
+2026-10-04 14:44:35,493 | INFO | ========== Pipeline Completed Successfully ==========
+2026-10-04 14:53:41,104 | INFO | ========== Pipeline Started ==========
+2026-10-04 14:53:41,106 | INFO | Starting data extraction
+2026-10-04 14:53:41,128 | INFO | Data extraction completed | rows=25
+2026-10-04 14:53:41,128 | INFO | Starting data transformation
+2026-10-04 14:53:41,146 | INFO | Data transformation completed
+2026-10-04 14:53:41,155 | INFO | Starting data validation
+2026-10-04 14:53:41,162 | INFO | Validation completed | valid=25 | rejected=0
+2026-10-04 14:53:41,162 | INFO | Starting data loading
+2026-10-04 14:53:41,227 | INFO | Data loading completed | destination=D:\Complete Data Science,Machine Learning,DL,NLP Bootcamp.torrent\Telegram Desktop\Poridhi\Data_Engineering_lab\quickcart-data-pipeline\output\orders_clean.parquet | rows=25
+2026-10-04 14:53:41,227 | INFO | ========== Pipeline Completed Successfully ==========
