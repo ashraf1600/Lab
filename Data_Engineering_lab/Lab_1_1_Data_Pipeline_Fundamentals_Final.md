@@ -8,25 +8,7 @@ Your team lead has tasked you with building an automated, robust **Extract, Tran
 
 Below is the end-to-end architecture of the data pipeline you will construct for QuickCart:
 
-```text
-                           QUICKCART ETL ARCHITECTURE
-                           
-    Incoming Orders             Transformation               Validation                 Storage & Ops
-    ┌───────────────┐         ┌─────────────────┐        ┌─────────────────┐        ┌───────────────────┐
-    │  orders.csv   │ ──────> │  Pandas Engine  │ ─────> │ Quality Checks  │ ─────> │ orders_clean.     │
-    │  (Raw CSV)    │ Extract │ • Clean Strings │        │ • Non-null IDs  │ Valid  │   parquet         │
-    └───────────────┘         │ • Parse Dates   │        │ • Qty > 0       │        └───────────────────┘
-                              │ • Calc Revenue  │        │ • Price >= 0    │                  │
-                              └─────────────────┘        └────────┬────────┘                  ▼
-                                                                  │ Invalid            Downstream BI &
-                                                                  ▼                     ML Pipelines
-                                                         ┌─────────────────┐
-                                                         │  pipeline.log   │
-                                                         │ (Structured Log)│
-                                                         └─────────────────┘
-```
 
-> **[Show Image: QuickCart Data Pipeline Architecture Diagram]**
 >
 > ![QuickCart Order Data Pipeline Architecture](assets/ETL.drawio.svg)
 
