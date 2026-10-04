@@ -38,7 +38,6 @@ quickcart-data-pipeline/
 └── requirements.txt            # Project dependencies (pandas, pyarrow)
 ```
 
-> **[Show Image: Initial Project File Structure in VS Code Server]**
 
 The project structure cleanly separates business logic from raw and generated artifacts. Storing raw CSV data in an isolated `data/` folder safeguards the original restaurant uploads against accidental in-place modification. The `src/` directory houses modular application scripts, while analytical results and operational telemetry are systematically written to `output/` and `logs/`. This standard structure mirrors production-grade data engineering repository standards.
 
