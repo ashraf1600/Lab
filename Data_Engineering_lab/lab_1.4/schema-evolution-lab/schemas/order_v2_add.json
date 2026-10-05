@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QuickCartOrderEventV2Add",
+  "description": "V2 Schema Evolution: Non-breaking addition of optional payment_method field",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string",
+      "description": "Unique identifier for the order"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Unique customer reference ID"
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Total order amount in BDT"
+    },
+    "delivery_address": {
+      "type": "string",
+      "description": "Delivery destination address"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": ["cash_on_delivery", "card", "bKash", "Nagad", "Rocket"],
+      "description": "Optional payment method specified by customer"
+    }
+  },
+  "required": [
+    "order_id",
+    "customer_id",
+    "amount"
+  ],
+  "additionalProperties": true
+}

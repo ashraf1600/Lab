@@ -1,0 +1,62 @@
+{
+  "lab": "Lab 1.4 -- Schema Evolution & Governance",
+  "timestamp_utc": "2026-10-05T18:32:11.546780+00:00",
+  "platform": "QuickCart Distributed Event Pipeline",
+  "governance_policy": {
+    "allowed_changes": [
+      "Add optional field with default/open content"
+    ],
+    "breaking_changes": [
+      "Remove required field",
+      "Rename required field",
+      "Incompatible type change"
+    ]
+  },
+  "summary": {
+    "total_tests": 4,
+    "passed": 2,
+    "failed_breaking": 2
+  },
+  "test_matrix": [
+    {
+      "test_id": "TEST-01",
+      "change_description": "Baseline Contract (No Change)",
+      "producer_version": "V1 (Initial)",
+      "consumer_version": "V1 (Expected)",
+      "result": "PASS",
+      "classification": "Non-Breaking",
+      "reason": "Exact schema contract match across producer and consumer.",
+      "invoice_total": 682.5
+    },
+    {
+      "test_id": "TEST-02",
+      "change_description": "Add optional field 'payment_method'",
+      "producer_version": "V2 (Add Field)",
+      "consumer_version": "V1 (Expected)",
+      "result": "PASS",
+      "classification": "Non-Breaking",
+      "reason": "V1 contract allows open content; optional property ignored by old consumer.",
+      "invoice_total": 861.0
+    },
+    {
+      "test_id": "TEST-03",
+      "change_description": "Remove required field 'amount'",
+      "producer_version": "V2 (Remove Field)",
+      "consumer_version": "V1 (Expected)",
+      "result": "FAIL",
+      "classification": "Breaking",
+      "reason": "Missing mandatory 'amount' property; violates V1 required array.",
+      "invoice_total": "N/A (Halted)"
+    },
+    {
+      "test_id": "TEST-04",
+      "change_description": "Rename field 'amount' -> 'total_amount'",
+      "producer_version": "V2 (Rename Field)",
+      "consumer_version": "V1 (Expected)",
+      "result": "FAIL",
+      "classification": "Breaking",
+      "reason": "Consumer cannot locate 'amount'; 'total_amount' not recognized as alias.",
+      "invoice_total": "N/A (Halted)"
+    }
+  ]
+}

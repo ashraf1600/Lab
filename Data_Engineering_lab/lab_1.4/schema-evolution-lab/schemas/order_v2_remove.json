@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QuickCartOrderEventV2Remove",
+  "description": "V2 Schema Evolution: Breaking removal of required 'amount' field",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string",
+      "description": "Unique identifier for the order"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Unique customer reference ID"
+    },
+    "delivery_address": {
+      "type": "string",
+      "description": "Delivery destination address"
+    }
+  },
+  "required": [
+    "order_id",
+    "customer_id"
+  ],
+  "additionalProperties": true
+}

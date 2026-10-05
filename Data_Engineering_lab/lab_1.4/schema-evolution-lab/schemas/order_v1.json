@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QuickCartOrderEventV1",
+  "description": "Baseline Order Event Data Contract for QuickCart Platform",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string",
+      "description": "Unique identifier for the order"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Unique customer reference ID"
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Total order amount in BDT"
+    },
+    "delivery_address": {
+      "type": "string",
+      "description": "Delivery destination address"
+    }
+  },
+  "required": [
+    "order_id",
+    "customer_id",
+    "amount"
+  ],
+  "additionalProperties": true
+}

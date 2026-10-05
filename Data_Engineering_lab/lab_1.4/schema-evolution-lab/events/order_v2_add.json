@@ -1,0 +1,7 @@
+{
+  "order_id": "ORD-002",
+  "customer_id": "CUST-8842",
+  "amount": 820.0,
+  "delivery_address": "Gulshan-2, Dhaka",
+  "payment_method": "bKash"
+}

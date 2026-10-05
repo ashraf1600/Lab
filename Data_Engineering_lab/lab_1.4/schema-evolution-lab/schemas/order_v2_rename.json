@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QuickCartOrderEventV2Rename",
+  "description": "V2 Schema Evolution: Breaking field rename of 'amount' to 'total_amount'",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string",
+      "description": "Unique identifier for the order"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Unique customer reference ID"
+    },
+    "total_amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Renamed order amount in BDT"
+    },
+    "delivery_address": {
+      "type": "string",
+      "description": "Delivery destination address"
+    }
+  },
+  "required": [
+    "order_id",
+    "customer_id",
+    "total_amount"
+  ],
+  "additionalProperties": true
+}

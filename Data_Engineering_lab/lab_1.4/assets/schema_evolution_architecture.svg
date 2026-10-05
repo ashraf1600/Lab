@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="950" height="560" rx="16" fill="url(#bgGrad)" />
+  <rect x="2" y="2" width="946" height="556" rx="14" fill="none" stroke="#334155" stroke-width="2" />
+
+  <!-- Title & Subtitle -->
+  <text x="475" y="45" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#f8fafc" text-anchor="middle" letter-spacing="0.5">QuickCart Order Event Schema Evolution &amp; Governance</text>
+  <text x="475" y="70" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Data Contracts, Backward Compatibility, and Non-Breaking vs Breaking Transitions</text>
+
+  <!-- Section 1: Baseline Contract -->
+  <g transform="translate(60, 100)" filter="url(#shadow)">
+    <rect width="250" height="180" rx="12" fill="url(#cardGrad)" stroke="#3b82f6" stroke-width="2" />
+    <rect width="250" height="36" rx="12" fill="url(#blueGrad)" />
+    <rect y="26" width="250" height="10" fill="url(#blueGrad)" />
+    <text x="125" y="23" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">1. Baseline Schema Contract (V1)</text>
+    
+    <text x="20" y="62" font-family="'Courier New', monospace" font-size="12" fill="#38bdf8">order_id: string (required)</text>
+    <text x="20" y="85" font-family="'Courier New', monospace" font-size="12" fill="#38bdf8">customer_id: string (req)</text>
+    <text x="20" y="108" font-family="'Courier New', monospace" font-size="12" fill="#38bdf8">amount: number (required)</text>
+    <text x="20" y="131" font-family="'Courier New', monospace" font-size="12" fill="#94a3b8">delivery_address: string</text>
+    <line x1="20" y1="145" x2="230" y2="145" stroke="#334155" stroke-width="1" />
+    <text x="125" y="165" font-family="'Segoe UI', sans-serif" font-size="11" fill="#10b981" font-weight="600" text-anchor="middle">Shared Producer/Consumer Contract</text>
+  </g>
+
+  <!-- Flow Arrow: Contract to Producer -->
+  <path d="M 310 190 L 370 190" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- Section 2: Producer & Consumer Pair -->
+  <g transform="translate(370, 100)" filter="url(#shadow)">
+    <rect width="250" height="180" rx="12" fill="url(#cardGrad)" stroke="#8b5cf6" stroke-width="2" />
+    <rect width="250" height="36" rx="12" fill="url(#purpleGrad)" />
+    <rect y="26" width="250" height="10" fill="url(#purpleGrad)" />
+    <text x="125" y="23" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">2. Producer &amp; Event Stream</text>
+
+    <!-- Producer Box -->
+    <rect x="20" y="52" width="210" height="32" rx="6" fill="#334155" stroke="#64748b" />
+    <text x="125" y="73" font-family="'Segoe UI', sans-serif" font-size="12" fill="#f8fafc" text-anchor="middle" font-weight="600">QuickCart Order Producer</text>
+    
+    <!-- Event Payload -->
+    <text x="125" y="104" font-family="'Courier New', monospace" font-size="11" fill="#a78bfa" text-anchor="middle">{"order_id": "ORD001", ...}</text>
+
+    <!-- Consumer Box -->
+    <rect x="20" y="120" width="210" height="36" rx="6" fill="#334155" stroke="#64748b" />
+    <text x="125" y="137" font-family="'Segoe UI', sans-serif" font-size="12" fill="#f8fafc" text-anchor="middle" font-weight="600">Downstream Consumer (V1)</text>
+    <text x="125" y="150" font-family="'Segoe UI', sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Billing • Tracking • Analytics</text>
+  </g>
+
+  <!-- Flow Arrow: Producer to Governance -->
+  <path d="M 620 190 L 680 190" fill="none" stroke="#64748b" stroke-width="2" />
+
+  <!-- Section 3: Governance Gate -->
+  <g transform="translate(680, 100)" filter="url(#shadow)">
+    <rect width="210" height="180" rx="12" fill="url(#cardGrad)" stroke="#10b981" stroke-width="2" />
+    <rect width="210" height="36" rx="12" fill="url(#greenGrad)" />
+    <rect y="26" width="210" height="10" fill="url(#greenGrad)" />
+    <text x="105" y="23" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">3. Schema Governance</text>
+
+    <text x="20" y="65" font-family="'Segoe UI', sans-serif" font-size="11" fill="#f8fafc">&#x2714; Backward Compatible</text>
+    <text x="20" y="88" font-family="'Segoe UI', sans-serif" font-size="11" fill="#f8fafc">&#x2714; Contract Verification</text>
+    <text x="20" y="111" font-family="'Segoe UI', sans-serif" font-size="11" fill="#f8fafc">&#x2718; Reject Breaking Drifts</text>
+    <line x1="20" y1="125" x2="190" y2="125" stroke="#334155" stroke-width="1" />
+    <text x="105" y="152" font-family="'Segoe UI', sans-serif" font-size="11" fill="#38bdf8" text-anchor="middle" font-weight="600">Automated Gate</text>
+  </g>
+
+  <!-- Section 4: Three Evolution Experiments (Bottom) -->
+  
+  <!-- Experiment 1: Add Field (Non-Breaking) -->
+  <g transform="translate(60, 320)" filter="url(#shadow)">
+    <rect width="260" height="190" rx="12" fill="url(#cardGrad)" stroke="#10b981" stroke-width="2" />
+    <rect width="260" height="32" rx="12" fill="url(#greenGrad)" />
+    <rect y="22" width="260" height="10" fill="url(#greenGrad)" />
+    <text x="130" y="22" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">A. Add Optional Field</text>
+    
+    <text x="20" y="55" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8">Change:</text>
+    <text x="20" y="73" font-family="'Courier New', monospace" font-size="11" fill="#34d399">+ payment_method: string</text>
+    <text x="20" y="98" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8">Consumer Impact:</text>
+    <text x="20" y="116" font-family="'Segoe UI', sans-serif" font-size="11" fill="#f8fafc">Old consumer ignores extra key</text>
+    <rect x="20" y="138" width="220" height="34" rx="6" fill="#064e3b" stroke="#059669" />
+    <text x="130" y="160" font-family="'Segoe UI', sans-serif" font-size="12" fill="#34d399" font-weight="700" text-anchor="middle">&#x2714; PASS (Non-Breaking)</text>
+  </g>
+
+  <!-- Experiment 2: Remove Required Field (Breaking) -->
+  <g transform="translate(345, 320)" filter="url(#shadow)">
+    <rect width="260" height="190" rx="12" fill="url(#cardGrad)" stroke="#ef4444" stroke-width="2" />
+    <rect width="260" height="32" rx="12" fill="url(#redGrad)" />
+    <rect y="22" width="260" height="10" fill="url(#redGrad)" />
+    <text x="130" y="22" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">B. Remove Required Field</text>
+    
+    <text x="20" y="55" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8">Change:</text>
+    <text x="20" y="73" font-family="'Courier New', monospace" font-size="11" fill="#f87171">- amount (deleted)</text>
+    <text x="20" y="98" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8">Consumer Impact:</text>
+    <text x="20" y="116" font-family="'Segoe UI', sans-serif" font-size="11" fill="#f8fafc">Old consumer KeyError / Missing</text>
+    <rect x="20" y="138" width="220" height="34" rx="6" fill="#450a0a" stroke="#b91c1c" />
+    <text x="130" y="160" font-family="'Segoe UI', sans-serif" font-size="12" fill="#f87171" font-weight="700" text-anchor="middle">&#x2718; FAIL (Breaking Change)</text>
+  </g>
+
+  <!-- Experiment 3: Rename Field (Breaking) -->
+  <g transform="translate(630, 320)" filter="url(#shadow)">
+    <rect width="260" height="190" rx="12" fill="url(#cardGrad)" stroke="#ef4444" stroke-width="2" />
+    <rect width="260" height="32" rx="12" fill="url(#redGrad)" />
+    <rect y="22" width="260" height="10" fill="url(#redGrad)" />
+    <text x="130" y="22" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">C. Rename Field</text>
+    
+    <text x="20" y="55" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8">Change:</text>
+    <text x="20" y="73" font-family="'Courier New', monospace" font-size="11" fill="#f87171">amount -&gt; total_amount</text>
+    <text x="20" y="98" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8">Consumer Impact:</text>
+    <text x="20" y="116" font-family="'Segoe UI', sans-serif" font-size="11" fill="#f8fafc">Old consumer cannot find amount</text>
+    <rect x="20" y="138" width="220" height="34" rx="6" fill="#450a0a" stroke="#b91c1c" />
+    <text x="130" y="160" font-family="'Segoe UI', sans-serif" font-size="12" fill="#f87171" font-weight="700" text-anchor="middle">&#x2718; FAIL (Breaking Change)</text>
+  </g>
+
+</svg>
