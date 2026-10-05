@@ -8,6 +8,24 @@ Your team lead has tasked you with building an automated, robust **Extract, Tran
 
 Below is the end-to-end architecture of the data pipeline you will construct for QuickCart:
 
+```text
+                           QUICKCART ETL ARCHITECTURE
+                           
+    Incoming Orders             Transformation               Validation                 Storage & Ops
+    ┌───────────────┐         ┌─────────────────┐        ┌─────────────────┐        ┌───────────────────┐
+    │  orders.csv   │ ──────> │  Pandas Engine  │ ─────> │ Quality Checks  │ ─────> │ orders_clean.     │
+    │  (Raw CSV)    │ Extract │ • Clean Strings │        │ • Non-null IDs  │ Valid  │   parquet         │
+    └───────────────┘         │ • Parse Dates   │        │ • Qty > 0       │        └───────────────────┘
+                              │ • Calc Revenue  │        │ • Price >= 0    │                  │
+                              └─────────────────┘        └────────┬────────┘                  ▼
+                                                                  │ Invalid            Downstream BI &
+                                                                  ▼                     ML Pipelines
+                                                         ┌─────────────────┐
+                                                         │  pipeline.log   │
+                                                         │ (Structured Log)│
+                                                         └─────────────────┘
+```
+
 ![QuickCart Order Data Pipeline Architecture](assets/ETL.drawio.svg)
 
 The architecture diagram outlines the complete lifecycle of QuickCart's operational order data. Raw CSV files are first extracted into memory where Pandas cleans text anomalies and calculates order totals. Validated records meeting all business constraints are persisted into optimized Parquet files, while erroneous records trigger structured warning logs. This blueprint ensures that downstream machine learning models and analytics dashboards consume only reliable, high-quality data.

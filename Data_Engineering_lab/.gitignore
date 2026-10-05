@@ -1,3 +1,20 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Stream queue temporary logs
+.stream_queue/
+*.log
+
+# Staging
+_*

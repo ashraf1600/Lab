@@ -1,0 +1,21 @@
+order_id,customer_id,restaurant,order_amount,item_count,order_tier,event_time,processing_time,latency_seconds,pipeline_type
+ORD1001,C001,Spice Kitchen,450.0,2,Medium Value,2026-10-05 10:00:01,2026-10-05 10:05:58,357.0,batch
+ORD1002,C002,FoodHub,700.0,3,High Value,2026-10-05 10:00:04,2026-10-05 10:05:58,354.0,batch
+ORD1003,C003,Pizza Paradiso,320.0,1,Standard,2026-10-05 10:00:07,2026-10-05 10:05:58,351.0,batch
+ORD1004,C004,Royal Kitchen,950.0,4,High Value,2026-10-05 10:00:10,2026-10-05 10:05:58,348.0,batch
+ORD1005,C005,FoodHub,180.0,1,Standard,2026-10-05 10:00:13,2026-10-05 10:05:58,345.0,batch
+ORD1006,C006,Spice Kitchen,550.0,2,Medium Value,2026-10-05 10:00:16,2026-10-05 10:05:58,342.0,batch
+ORD1007,C007,Burger Lab,390.0,2,Standard,2026-10-05 10:00:19,2026-10-05 10:05:58,339.0,batch
+ORD1008,C008,Pizza Paradiso,840.0,3,High Value,2026-10-05 10:00:22,2026-10-05 10:05:58,336.0,batch
+ORD1009,C009,Royal Kitchen,620.0,2,Medium Value,2026-10-05 10:00:25,2026-10-05 10:05:58,333.0,batch
+ORD1010,C010,Spice Kitchen,290.0,1,Standard,2026-10-05 10:00:28,2026-10-05 10:05:58,330.0,batch
+ORD1011,C011,FoodHub,1100.0,5,High Value,2026-10-05 10:00:31,2026-10-05 10:05:58,327.0,batch
+ORD1012,C012,Burger Lab,480.0,2,Medium Value,2026-10-05 10:00:34,2026-10-05 10:05:58,324.0,batch
+ORD1013,C013,Spice Kitchen,360.0,1,Standard,2026-10-05 10:00:37,2026-10-05 10:05:58,321.0,batch
+ORD1014,C014,Pizza Paradiso,750.0,3,High Value,2026-10-05 10:00:40,2026-10-05 10:05:58,318.0,batch
+ORD1015,C015,Royal Kitchen,920.0,4,High Value,2026-10-05 10:00:43,2026-10-05 10:05:58,315.0,batch
+ORD1016,C016,FoodHub,260.0,1,Standard,2026-10-05 10:00:46,2026-10-05 10:05:58,312.0,batch
+ORD1017,C017,Burger Lab,530.0,2,Medium Value,2026-10-05 10:00:49,2026-10-05 10:05:58,309.0,batch
+ORD1018,C018,Spice Kitchen,680.0,3,Medium Value,2026-10-05 10:00:52,2026-10-05 10:05:58,306.0,batch
+ORD1019,C019,Pizza Paradiso,410.0,2,Medium Value,2026-10-05 10:00:55,2026-10-05 10:05:58,303.0,batch
+ORD1020,C020,Royal Kitchen,870.0,3,High Value,2026-10-05 10:00:58,2026-10-05 10:05:58,300.0,batch

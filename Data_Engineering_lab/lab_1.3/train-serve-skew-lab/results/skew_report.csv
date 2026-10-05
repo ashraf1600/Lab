@@ -1,0 +1,6 @@
+Feature,Training_Mean,Online_Mean,Difference,Percentage_Drift,Status
+order_amount,500.9,852.89,351.99,70.27,DRIFT DETECTED
+delivery_time,30.34,48.24,17.9,59.0,DRIFT DETECTED
+customer_orders,7.88,4.97,-2.91,36.91,DRIFT DETECTED
+distance,6.52,10.72,4.2,64.4,DRIFT DETECTED
+PREDICTION: Class 1 Ratio (%),10.5,99.2,88.7,844.76,HIGH SKEW
