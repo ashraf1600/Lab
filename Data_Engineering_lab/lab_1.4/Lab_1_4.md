@@ -8,7 +8,7 @@ Imagine you are a data engineer at **QuickCart**, a rapidly expanding online foo
 
 Below is the end-to-end architecture of the schema evolution and governance pipeline you will build for QuickCart:
 
-![QuickCart Schema Evolution Architecture](assets/quickcart_schema_evolution_architecture.png)
+![QuickCart Schema Evolution Architecture](assets/Lab_1_4.svg)
 
 This architecture illustrates how the QuickCart Order Service acts as a producer that publishes JSON order events into an asynchronous message broker. Downstream consumer services, such as Billing and Analytics, ingest these events and validate them against an agreed-upon data contract stored in the Schema Registry. When schema changes occur—such as adding optional fields, deleting required properties, or renaming attributes—the automated Compatibility Check and Schema Governance gate evaluates the modifications to determine whether they are non-breaking or breaking. Safe changes are allowed into production, while breaking changes are blocked before they cause downstream pipeline outages.
 
