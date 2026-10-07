@@ -2,15 +2,17 @@
 
 ---
 
-## 1. Introduction
+## 1. Introduction:
 
-Imagine you are a data engineer at **QuickCart**, a rapidly expanding online food delivery platform. Every time a customer places an order on the mobile app, the primary Ordering Service emits a structured JSON event to downstream microservices, including billing, delivery dispatch, real-time analytics, and customer notifications. Initially, the order event contains standard fields such as `order_id`, `customer_id`, `amount`, and `delivery_address`. As business requirements grow, engineering teams frequently need to introduce new payment metadata, remove legacy attributes, or rename fields to conform to company-wide naming standards. However, if an upstream service modifies a shared event contract without coordination, older downstream consumers can crash due to missing required keys or unexpected data structures.
+Imagine you are a data engineer at **QuickCart**, a fast-growing online food delivery platform. Whenever customers place orders, the Ordering Service emits JSON events containing fields like `order_id`, `customer_id`, and `amount` to downstream billing, analytics, and notification services.
 
-Below is the end-to-end architecture of the schema evolution and governance pipeline you will build for QuickCart:
+As business needs evolve, developers add, remove, or rename event fields. If an upstream service modifies a shared schema contract without coordination, older downstream consumers can crash from missing required keys or unexpected data types.
+
+You will build the following QuickCart schema evolution and governance pipeline:
 
 ![QuickCart Schema Evolution Architecture](assets/Lab_1_4.drawio.svg)
 
-This architecture illustrates how the QuickCart Order Service acts as a producer that publishes JSON order events into an asynchronous message broker. Downstream consumer services, such as Billing and Analytics, ingest these events and validate them against an agreed-upon data contract stored in the Schema Registry. When schema changes occur—such as adding optional fields, deleting required properties, or renaming attributes—the automated Compatibility Check and Schema Governance gate evaluates the modifications to determine whether they are non-breaking or breaking. Safe changes are allowed into production, while breaking changes are blocked before they cause downstream pipeline outages.
+The Order Service publishes JSON events validated against schema contracts. When schema updates occur (adding, removing, or renaming fields), an automated governance check tests compatibility—allowing safe, backward-compatible updates and blocking breaking changes before they reach production.
 
 ---
 

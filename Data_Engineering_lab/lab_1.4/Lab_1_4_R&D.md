@@ -10,11 +10,9 @@
 
 ### 1.1 Real-Life Scenario
 
-Imagine you are a data engineer at **QuickCart**, an online food delivery platform. Every time a customer places an order, the ordering service sends a JSON event to downstream services such as billing, delivery tracking, analytics, and notifications.
+Imagine you are a data engineer at **QuickCart**, an online food delivery platform. Whenever customers place orders, the ordering service emits JSON events to downstream billing, delivery tracking, and analytics services.
 
-Initially, the order event contains fields such as `order_id`, `customer_id`, `amount`, and `delivery_address`. Later, the development team wants to add new fields, remove old fields, or rename existing fields. A change that looks harmless to the producer can cause an older consumer to fail because the consumer still expects the original structure.
-
-In this lab, we will simulate these schema changes and observe the difference between **non-breaking** and **breaking** changes. We will then introduce simple schema-governance rules that help prevent unsafe changes from reaching production.
+As business needs evolve, developers add, remove, or rename event fields. Uncoordinated modifications can break downstream consumers that depend on the original contract. In this lab, you will simulate schema updates to observe **non-breaking** versus **breaking** changes and apply schema-governance rules to prevent production outages.
 
 ---
 

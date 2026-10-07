@@ -2,33 +2,15 @@
 
 ## 1. Introduction:
 
-Imagine you have just joined **QuickCart**, a fast-growing online food delivery platform, as a **Junior Data Engineer**. Every evening, partner restaurants upload thousands of customer orders across various cities as raw CSV files. Initially, the analytics team manually opened these spreadsheets to compute daily revenues and food trends, but this manual process quickly started falling apart. Many CSV files arrive with corrupted numbers, missing customer identifiers, negative quantities from order cancellations, and inconsistent text formatting. Furthermore, querying gigabytes of unindexed CSV files in analytical dashboards has become painfully slow.
+Imagine you have just joined **QuickCart**, a fast-growing online food delivery platform, as a **Junior Data Engineer**. Every evening, partner restaurants upload raw CSV order files, but the data often contains missing IDs, corrupted numbers, negative quantities, and inconsistent text formatting. Manual spreadsheet checks are no longer enough, and analytics dashboards are becoming slow over unindexed CSV data.
 
-Your team lead has tasked you with building an automated, robust **Extract, Transform, Validate, and Load (ETL)** pipeline. The pipeline must ingest the incoming daily CSV orders, clean string discrepancies, cast data types, calculate derived revenue columns, enforce strict business validation rules, and store the certified records in high-performance **Apache Parquet** format. Crucially, the system must never crash silently: it must record structured log messages and trace exceptions so the operations team can monitor pipeline health.
+Your team lead asks you to build an automated **Extract, Transform, Validate, and Load (ETL)** pipeline. It will read daily order CSV files, clean and validate the records, calculate revenue fields, save trusted data as **Apache Parquet**, and write logs so pipeline failures can be traced.
 
-Below is the end-to-end architecture of the data pipeline you will construct for QuickCart:
+You will build the following QuickCart order data pipeline:
 
-```text
-                           QUICKCART ETL ARCHITECTURE
-                           
-    Incoming Orders             Transformation               Validation                 Storage & Ops
-    ┌───────────────┐         ┌─────────────────┐        ┌─────────────────┐        ┌───────────────────┐
-    │  orders.csv   │ ──────> │  Pandas Engine  │ ─────> │ Quality Checks  │ ─────> │ orders_clean.     │
-    │  (Raw CSV)    │ Extract │ • Clean Strings │        │ • Non-null IDs  │ Valid  │   parquet         │
-    └───────────────┘         │ • Parse Dates   │        │ • Qty > 0       │        └───────────────────┘
-                              │ • Calc Revenue  │        │ • Price >= 0    │                  │
-                              └─────────────────┘        └────────┬────────┘                  ▼
-                                                                  │ Invalid            Downstream BI &
-                                                                  ▼                     ML Pipelines
-                                                         ┌─────────────────┐
-                                                         │  pipeline.log   │
-                                                         │ (Structured Log)│
-                                                         └─────────────────┘
-```
+![QuickCart Order Data Pipeline Architecture](assets/Lab-1_1.drawio.svg)
 
-![QuickCart Order Data Pipeline Architecture](assets/ETL.drawio.svg)
-
-The architecture diagram outlines the complete lifecycle of QuickCart's operational order data. Raw CSV files are first extracted into memory where Pandas cleans text anomalies and calculates order totals. Validated records meeting all business constraints are persisted into optimized Parquet files, while erroneous records trigger structured warning logs. This blueprint ensures that downstream machine learning models and analytics dashboards consume only reliable, high-quality data.
+Raw CSV files are loaded into Pandas, cleaned, validated against business rules, and written to optimized Parquet output. Invalid records trigger structured warning logs, helping downstream analytics and machine learning systems consume reliable data.
 
 ---
 
@@ -55,21 +37,14 @@ quickcart-data-pipeline/
 └── requirements.txt            # Project dependencies (pandas, pyarrow)
 ```
 
-The project structure cleanly separates business logic from raw and generated artifacts. Storing raw CSV data in an isolated `data/` folder safeguards the original restaurant uploads against accidental in-place modification. The `src/` directory houses modular application scripts, while analytical results and operational telemetry are systematically written to `output/` and `logs/`. This standard structure mirrors production-grade data engineering repository standards.
-
 ---
 
 ## 3. Project Implementation
 
-Students will build the entire pipeline using **VS Code Server**. All files are created, edited, and managed directly through the VS Code Server user interface—**no `cat` commands are used**.
-
----
-
 ### Step 1: Open VS Code Server and Create Project Folders
 
-1. Open your browser and access your **VS Code Server** workspace.
-2. In the top menu, click **File > Open Folder...** and select or create the workspace folder:
-   ```text
+1. Open your browser and access your **VS Code Server** workspace and create folder
+2. ```text
    quickcart-data-pipeline
    ```
 3. In the VS Code Explorer sidebar (left panel), click the **New Folder** icon to create the following directories:
@@ -95,6 +70,7 @@ The VS Code Server Explorer displays the newly scaffolded project directories. E
    ```bash
    source .venv/bin/activate
    ```
+
    *(Note: If working locally on Windows PowerShell, run: `.venv\Scripts\Activate.ps1`)*
 4. Verify that `(.venv)` appears at the beginning of your terminal prompt.
 
@@ -292,6 +268,7 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
 3. Save the file by clicking **File > Save**.
 
 The pipeline code organizes the ETL workflow into independent, modular functions. Extraction loads the raw order file, transformation cleans strings and derives the `total_amount` metric, and validation removes corrupted rows. Wrapping the execution in a `try/except` block guarantees that unhandled errors are automatically captured in the operational log.
@@ -424,4 +401,4 @@ This test proves the pipeline's resilience against sudden environmental failures
 
 ## 4. Conclusion
 
-QuickCart's daily restaurant orders are now seamlessly ingested, validated, and transformed from messy CSV files into high-performance Parquet datasets. By establishing clear modular stages for extraction, transformation, validation, and loading, the pipeline guarantees that only high-quality data reaches downstream business dashboards. The inclusion of structured logging and exception handling provides vital operational visibility whenever corrupted records or system failures arise. This architecture forms the foundational pattern utilized by modern data platforms to power business intelligence and automated machine learning workflows. In the upcoming lab, we will expand this architecture by transitioning from batch-scheduled file processing to real-time event streaming with Apache Kafka.
+QuickCart's daily restaurant orders are now ingested, cleaned, validated, and stored as efficient Parquet datasets. With modular ETL stages, structured logging, and exception handling, the pipeline delivers reliable data to dashboards and future ML workflows. In the next lab, we will extend this batch pipeline into real-time event streaming with Apache Kafka.

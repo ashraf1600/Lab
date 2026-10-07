@@ -2,15 +2,15 @@
 
 ## 1. Introduction:
 
-Imagine you are working as a **Machine Learning Data Engineer** at **QuickCart**, a fast-growing online food delivery platform. Several months ago, your team trained and deployed a machine learning model designed to predict whether a customer is likely to cancel an incoming food order in real time. During offline validation on historical order data, the model achieved high accuracy and balanced precision, allowing dispatch operations to intervene early whenever cancellation risks surged.
+Imagine you are working as a **Machine Learning Data Engineer** at **QuickCart**, a fast-growing online food delivery platform. Your team previously deployed a machine learning model to predict order cancellations in real time, which performed accurately during offline validation on historical data.
 
-However, over the last few months, QuickCart's operational landscape has shifted dramatically. A seasonal monsoon wave combined with an expansion into distant suburban zones has increased average delivery times, inflated order cart values, and brought in thousands of new customers with minimal ordering history. While the deployed model continues to return predictions without software crashes, customer operations reports that cancellations are spiking unexpectedly and the model's predictions appear heavily skewed compared to its training baseline. This phenomenon is known as **Train-Serve Skew**—a silent failure where the distribution of live serving data drifts far away from the training distribution, degrading model reliability.
+Recently, seasonal delivery delays and suburban expansion shifted incoming order patterns. While the model continues to run without crashing, live prediction reliability drops because real-world inputs have drifted from the training baseline—a silent failure known as **Train-Serve Skew**.
 
-Below is the end-to-end architecture of the ML monitoring and skew simulation pipeline you will build for QuickCart:
+You will build the following QuickCart train-serve skew monitoring pipeline:
 
 ![QuickCart Train-Serve Skew Architecture](assets/training_serve.svg)
 
-The architecture diagram illustrates the dual-phase lifecycle of QuickCart's order cancellation prediction system. The historical branch prepares a certified training and offline test dataset, establishes performance baselines, and serializes the trained model pipeline. The production branch simulates live incoming serving traffic experiencing real-world feature drift, passing these unlabelled inputs through the identical frozen model artifact. Finally, the skew detection engine compares distribution statistics across both pipelines, quantifying train-serve skew and triggering engineering alerts before operational degradation harms business revenue.
+The pipeline trains a baseline model on historical data, passes drifted live serving traffic through the frozen model artifact, and runs a skew detection engine to quantify distribution divergence before operational degradation impacts the business.
 
 ---
 
