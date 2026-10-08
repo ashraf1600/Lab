@@ -6,50 +6,6 @@ Imagine you are working as a **Machine Learning Data Engineer** at **QuickCart**
 
 However, over the last few months, QuickCart's operational landscape has shifted dramatically. A seasonal monsoon wave combined with an expansion into distant suburban zones has increased average delivery times, inflated order cart values, and brought in thousands of new customers with minimal ordering history. While the deployed model continues to return predictions without software crashes, customer operations reports that cancellations are spiking unexpectedly and the model's predictions appear heavily skewed compared to its training baseline. This phenomenon is known as **Train-Serve Skew**—a silent failure where the distribution of live serving data drifts far away from the training distribution, degrading model reliability.
 
-Below is the end-to-end architecture of the ML monitoring and skew simulation pipeline you will build for QuickCart:
-
-```text
-                           QUICKCART TRAIN-SERVE SKEW ARCHITECTURE
-
-       Historical Training Lifecycle                       Production Serving & Drift Lifecycle
-     ┌───────────────────────────────┐                  ┌─────────────────────────────────────────┐
-     │  Historical Order Data (CSV)  │                  │  Incoming Production Live Stream (CSV)  │
-     │  (Normal Times & Distances)   │                  │  (Monsoon Delays & Expanded Distances)  │
-     └───────────────┬───────────────┘                  └────────────────────┬────────────────────┘
-                     │                                                       │
-                     ▼                                                       ▼
-     ┌───────────────────────────────┐                                       │
-     │      Pipeline Preprocessor    │                                       │
-     │  • Train/Test Split (80/20)   │                                       │
-     │  • StandardScaler Normalizer  │                                       │
-     └───────────────┬───────────────┘                                       │
-                     │                                                       │
-                     ▼                                                       │
-     ┌───────────────────────────────┐                                       │
-     │   Model Training & Freezing   │                                       │
-     │   LogisticRegression Pipeline │                                       │
-     │   (Saved to models/model.pkl) │                                       │
-     └───────┬───────────────┬───────┘                                       │
-             │               │                                               │
-             │ Frozen Model  └─────────────────────────────────┐             │
-             ▼                                                 ▼             ▼
-     ┌───────────────────────────────┐                  ┌─────────────────────────────────────────┐
-     │    Offline Test Evaluation    │                  │         Online Production Serving       │
-     │ • Evaluate Test Accuracy      │                  │ • Score Unseen Live Production Stream   │
-     │ • Reference Prediction Baseline│                 │ • Unlabeled Online Cancellation Shift   │
-     │ (results/offline_preds.csv)   │                  │ (results/online_preds.csv)              │
-     └───────────────┬───────────────┘                  └────────────────────┬────────────────────┘
-                     │                                                       │
-                     └───────────────────────┬───────────────────────────────┘
-                                             ▼
-                               ┌───────────────────────────┐
-                               │  Skew Detection Engine    │
-                               │ • Feature Drift Delta (%) │
-                               │ • Prediction Shift Check  │
-                               │ • Threshold Alerts (>20%) │
-                               │ • skew_report.csv & Plots │
-                               └───────────────────────────┘
-```
 
 ![QuickCart Train-Serve Skew Architecture](assets/training_serve.svg)
 
