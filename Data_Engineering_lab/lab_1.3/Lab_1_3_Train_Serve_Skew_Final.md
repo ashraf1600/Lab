@@ -70,7 +70,6 @@ Students will build and run the entire machine learning skew detection pipeline 
    - `src`
    - `results`
 
-> **[Show Image — VS Code Server Directory Structure]**
 > ![VS Code Server Directory Structure](assets/step1_skew_project_structure.png)
 
 The VS Code Server Explorer displays the newly created project directories for the QuickCart ML pipeline. The `data` folder will host our historical and simulated production datasets, while `models` will hold serialized pipeline artifacts. The `src` directory will store our modular Python scripts, and `results` will capture offline/online prediction logs and drift summaries. Creating this clean layout at the start guarantees seamless relative path resolution across all pipeline execution steps.
@@ -111,7 +110,6 @@ The VS Code Server Explorer displays the newly created project directories for t
    pip install -r requirements.txt
    ```
 
-> **[Show Image — Python Dependencies Installation in VS Code Terminal]**
 > ![Python Dependencies Installation](assets/step2_environment_setup.png)
 
 The terminal verifies the successful installation of all required machine learning and data engineering packages inside the isolated virtual environment. The Scikit-Learn library provides feature transformers and classification algorithms, while Pandas and NumPy manage tabular dataset structures. Matplotlib enables automated rendering of multi-panel feature density distribution plots. Confining these dependencies to `.venv` guarantees a reproducible execution environment that mirrors real-world cloud server environments.
@@ -236,7 +234,6 @@ if __name__ == "__main__":
    python src/prepare_data.py
    ```
 
-> **[Show Image — Historical Data Generation and Partition Output]**
 > ![Historical Data Preparation](assets/step3_prepare_data.png)
 
 The terminal confirms the generation and splitting of QuickCart's historical order data. The training partition contains 800 certified orders exhibiting realistic operational baselines, with roughly 16% historical cancellations reflecting typical food delivery operations. Reserving 200 orders in `test.csv` establishes a baseline test partition that will never be used during training. This strict separation guarantees unbiased evaluation before the model is exposed to production shifts.
@@ -445,8 +442,6 @@ if __name__ == "__main__":
    ```bash
    python src/offline_predict.py
    ```
-
-> **[Show Image — Offline Baseline Prediction Evaluation Output]**
 > ![Offline Evaluation Output](assets/step5_offline_eval.png)
 
 The terminal confirms that the model generalizes effectively to unseen historical test orders, reaching 91.0% accuracy. The baseline offline prediction distribution shows that the model predicts cancellations for approximately 10.5% of incoming orders, with a mean predicted probability of 0.1462. Persisting these predictions to `results/offline_predictions.csv` creates a definitive mathematical baseline. When live serving begins, any deviation from this reference distribution will serve as an indicator of potential data drift.
@@ -563,7 +558,6 @@ if __name__ == "__main__":
    python src/generate_online_data.py
    ```
 
-> **[Show Image — Feature Distribution Drift Inspection Table]**
 > ![Production Drift Simulation Output](assets/step6_drift_simulation.png)
 
 The feature comparison table quantifies substantial data drift across all operational inputs. Average delivery times surged by +59.0% (from 30.3 to 48.2 mins), delivery distances increased by +64.4% (from 6.5 to 10.7 km), and order values inflated by +70.3%. Notice that `data/online_data.csv` does not contain a `cancelled` column, faithfully reproducing real-time serving realities where true labels are unavailable at inference. This synthetic distribution represents production data arriving under extreme weather and delivery expansion pressures.
@@ -655,7 +649,6 @@ if __name__ == "__main__":
    python src/online_predict.py
    ```
 
-> **[Show Image — Online Serving Prediction Distribution Output]**
 > ![Online Prediction Serving](assets/step7_online_serving.png)
 
 The online serving output illustrates the dramatic operational consequence of data drift. Because the frozen model received inputs with inflated delivery delays and transit distances, its predicted cancellation rate exploded from a historical 10.5% baseline up to 99.2%. The average predicted probability of cancellation escalated from 0.1462 to 0.9925. The code executed without software exceptions, but the business utility of the model has collapsed due to severe train-serve skew.
@@ -850,12 +843,12 @@ def detect_skew():
     print(" TRAIN-SERVE SKEW DIAGNOSTIC VERDICT")
     print("=" * 70)
     if c1_delta > 15.0:
-        print("🚨 SEVERE TRAIN-SERVE SKEW DETECTED!")
+        print("SEVERE TRAIN-SERVE SKEW DETECTED!")
         print("  • Cause  : Incoming production features drifted significantly beyond training ranges.")
         print(f"  • Effect : Cancellation prediction frequency surged by +{c1_delta:.1f}%.")
         print("  • Action : Trigger production alert; log payloads; retrain on recent production window.")
     else:
-        print("✅ No significant train-serve skew detected. Model serving remains aligned with training distribution.")
+        print("No significant train-serve skew detected. Model serving remains aligned with training distribution.")
     print("=" * 70)
 
 
@@ -868,14 +861,12 @@ if __name__ == "__main__":
    python src/detect_skew.py
    ```
 
-> **[Show Image — Skew Detection Terminal Output and ASCII Bars]**
 > ![Skew Detection Terminal Output](assets/step8_skew_detection.png)
 
 The monitoring script synthesizes feature-level drift with prediction-level shift to deliver an automated diagnostic verdict. Every operational feature surpassed the 20% drift alert threshold, triggering a critical train-serve skew warning as cancellation predictions surged by +88.7%. The ASCII comparison bars provide rapid visual confirmation of feature distribution inflation directly inside the terminal. Exporting `results/skew_report.csv` creates a machine-readable audit artifact for automated monitoring pipelines.
 
 4. Open `results/skew_distribution.png` in VS Code Server to inspect the graphical distribution comparison:
 
-> **[Show Image — Multi-Panel Feature Density Distribution Chart]**
 > ![Multi-Panel Feature Distribution](assets/skew_distribution.png)
 
 The four-panel distribution plot visually contrasts the baseline historical distribution (blue) against live production serving (red). The density curves for delivery time and distance have migrated completely to the right, showing almost zero overlap with the original training regime. This clear visual evidence explains why the linear decision boundary classified nearly all incoming orders as cancellations. Visualizations like this form the core dashboard telemetry used by MLOps teams to justify model recalibration.
