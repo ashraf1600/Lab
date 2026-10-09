@@ -4,19 +4,7 @@
 
 ## 1. Introduction & Real-Life Scenario
 
-Imagine you are a Senior Data Engineer at **QuickCart**, an on-demand food and grocery delivery platform processing millions of daily transactions. QuickCart's event streaming broker ingests real-time order placements, delivery status updates, driver location coordinates, and payment receipts. 
-
-Historically, upstream engineering teams dumped these transactional events as uncompressed JSON and CSV files into a centralized data lake. However, as platform scale exploded, QuickCart's data infrastructure started experiencing severe performance and financial bottlenecks:
-- **Storage Cost Inflation:** Bulky raw text files consumed hundreds of terabytes of expensive cloud object storage.
-- **Analytical Query Delays:** Downstream Business Intelligence (BI) dashboards and machine learning pipelines suffered multi-minute query latency because analytics queries had to scan entire datasets row-by-row just to compute order revenue metrics.
-- **Data Integrity & Schema Divergence:** Ad-hoc field alterations caused silent data type mismatches, breaking downstream downstream data pipelines.
-
-To resolve these challenges, the Data Platform team initiated a storage layer modernization initiative. Before migrating petabytes of historical and streaming data, you must evaluate three industry-standard data formats:
-1. **Apache Parquet:** A binary, hybrid columnar storage format optimized for high-performance analytical queries and deep data compression.
-2. **Apache Avro:** A compact, binary, row-oriented format that packages schemas with data, ideal for schema-governed, write-heavy event streaming.
-3. **Apache ORC (Optimized Row Columnar):** A highly optimized columnar format originating from the Apache Hadoop/Hive ecosystem, engineered for enterprise workloads and ACID transactions.
-
-You will design an empirical benchmark harness to compare Parquet, Avro, and ORC on the exact same dataset, measuring disk compression efficiency, write latency, read throughput, and schema governance flexibility.
+As a Senior Data Engineer at **QuickCart**, you are modernizing the storage layer for millions of daily food and grocery delivery transactions. Raw JSON and CSV files have caused severe storage cost inflation and slow analytical queries. In this lab, you build an empirical benchmark harness comparing **Apache Parquet**, **Apache Avro**, and **Apache ORC** on an identical 100,000-order dataset to evaluate compression efficiency, read/write throughput, and schema governance.
 
 ---
 
@@ -985,5 +973,5 @@ All benchmark metrics below represent the mean of 5 isolated execution iteration
 
 ## 8. Conclusion
 
-Through this empirical evaluation of 100,000 QuickCart transactions, we established that no single storage format is universally superior across every stage of the data lifecycle. Apache Parquet delivered optimal analytical performance for QuickCart's cloud data lake, achieving the smallest footprint at 2.53 MB (2.64x compression) and vector scan throughput exceeding 5.3 million records per second. Apache Avro proved indispensable for upstream streaming ingestion, offering robust schema-registry enforcement and efficient row serialization without columnar buffering latency. Apache ORC demonstrated exceptional write throughput at over 910,000 records per second alongside sub-16ms column pruning, making it highly effective for enterprise batch processing. By adopting a hybrid architecture—streaming incoming order events as Avro into Kafka and compacting historical partitions into Parquet for analytical warehousing—QuickCart balances real-time ingestion safety with cost-effective, high-speed data lake queries.
+Evaluating 100,000 QuickCart orders confirms that file formats serve distinct architectural needs. Apache Parquet provides optimal analytical performance, delivering the highest compression (2.53 MB) and scan speeds exceeding 5.3 million records/sec. Apache Avro excels for upstream streaming ingestion through strict schema governance and row-level serialization. Apache ORC offers high-throughput batch writes exceeding 910,000 records/sec with fast column pruning. QuickCart adopts a hybrid architecture: streaming raw events in Avro and compacting analytical partitions into Parquet.
 
