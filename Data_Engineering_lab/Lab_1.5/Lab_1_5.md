@@ -16,46 +16,6 @@ As a Senior Data Engineer at **QuickCart**, you are modernizing the storage laye
 
 Below is the architectural workflow of the QuickCart file format evaluation harness:
 
-```text
-                           QUICKCART FILE FORMAT BENCHMARK ARCHITECTURE
-
-  ┌────────────────────────────────────────────────────────────────────────┐
-  │                   Canonical QuickCart Order Dataset                    │
-  │     100,000 Transactional Records (Strings, Decimals, Timestamps, Booleans)    │
-  └───────────────────────────────────┬────────────────────────────────────┘
-                                      │
-                     ┌────────────────┴────────────────┐
-                     ▼                                 ▼
-        ┌─────────────────────────┐       ┌─────────────────────────┐
-        │  Apache Avro Contract   │       │  PyArrow Schema Contract│
-        │   (order_schema.avsc)   │       │    (order_schema.py)    │
-        └────────────┬────────────┘       └────────────┬────────────┘
-                     │                                 │
-     ┌───────────────┼─────────────────────────────────┼───────────────┐
-     │ Write Phase   ▼                                 ▼               ▼
-     │        ┌─────────────┐                   ┌─────────────┐ ┌─────────────┐
-     │        │ Apache Avro │                   │Apache Parquet│ │ Apache ORC  │
-     │        │ (.avro file)│                   │(.parquet file│ │ (.orc file) │
-     │        └──────┬──────┘                   └──────┬──────┘ └──────┬──────┘
-     │               │                                 │               │
-     ├───────────────┼─────────────────────────────────┼───────────────┤
-     │ Read Phase    ▼                                 ▼               ▼
-     │        ┌─────────────┐                   ┌─────────────┐ ┌─────────────┐
-     │        │  Row Scan   │                   │Column Pruning│ │Stripe Scan  │
-     │        │ Deserializer│                   │& Predicate  │ │& Index Read │
-     │        └──────┬──────┘                   └──────┬──────┘ └──────┬──────┘
-     │               │                                 │               │
-     └───────────────┼─────────────────────────────────┼───────────────┘
-                     │                                 │
-                     ▼                                 ▼
-        ┌──────────────────────────────────────────────────────────────┐
-        │            Validation & Benchmark Evaluation Engine          │
-        │  • Integrity Check: Row Counts (100,000), Data Parity, Nulls  │
-        │  • Storage Metrics: Raw File Sizes, Compression Ratio        │
-        │  • Speed Metrics: Multi-run Timed Write/Read (Records/sec)   │
-        │  • Output: results/benchmark_report.json & CLI Summary Table │
-        └──────────────────────────────────────────────────────────────┘
-```
 
 The pipeline synthesizes 100,000 realistic QuickCart orders governed by strict canonical schemas. It encodes the records into Parquet, Avro, and ORC, validates record counts and value parity, runs timed multi-iteration read/write benchmarks, and outputs a structured comparative report.
 
