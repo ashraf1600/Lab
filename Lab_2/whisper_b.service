@@ -1,0 +1,16 @@
+[Unit]
+Description=Whisper Region B Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Environment=REGION_NAME=Region-B-Failover-Secondary
+Environment=REGION_CODE=ap-southeast-1b
+Environment=PORT=8000
+ExecStart=/usr/bin/python3 /home/ubuntu/whisper_server.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
