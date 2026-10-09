@@ -73,7 +73,7 @@ Fits a `StandardScaler` and `LogisticRegression` pipeline on `data/train.csv` an
 ```bash
 python src/offline_predict.py
 ```
-Scores `data/test.csv`, measures baseline accuracy and cancellation class distribution (~25% cancel rate), and writes predictions to `results/offline_predictions.csv`.
+Scores `data/test.csv`, measures baseline accuracy and cancellation class distribution (~10.5% predicted cancel rate), and writes predictions to `results/offline_predictions.csv`.
 
 ### Step 4: Simulate Production Data Drift
 ```bash

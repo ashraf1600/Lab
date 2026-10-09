@@ -133,9 +133,9 @@ def detect_skew():
     report_df.to_csv(report_path, index=False)
     print(f"\n[SUCCESS] Comprehensive Skew Report saved to: {report_path}")
 
-    # 3. Terminal ASCII Visualization (Step 17 requirement)
+    # 3. Terminal ASCII Visualization
     print("\n" + "=" * 70)
-    print(" STEP 17: ASCII DISTRIBUTION SKEW VISUALIZATION")
+    print(" ASCII DISTRIBUTION SKEW VISUALIZATION")
     print("=" * 70)
     for feat in ["order_amount", "delivery_time", "distance"]:
         tr_val = train_df[feat].mean()
@@ -176,17 +176,17 @@ def detect_skew():
     except Exception as e:
         print(f"\n[NOTE] Matplotlib visualization skipped: {e}")
 
-    # 5. Final Diagnostic Verdict (Step 18)
+    # 5. Production Diagnostic Verdict & Remediation Runbook
     print("\n" + "=" * 70)
-    print(" STEP 18: TRAIN-SERVE SKEW DIAGNOSTIC VERDICT")
+    print(" TRAIN-SERVE SKEW DIAGNOSTIC VERDICT")
     print("=" * 70)
     if c1_delta > 15.0:
-        print("🚨 SEVERE TRAIN-SERVE SKEW DETECTED!")
+        print("SEVERE TRAIN-SERVE SKEW DETECTED!")
         print("  • Cause  : Incoming production features drifted significantly beyond training ranges.")
         print(f"  • Effect : Cancellation prediction frequency surged by +{c1_delta:.1f}%.")
-        print("  • Action : Trigger production pipeline alert; collect new production labels and retrain model.")
+        print("  • Action : Trigger production alert; log payloads; retrain on recent production window.")
     else:
-        print("✅ No significant train-serve skew detected. Model serving remains aligned with training distribution.")
+        print("No significant train-serve skew detected. Model serving remains aligned with training distribution.")
     print("=" * 70)
 
 
