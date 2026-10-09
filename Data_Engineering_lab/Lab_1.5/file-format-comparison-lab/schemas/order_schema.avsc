@@ -1,0 +1,51 @@
+{
+  "type": "record",
+  "name": "QuickCartOrder",
+  "namespace": "com.quickcart.orders",
+  "doc": "Canonical data contract for QuickCart order delivery lifecycle events",
+  "fields": [
+    {
+      "name": "order_id",
+      "type": "string",
+      "doc": "Unique alphanumeric order identifier"
+    },
+    {
+      "name": "customer_id",
+      "type": "string",
+      "doc": "Unique customer account identifier"
+    },
+    {
+      "name": "order_timestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Order creation epoch timestamp in milliseconds"
+    },
+    {
+      "name": "item_count",
+      "type": "int",
+      "doc": "Number of menu items ordered"
+    },
+    {
+      "name": "order_amount",
+      "type": "double",
+      "doc": "Total transaction order amount in BDT"
+    },
+    {
+      "name": "delivery_distance_km",
+      "type": "double",
+      "doc": "Transit distance from restaurant to customer in kilometers"
+    },
+    {
+      "name": "payment_method",
+      "type": "string",
+      "doc": "Payment channel used (e.g., credit_card, bKash, cash_on_delivery)"
+    },
+    {
+      "name": "is_cancelled",
+      "type": "boolean",
+      "doc": "Flag indicating if the order was cancelled prior to delivery"
+    }
+  ]
+}

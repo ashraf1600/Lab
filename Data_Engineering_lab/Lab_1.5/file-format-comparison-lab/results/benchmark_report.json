@@ -1,0 +1,41 @@
+{
+  "dataset_records": 100000,
+  "in_memory_mb": 6.68,
+  "iterations": 5,
+  "compression_codec": "snappy",
+  "results": {
+    "Parquet": {
+      "file_size_bytes": 2656602,
+      "file_size_mb": 2.53,
+      "compression_ratio": 2.64,
+      "mean_write_s": 0.1151,
+      "write_throughput_rec_sec": 868519,
+      "mean_read_s": 0.0187,
+      "read_throughput_rec_sec": 5333476,
+      "mean_projected_read_s": 0.0159,
+      "projected_throughput_rec_sec": 6293623
+    },
+    "Avro": {
+      "file_size_bytes": 2933577,
+      "file_size_mb": 2.8,
+      "compression_ratio": 2.39,
+      "mean_write_s": 1.0135,
+      "write_throughput_rec_sec": 98667,
+      "mean_read_s": 0.926,
+      "read_throughput_rec_sec": 107991,
+      "mean_projected_read_s": "N/A (Row-Scan)",
+      "projected_throughput_rec_sec": "N/A"
+    },
+    "ORC": {
+      "file_size_bytes": 2811133,
+      "file_size_mb": 2.68,
+      "compression_ratio": 2.49,
+      "mean_write_s": 0.1099,
+      "write_throughput_rec_sec": 910149,
+      "mean_read_s": 0.0349,
+      "read_throughput_rec_sec": 2865364,
+      "mean_projected_read_s": 0.0153,
+      "projected_throughput_rec_sec": 6553303
+    }
+  }
+}
