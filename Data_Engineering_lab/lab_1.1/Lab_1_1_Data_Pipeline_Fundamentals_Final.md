@@ -43,7 +43,7 @@ quickcart-data-pipeline/
 
 ### Step 1: Open VS Code Server and Create Project Folders
 
-1. Open your browser and access your **VS Code Server** workspace and create folder
+1. Open your **VS Code Server** workspace and create folder
 2. ```text
    quickcart-data-pipeline
    ```
