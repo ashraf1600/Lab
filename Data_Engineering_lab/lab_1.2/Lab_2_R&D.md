@@ -8,43 +8,31 @@ To process incoming orders, you can either accumulate records for periodic sched
 
 You will build and compare the following QuickCart batch and streaming architectures:
 
-![Batch vs Streaming Architecture](assets/batch_vs_streaming_v2.drawio.svg)
+![Batch vs Streaming Architecture](assets/Lab_1.2.drawio.svg)
 
 The batch workflow periodically collects and processes order files on a schedule, while the streaming pipeline continuously ingests live Kafka events with low latency. Comparing both demonstrates when batch processing is efficient and when streaming is required.
 
 ---
 
-## 2. Lab Objective
+## 2. Lab Objectives
 
 By completing this lab, you will:
 
--   Understand the difference between batch and streaming data
-    processing.
--   Build a simple batch-processing pipeline.
--   Schedule the batch job using **Cron**.
--   Build a simple streaming pipeline using **Apache Kafka**.
--   Use a Kafka producer and consumer.
--   Record event and processing timestamps.
--   Calculate processing latency.
--   Measure basic throughput.
--   Compare data freshness between batch and streaming.
--   Understand the practical trade-offs between the two architectures.
+- Build and schedule a batch data pipeline using **Cron**.
+- Build an event-driven streaming pipeline using **Apache Kafka**.
+- Benchmark and compare **latency**, **throughput**, and **data freshness** between batch and streaming architectures.
+- Evaluate operational trade-offs to choose the right architecture for production workloads.
 
-------------------------------------------------------------------------
+---
 
 ## 3. Architecture
 
-### 3.1 Overall Architecture
-
-![Overall Architecture](assets/batch_vs_streaming_v2.drawio.svg)
-
-### 3.2 Batch Flow
-
+### 3.1 Batch Flow
 
 The batch system waits until the scheduled execution time before
-processing the available data.
+processing the available data in bulk.
 
-### 3.3 Streaming Flow
+### 3.2 Streaming Flow
 
 The streaming system processes events continuously as they arrive.
 
