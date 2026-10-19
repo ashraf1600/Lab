@@ -178,23 +178,10 @@ batch-streaming-lab/
 Open the project in **VS Code Server** and verify that Python, Java,
 Kafka, and Cron are available.
 
-**Show Image**
-
-> The VS Code Server environment provides the workspace where the entire
-> lab will be implemented. Python will be used for the data-processing
-> logic and Kafka producer/consumer, while Java is required by the Kafka
-> runtime. Cron will be used to schedule the batch pipeline. All project
-> files will be created and edited directly through the VS Code Server
-> interface.
-
 ------------------------------------------------------------------------
 
 ## Step 2 --- Create the Project Workspace
 
-Create the `batch-streaming-lab` project and the required folders
-through the VS Code Server file explorer.
-
-![Project Directory Structure in VS Code Explorer](assets/step1_project_structure.png)
 
 > The project is organized into separate directories for data, batch
 > processing, streaming processing, and results. This separation makes
