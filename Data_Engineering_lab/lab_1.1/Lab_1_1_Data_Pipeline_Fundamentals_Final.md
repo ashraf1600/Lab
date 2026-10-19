@@ -22,19 +22,19 @@ Following your architectural design, the project maintains strict separation bet
 quickcart-data-pipeline/
 │
 ├── data/
-│   └── orders.csv              # Incoming raw CSV order data from partner restaurants
+│   └── orders.csv              # raw CSV order data 
 │
 ├── src/
-│   ├── pipeline.py             # Main ETL script (Extract, Transform, Validate, Load)
-│   └── check_output.py         # Verification script to inspect Parquet data and schema
+│   ├── pipeline.py             # ETL script
+│   └── check_output.py         # Verification script
 │
 ├── output/
-│   └── orders_clean.parquet    # Cleaned, validated, and compressed analytical dataset
+│   └── orders_clean.parquet    # Cleaned dataset
 │
 ├── logs/
-│   └── pipeline.log            # Execution history, runtime metrics, and error logs
+│   └── pipeline.log            # History, metrics,error logs
 │
-└── requirements.txt            # Project dependencies (pandas, pyarrow)
+└── requirements.txt            # Dependencies
 ```
 
 ---
@@ -53,9 +53,6 @@ quickcart-data-pipeline/
    - `output`
    - `logs`
 
-![Project Directory Structure in VS Code Server Explorer](assets/step1_project_structure.png)
-
-The VS Code Server Explorer displays the newly scaffolded project directories. Each directory represents a dedicated layer in the data processing lifecycle. Establishing this directory skeleton up front prevents runtime path resolution errors during file extraction and loading.
 
 ---
 
