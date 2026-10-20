@@ -53,7 +53,7 @@ The project structure enforces clean boundaries between development, production 
 
 ## 3. Project Implementation
 
-Students will build and run the entire machine learning skew detection pipeline using **VS Code Server**. All files are created, edited, and managed directly through the VS Code Server user interface—**no `cat` commands are used**.
+
 
 ---
 
@@ -70,9 +70,6 @@ Students will build and run the entire machine learning skew detection pipeline 
    - `src`
    - `results`
 
-![VS Code Server Directory Structure](assets/step1_skew_project_structure.png)
-
-The VS Code Server Explorer displays the newly created project directories for the QuickCart ML pipeline. The `data` folder will host our historical and simulated production datasets, while `models` will hold serialized pipeline artifacts. The `src` directory will store our modular Python scripts, and `results` will capture offline/online prediction logs and drift summaries. Creating this clean layout at the start guarantees seamless relative path resolution across all pipeline execution steps.
 
 ---
 
