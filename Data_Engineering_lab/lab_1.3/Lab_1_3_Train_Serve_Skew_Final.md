@@ -8,7 +8,7 @@ Recently, seasonal delivery delays and suburban expansion shifted incoming order
 
 You will build the following QuickCart train-serve skew monitoring pipeline:
 
-![QuickCart Train-Serve Skew Architecture](assets/training_serve.svg)
+![QuickCart Train-Serve Skew Architecture](assets/lab_1.3.drawio.svg)
 
 The pipeline trains a baseline model on historical data, passes drifted live serving traffic through the frozen model artifact, and runs a skew detection engine to quantify distribution divergence before operational degradation impacts the business.
 
