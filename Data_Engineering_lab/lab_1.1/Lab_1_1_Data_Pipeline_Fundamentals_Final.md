@@ -1,4 +1,4 @@
-# Lab 1.1: Data Pipeline Fundamentals
+# Data Pipeline Fundamentals
 
 ## 1. Introduction:
 
