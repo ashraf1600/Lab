@@ -1,4 +1,4 @@
-# Lab 1.2: Batch vs Streaming Trade-offs
+# Batch vs Streaming Trade-offs
 
 ## 1. Introduction:
 
