@@ -8,7 +8,7 @@ Your team lead asks you to build an automated **Extract, Transform, Validate, an
 
 You will build the following QuickCart order data pipeline:
 
-![QuickCart Order Data Pipeline Architecture](assets/Lab-1_1.drawio.svg)
+![QuickCart Order Data Pipeline Architecture](assets/Lab_1-1(DE).drawio.svg)
 
 Raw CSV files are loaded into Pandas, cleaned, validated against business rules, and written to optimized Parquet output. Invalid records trigger structured warning logs, helping downstream analytics and machine learning systems consume reliable data.
 

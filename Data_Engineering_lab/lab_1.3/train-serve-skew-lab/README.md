@@ -10,28 +10,28 @@ This repository implements the production machine learning data engineering lab 
 train-serve-skew-lab/
 │
 ├── data/
-│   ├── train.csv               # Historical training dataset (80% split)
-│   ├── test.csv                # Reserved offline evaluation dataset (20% split)
-│   └── online_data.csv         # Drifted production incoming data
+│   ├── train.csv               # training dataset
+│   ├── test.csv                # evaluation dataset (20% split)
+│   └── online_data.csv         # incoming data
 │
 ├── models/
-│   └── model.pkl               # Serialized frozen Scikit-Learn pipeline artifact
+│   └── model.pkl               # pipeline artifact
 │
 ├── src/
-│   ├── prepare_data.py         # Synthesizes historical dataset and splits train/test
-│   ├── train.py                # Trains scaler + classifier and exports model.pkl
-│   ├── offline_predict.py      # Evaluates baseline offline metrics & predictions
-│   ├── generate_online_data.py # Simulates production feature drift (rush hour, radius)
-│   ├── online_predict.py       # Scores drifted online data with frozen model
-│   └── detect_skew.py          # Quantifies drift, prediction skew, and generates reports
+│   ├── prepare_data.py         # dataset and splits train/test
+│   ├── train.py                # exports model.pkl
+│   ├── offline_predict.py      # offline metrics & predictions
+│   ├── generate_online_data.py # feature drift (rush hour, radius)
+│   ├── online_predict.py       # online data with frozen model
+│   └── detect_skew.py         
 │
 ├── results/
-│   ├── offline_predictions.csv # Baseline offline test predictions & probabilities
-│   ├── online_predictions.csv  # Production serving predictions & probabilities
-│   ├── skew_report.csv         # Structured feature drift and skew delta report
-│   └── skew_distribution.png   # Multi-panel feature distribution visualization
+│   ├── offline_predictions.csv # test predictions & probabilities
+│   ├── online_predictions.csv  # predictions & probabilities
+│   ├── skew_report.csv         # drift and skew delta report
+│   └── skew_distribution.png   # feature distribution visualization
 │
-├── requirements.txt            # Python dependencies (pandas, scikit-learn, matplotlib)
+├── requirements.txt            # Python dependencies
 └── README.md                   # Lab execution documentation
 ```
 

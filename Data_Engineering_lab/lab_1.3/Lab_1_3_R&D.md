@@ -22,28 +22,28 @@ Following your architectural design, the project maintains strict separation bet
 train-serve-skew-lab/
 │
 ├── data/
-│   ├── train.csv               # Historical training dataset (80% split)
-│   ├── test.csv                # Reserved offline evaluation dataset (20% split)
-│   └── online_data.csv         # Drifted production incoming data
+│   ├── train.csv               # training dataset
+│   ├── test.csv                # evaluation dataset (20% split)
+│   └── online_data.csv         # incoming data
 │
 ├── models/
-│   └── model.pkl               # Serialized frozen Scikit-Learn pipeline artifact
+│   └── model.pkl               # pipeline artifact
 │
 ├── src/
-│   ├── prepare_data.py         # Synthesizes historical dataset and splits train/test
-│   ├── train.py                # Trains scaler + classifier and exports model.pkl
-│   ├── offline_predict.py      # Evaluates baseline offline metrics & predictions
-│   ├── generate_online_data.py # Simulates production feature drift (rush hour, radius)
-│   ├── online_predict.py       # Scores drifted online data with frozen model
-│   └── detect_skew.py          # Quantifies drift, prediction skew, and generates reports
+│   ├── prepare_data.py         # dataset and splits train/test
+│   ├── train.py                # exports model.pkl
+│   ├── offline_predict.py      # offline metrics & predictions
+│   ├── generate_online_data.py # feature drift (rush hour, radius)
+│   ├── online_predict.py       # online data with frozen model
+│   └── detect_skew.py         
 │
 ├── results/
-│   ├── offline_predictions.csv # Baseline offline test predictions & probabilities
-│   ├── online_predictions.csv  # Production serving predictions & probabilities
-│   ├── skew_report.csv         # Structured feature drift and skew delta report
-│   └── skew_distribution.png   # Multi-panel feature distribution visualization
+│   ├── offline_predictions.csv # test predictions & probabilities
+│   ├── online_predictions.csv  # predictions & probabilities
+│   ├── skew_report.csv         # drift and skew delta report
+│   └── skew_distribution.png   # feature distribution visualization
 │
-├── requirements.txt            # Python dependencies (pandas, scikit-learn, matplotlib)
+├── requirements.txt            # Python dependencies
 └── README.md                   # Lab execution documentation
 ```
 
@@ -70,9 +70,6 @@ Students will build and run the entire machine learning skew detection pipeline 
    - `src`
    - `results`
 
-![VS Code Server Directory Structure](assets/step1_skew_project_structure.png)
-
-The VS Code Server Explorer displays the newly created project directories for the QuickCart ML pipeline. The `data` folder will host our historical and simulated production datasets, while `models` will hold serialized pipeline artifacts. The `src` directory will store our modular Python scripts, and `results` will capture offline/online prediction logs and drift summaries. Creating this clean layout at the start guarantees seamless relative path resolution across all pipeline execution steps.
 
 ---
 
