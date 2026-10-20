@@ -1,4 +1,4 @@
-# Lab 1.3: Train-Serve Skew Simulation
+# Train-Serve Skew Simulation
 
 ## 1. Introduction:
 
