@@ -116,45 +116,7 @@ The old consumer still searches for `amount`.
 
 # 5. Architecture
 
-```text
-                 QUICKCART ORDER EVENT PIPELINE
-
-        ┌──────────────┐
-        │ JSON Schema  │
-        │    V1        │
-        └──────┬───────┘
-               │
-               ▼
-        ┌──────────────┐
-        │   Producer   │
-        │ Create Event │
-        └──────┬───────┘
-               │
-               ▼
-        ┌──────────────┐
-        │  JSON Event  │
-        └──────┬───────┘
-               │
-               ▼
-        ┌──────────────┐
-        │   Consumer   │
-        │ Read/Validate│
-        └──────┬───────┘
-               │
-               ▼
-        ┌──────────────┐
-        │ Compatibility│
-        │    Tests     │
-        └──────┬───────┘
-               │
-       ┌───────┼────────┐
-       ▼       ▼        ▼
-      Add    Remove    Rename
-     Field    Field     Field
-       │       │        │
-       ▼       ▼        ▼
-      Safe*   Break     Break
-```
+![QuickCart Schema Evolution Architecture](assets/lab_1.4_DE.drawio.svg)
 
 > *Adding a field is non-breaking when it is optional and the compatibility policy permits it.
 

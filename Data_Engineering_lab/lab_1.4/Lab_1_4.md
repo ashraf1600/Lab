@@ -10,7 +10,7 @@ As business needs evolve, developers add, remove, or rename event fields. If an 
 
 You will build the following QuickCart schema evolution and governance pipeline:
 
-![QuickCart Schema Evolution Architecture](assets/Schema_evaluation_lab_1.4.drawio.svg)
+![QuickCart Schema Evolution Architecture](assets/lab_1.4_DE.drawio.svg)
 
 The Order Service publishes JSON events validated against schema contracts. When schema updates occur (adding, removing, or renaming fields), an automated governance check tests compatibility—allowing safe, backward-compatible updates and blocking breaking changes before they reach production.
 
