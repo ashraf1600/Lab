@@ -10,7 +10,7 @@ As a Senior Data Engineer at **QuickCart**, you are modernizing the storage laye
 
 ## 2. Architecture Overview
 
-![QuickCart Storage Format Benchmark Architecture](images/Lab_1_5.drawio.svg)
+![QuickCart Storage Format Benchmark Architecture](images/Lab_1.5.drawio.svg)
 
 *Figure 1: High-level architectural pipeline for QuickCart file format evaluation and benchmarking.*
 
