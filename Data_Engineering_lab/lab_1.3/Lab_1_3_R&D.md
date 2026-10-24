@@ -99,7 +99,10 @@ Students will build and run the entire machine learning skew detection pipeline 
 6. Save the file (**File > Save**) and install the dependencies inside your terminal:
    ```bash
    pip install -r requirements.txt
+   pip list
    ```
+
+![Dependencies Installation](assets/step2_pip_install.png)
 
 ![Python Dependencies Installation](assets/step2_environment_setup.png)
 

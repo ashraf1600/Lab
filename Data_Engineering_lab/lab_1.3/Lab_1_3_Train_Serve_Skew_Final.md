@@ -105,7 +105,10 @@ The project structure enforces clean boundaries between development, production 
 
    ```bash
    pip install -r requirements.txt
+   pip list
    ```
+
+![Dependencies Installation](assets/step2_pip_install.png)
 
 ![Dependencies Setup](assets/step2_environment_setup.png)
 
