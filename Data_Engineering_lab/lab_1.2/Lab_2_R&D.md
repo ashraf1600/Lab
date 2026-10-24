@@ -244,6 +244,13 @@ the VS Code Server terminal.
 
 Install the Python packages required for the lab, including the Kafka client and data-processing utilities:
 
+```bash
+pip install -r requirements.txt
+pip list
+```
+
+![Dependencies Installation](assets/step5_pip_install.png)
+
 ![Installed Dependencies](assets/step5_dependencies_installed.png)
 
 > The Python dependencies provide the functionality needed to read the
