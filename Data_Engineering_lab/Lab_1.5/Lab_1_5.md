@@ -10,9 +10,9 @@ As a Senior Data Engineer at **QuickCart**, you are modernizing the storage laye
 
 ## 2. Architecture Overview
 
-![QuickCart Storage Format Benchmark Architecture](images/Lab_1.5.drawio.svg)
+![Benchmark Architecture](images/Lab_1.5.drawio.svg)
 
-*Figure 1: High-level architectural pipeline for QuickCart file format evaluation and benchmarking.*
+*Figure 1: Benchmark architecture pipeline.*
 
 Below is the architectural workflow of the QuickCart file format evaluation harness:
 
@@ -27,21 +27,21 @@ The project is structured modularly inside `file-format-comparison-lab/`:
 
 ```text
 file-format-comparison-lab/
-├── data/                       # Destination directory for generated Parquet, Avro, and ORC files
-├── schemas/                    # Schema contracts ensuring identical data types across formats
-│   ├── order_schema.avsc       # Apache Avro JSON schema definition
-│   └── order_schema.py         # PyArrow schema definition for Parquet and ORC
-├── src/                        # Benchmark implementation scripts
-│   ├── generate_data.py        # Generates standardized synthetic QuickCart orders
-│   ├── convert_parquet.py      # Parquet writer and reader implementation
-│   ├── convert_avro.py         # Avro writer and reader implementation
-│   ├── convert_orc.py          # ORC writer and reader implementation
-│   ├── validate_integrity.py   # Cross-format record parity and schema validation
-│   └── benchmark.py            # Automated multi-iteration benchmark suite
-├── results/                    # Machine-readable output directory
-│   └── benchmark_report.json   # Structured benchmark measurements
-├── requirements.txt            # Project dependencies (pandas, pyarrow, fastavro, tabulate)
-└── README.md                   # Project instructions and overview
+├── data/                       # Storage for Parquet, Avro, and ORC files
+├── schemas/                    # Schema contracts
+│   ├── order_schema.avsc       # Avro JSON schema
+│   └── order_schema.py         # PyArrow schema
+├── src/                        # Benchmark scripts
+│   ├── generate_data.py        # Order data generator
+│   ├── convert_parquet.py      # Parquet writer and reader
+│   ├── convert_avro.py         # Avro writer and reader
+│   ├── convert_orc.py          # ORC writer and reader
+│   ├── validate_integrity.py   # Parity and validation script
+│   └── benchmark.py            # Benchmark suite
+├── results/                    # Benchmark results directory
+│   └── benchmark_report.json   # Benchmark measurements
+├── requirements.txt            # Python dependencies
+└── README.md                   # Project documentation
 ```
 
 ---
@@ -97,7 +97,7 @@ Initialize the lab workspace in VS Code Server, create the modular project folde
    pip install -r requirements.txt
    ```
 
-![Project Structure and Virtual Environment in VS Code Server](images/step-01-environment.png)
+![Project Structure and Environment](images/step-01-environment.png)
 
 The VS Code Server workspace displays the isolated `.venv` Python virtual environment alongside the `file-format-comparison-lab` project directory. The editor confirms the required dependencies (`pandas`, `numpy`, `pyarrow`, `fastavro`, `tabulate`, `cramjam`, and `tzdata`) defined in `requirements.txt` to support Parquet, Avro, and ORC processing. The integrated terminal visually verifies active virtual environment isolation with the `(.venv)` prefix. This sandbox guarantees reproducible execution without contaminating system packages or conflicting with other data pipeline environments.
 
@@ -221,9 +221,9 @@ Establish unambiguous schema contracts across row-oriented and columnar formats,
    ```
 6. Verify in the terminal that 100,000 records are generated and the baseline file `orders_raw.parquet` is created under `data/`.
 
-![Step 2 — Canonical Schema Definition and Dataset Generation in VS Code Server](images/step-02-dataset-schema.png)
+![Schema Definition and Dataset Generation](images/step-02-dataset-schema.png)
 
-*Figure 2: The canonical Avro schema contract in the VS Code editor alongside the terminal execution of the 100,000-order dataset generator.*
+*Figure 2: Avro schema and dataset generation.*
 
 The VS Code Server editor displays the canonical QuickCart Avro schema contract (`order_schema.avsc`) establishing formal data types for order IDs, epoch timestamps, monetary values, and flags. In the integrated terminal below, executing `python src/generate_data.py` generates exactly 100,000 synthetic transactional records and serializes them into the baseline file `data/orders_raw.parquet`. This step establishes strict schema parity across all subsequent conversions, preventing data type drift from skewing benchmark measurements. Students can verify the generation metrics directly in the terminal, confirming 8 columns, 2.53 MB compressed baseline file size, and 6.68 MB uncompressed in-memory footprint.
 
@@ -313,9 +313,9 @@ Implement the Apache Parquet converter and reader to evaluate columnar data layo
    ```
 6. Observe the terminal output: notice the write throughput, the compact file size of ~2.53 MB, and how projected reading across 3 columns is significantly faster than a full scan due to columnar storage pruning.
 
-![Step 3 — Apache Parquet Serialization and Projection in VS Code Server](images/step-03-parquet-write.png)
+![Parquet Serialization and Projection](images/step-03-parquet-write.png)
 
-*Figure 3: Apache Parquet converter implementation in the editor tab and terminal verification of Snappy serialization and column projection.*
+*Figure 3: Parquet serialization and column projection.*
 
 The VS Code Server editor displays `convert_parquet.py`, demonstrating columnar encoding with Snappy compression alongside selective column projection. In the terminal below, running `python src/convert_parquet.py` confirms that serializing 100,000 QuickCart orders took only 0.1269 seconds (~787,787 records/sec) producing a 2.53 MB compressed file. Reading the full dataset takes 0.0346 seconds (~2,888,871 records/sec), while projecting just three analytical columns (`order_id`, `order_amount`, `payment_method`) completes in 0.0185 seconds. This demonstrates Parquet's primary architectural advantage for QuickCart: skipping unrequested column chunks entirely from disk I/O to deliver sub-20ms query performance.
 
@@ -415,9 +415,9 @@ Implement the Apache Avro serializer and deserializer using `fastavro` and `cram
    ```
 5. Verify that 100,000 records are written to `data/orders.avro` (approx 2.80 MB) and read back sequentially. Notice that row deserialization requires iterating through each record sequentially, making full scans distinct from columnar vectorization.
 
-![Step 4 — Apache Avro Serialization and Row Deserialization in VS Code Server](images/step-04-avro-write.png)
+![Avro Serialization and Deserialization](images/step-04-avro-write.png)
 
-*Figure 4: Apache Avro converter implementation in the editor tab and terminal verification of row-oriented Snappy serialization.*
+*Figure 4: Avro serialization and row inspection.*
 
 The VS Code Server editor displays `convert_avro.py`, parsing the canonical schema contract via FastAvro and serializing records with Snappy compression. In the integrated terminal below, executing `python src/convert_avro.py` verifies that writing 100,000 QuickCart orders completed in 0.9709 seconds (~103,002 records/sec), yielding a 2.80 MB binary container file. Full sequential row deserialization required 0.8279 seconds (~120,792 records/sec), illustrating the CPU overhead of hydrating individual Python dictionary objects compared to columnar vectorization. This highlights why Avro excels for individual message streaming over Kafka and RPC payloads, whereas batch analytics queries favor columnar layouts.
 
@@ -520,9 +520,9 @@ Implement the Apache ORC converter and reader using PyArrow's native ORC engine 
    ```
 5. Verify that 100,000 records are serialized into `data/orders.orc` (approx 2.68 MB). Notice the lightning-fast write latency (~0.09s) and how projected column reads finish in just ~0.014s thanks to ORC stripe indexes.
 
-![Step 5 — Apache ORC Serialization and Column Projection in VS Code Server](images/step-05-orc-write.png)
+![ORC Serialization and Column Projection](images/step-05-orc-write.png)
 
-*Figure 5: Apache ORC converter implementation in the editor tab and terminal verification of columnar stripe serialization and column projection.*
+*Figure 5: ORC serialization and column projection.*
 
 The VS Code Server editor displays `convert_orc.py`, utilizing PyArrow's built-in ORC engine configured with the portable IANA timezone environment (`TZDIR`). In the terminal below, executing `python src/convert_orc.py` completes 100,000 order serializations in 0.1051 seconds (~951,129 records/sec), producing a 2.68 MB columnar binary file. Full table reading completes in 0.0526 seconds (~1,902,721 records/sec), while projecting 3 columns (`order_id`, `order_amount`, `payment_method`) finishes in just 0.0155 seconds. This empirically proves the efficiency of ORC's internal stripe indexes and lightweight encodings, showing near-parity with Parquet for analytical projection workloads.
 
@@ -628,9 +628,9 @@ Ensure rigorous scientific validity by running a cross-format validation suite t
    ```
 5. Verify that all 100,000 records match across all 3 formats with zero numeric divergence (`[PASS] INTEGRITY CONFIRMED`).
 
-![Step 6 — Cross-Format Integrity and Parity Verification in VS Code Server](images/step-06-validation.png)
+![Integrity and Parity Verification](images/step-06-validation.png)
 
-*Figure 6: Cross-format parity verification in the editor tab and terminal verification confirming 100% data integrity.*
+*Figure 6: Cross-format parity validation.*
 
 The VS Code Server editor displays `validate_integrity.py`, which systematically reads the generated Parquet, Avro, and ORC files to cross-examine their record populations and numerical consistency. In the integrated terminal below, executing `python src/validate_integrity.py` confirms that each format accurately retained all 100,000 records, exactly 8 schema fields, and the exact same aggregate transaction sum of 177,532,403.85 BDT without float drift. This step scientifically guarantees that any differences observed in subsequent benchmarking reflect true format architecture characteristics rather than data corruption or mismatched fields. Students can verify the green `[PASS]` indicator confirming complete fidelity before initiating performance evaluations.
 
@@ -861,9 +861,9 @@ Execute an automated multi-iteration benchmarking harness that eliminates cachin
    ```
 5. Inspect the generated comparison table and the exported file `results/benchmark_report.json`.
 
-![Step 7 — Automated Storage Benchmark Results in VS Code Server](images/step-07-benchmark-results.png)
+![Benchmark Results](images/step-07-benchmark-results.png)
 
-*Figure 7: The benchmark harness running in VS Code Server displaying the multi-run performance matrix across Parquet, Avro, and ORC.*
+*Figure 7: Storage benchmark results.*
 
 The VS Code Server editor displays `benchmark.py`, implementing a 5-iteration warm-up and timing suite that measures write throughput, full-table scans, and projected column reads. In the integrated terminal below, executing `python src/benchmark.py` reveals that Apache Parquet achieved the highest analytical read throughput at 5,333,476 records/sec and highest compression (2.53 MB, 2.64x vs RAM), while Apache ORC delivered competitive write throughput at 910,149 records/sec (2.68 MB). Apache Avro completed writes at 98,667 records/sec with a 2.80 MB footprint, reflecting row-oriented serialization trade-offs where full scans require deserializing every row sequentially (107,991 records/sec). The automated runner persists these empirical measurements directly to `results/benchmark_report.json` for reproducible downstream analysis.
 

@@ -7,22 +7,22 @@ This directory contains the complete implementation for **Lab 1.4: Schema Evolut
 ```text
 schema-evolution-lab/
 ├── schemas/
-│   ├── order_v1.json            # Baseline V1 Order Event Schema
-│   ├── order_v2_add.json        # V2: Non-breaking optional field addition (payment_method)
-│   ├── order_v2_remove.json     # V2: Breaking required field removal (amount)
-│   └── order_v2_rename.json     # V2: Breaking field rename (amount -> total_amount)
+│   ├── order_v1.json            # Baseline V1 schema
+│   ├── order_v2_add.json        # V2: add optional field
+│   ├── order_v2_remove.json     # V2: remove required field
+│   └── order_v2_rename.json     # V2: rename required field
 ├── producer/
-│   └── producer.py              # Order event producer supporting multiple schema versions
+│   └── producer.py              # Event producer
 ├── consumer/
-│   └── consumer.py              # Order event consumer validating against V1 schema contract
+│   └── consumer.py              # Event consumer (V1 contract)
 ├── tests/
-│   ├── test_add_field.py        # Validates non-breaking evolution (V2 add -> V1 consumer)
-│   ├── test_remove_field.py     # Validates breaking evolution (V2 remove -> V1 consumer)
-│   └── test_rename_field.py     # Validates breaking evolution (V2 rename -> V1 consumer)
+│   ├── test_add_field.py        # Test Scenario A (add field)
+│   ├── test_remove_field.py     # Test Scenario B (remove field)
+│   └── test_rename_field.py     # Test Scenario C (rename field)
 ├── results/
-│   └── compatibility_report.json # Automated compatibility evaluation report
-├── requirements.txt             # Python dependencies (jsonschema, pytest, tabulate)
-└── README.md
+│   └── compatibility_report.json # Compatibility report
+├── requirements.txt             # Python dependencies
+└── README.md                    # Lab documentation
 ```
 
 ## Quick Start

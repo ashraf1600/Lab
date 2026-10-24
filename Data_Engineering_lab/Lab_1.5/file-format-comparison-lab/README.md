@@ -2,7 +2,7 @@
 
 This lab implements an empirical benchmark and schema compatibility comparison across three modern big data file formats: **Apache Parquet**, **Apache Avro**, and **Apache ORC**, using identical QuickCart order lifecycle datasets.
 
-![QuickCart Storage Format Benchmark Architecture](../images/Lab_1_5.drawio.svg)
+![Benchmark Architecture](../images/Lab_1.5.drawio.svg)
 
 ---
 
@@ -10,12 +10,12 @@ This lab implements an empirical benchmark and schema compatibility comparison a
 
 ```text
 file-format-comparison-lab/
-├── data/                       # Storage directory for generated Parquet, Avro, and ORC files
-├── schemas/                    # Formal schema contracts (Avro .avsc and PyArrow Schema)
-├── src/                        # Data generator, converters, validator, and benchmark runner
-├── results/                    # Machine-readable benchmark report and metrics
-├── requirements.txt            # Python dependencies (pandas, pyarrow, fastavro, tabulate)
-└── README.md                   # Project overview and instructions
+├── data/                       # Storage for Parquet, Avro, and ORC files
+├── schemas/                    # Schema contracts (Avro and PyArrow)
+├── src/                        # Benchmark scripts
+├── results/                    # Benchmark results directory
+├── requirements.txt            # Python dependencies
+└── README.md                   # Project documentation
 ```
 
 ---

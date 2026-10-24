@@ -23,7 +23,7 @@ train-serve-skew-lab/
 │   ├── offline_predict.py      # offline metrics & predictions
 │   ├── generate_online_data.py # feature drift (rush hour, radius)
 │   ├── online_predict.py       # online data with frozen model
-│   └── detect_skew.py         
+│   └── detect_skew.py          # drift and skew detection
 │
 ├── results/
 │   ├── offline_predictions.csv # test predictions & probabilities

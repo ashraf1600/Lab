@@ -10,26 +10,26 @@ This repository implements the comparative data engineering lab comparing **Batc
 batch-streaming-lab/
 │
 ├── data/
-│   └── orders.csv              # Incoming raw food orders with event timestamps
+│   └── orders.csv              # Raw orders dataset
 │
 ├── batch/
-│   ├── batch_processor.py      # Core batch ETL processor (latency, freshness, tiers)
-│   └── run_batch.py            # Cron execution runner / interval simulator
+│   ├── batch_processor.py      # Batch ETL processor
+│   └── run_batch.py            # Cron batch runner
 │
 ├── streaming/
-│   ├── producer.py             # Kafka producer emitting real-time order events
-│   ├── consumer.py             # Kafka consumer measuring millisecond event latency
-│   └── run_streaming.py        # End-to-end concurrent producer/consumer runner
+│   ├── producer.py             # Kafka event producer
+│   ├── consumer.py             # Kafka event consumer
+│   └── run_streaming.py        # Streaming runner
 │
 ├── results/
-│   ├── batch_results.csv       # Persisted batch run records and latencies
-│   └── streaming_results.csv   # Persisted streaming run records and latencies
+│   ├── batch_results.csv       # Batch run results
+│   └── streaming_results.csv   # Streaming run results
 │
 ├── metrics/
-│   └── comparison.py           # Benchmark script calculating latency, throughput, freshness
+│   └── comparison.py           # Metrics comparison script
 │
 ├── requirements.txt            # Python dependencies
-└── README.md                   # Lab documentation and operational guide
+└── README.md                   # Lab documentation
 ```
 
 ---
