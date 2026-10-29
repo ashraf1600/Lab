@@ -1,0 +1,4 @@
+outputs/
+docs/
+**/__pycache__/
+*.md

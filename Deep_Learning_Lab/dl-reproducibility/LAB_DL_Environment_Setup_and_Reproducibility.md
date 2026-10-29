@@ -1,32 +1,18 @@
-# Deep Learning Environment Setup and Reproducibility
+# DL Environment Setup and Reproducibility
+
+**Level:** Beginner · **Stack:** Docker, Python 3.11.9, PyTorch 2.3.1 (CPU)
+
+---
 
 ## 1. Introduction
-
-### 1.1 Real-World Scenario
 
 **ShasthyoLens** is a health-tech startup that reads handwritten digits (age, ward, bed number) on scanned patient forms using a small CNN. Two engineers trained the model from the **same commit** and got **different loss curves and accuracies**. The hospital auditor asked: *"If you can't produce the same model twice, which one did you deploy?"*
 
 The causes were different library versions on each laptop, no random seed, and non-deterministic algorithms. Your job is to fix all three and prove it.
 
-### 1.2 Problem Statement
-
 Build a Dockerised PyTorch training pipeline that pins its environment, seeds every RNG, enables deterministic ops, and **proves that two runs produce bit-identical loss curves and weights**.
 
-### 1.3 Learning Outcomes
-
-- Identify where randomness enters a DL training run.
-- Pin Python and library versions in a Docker image.
-- Seed Python, NumPy and PyTorch RNGs, including DataLoader workers.
-- Enable deterministic cuDNN/PyTorch ops.
-- Verify reproducibility exactly with hex losses and a weight hash.
-
-### 1.4 Architecture Diagram
-
 ![Architecture](docs/images/architecture.svg)
-
-*Figure 1: High-level architecture of the lab.*
-
-### 1.5 Architecture Walkthrough
 
 The **project files** (Dockerfile, requirements.txt, `src/`) are **built** into the image `dl-repro:v1`, which pins Python 3.11.9, PyTorch 2.3.1 and every library. Everything inside the blue box runs in that one environment. The **scikit-learn digits** dataset ships inside scikit-learn, so it is part of the image and needs no download.
 
@@ -36,11 +22,23 @@ The **project files** (Dockerfile, requirements.txt, `src/`) are **built** into 
 
 ---
 
-## 2. Project Structure
+## 2. Objectives
+
+By the end of this lab, you will be able to:
+
+- Identify where randomness enters a DL training run.
+- Pin Python and library versions in a Docker image.
+- Seed Python, NumPy and PyTorch RNGs, including DataLoader workers.
+- Enable deterministic cuDNN/PyTorch ops.
+- Verify reproducibility exactly with hex losses and a weight hash.
+
+---
+
+## 3. Project Structure
 
 ```text
 dl-reproducibility/
-├── Dockerfile            # pinned base image + determinism env vars
+├── Dockerfile            # base image + determinism env vars
 ├── .dockerignore
 ├── requirements.txt      # exact library versions
 ├── src/
@@ -56,7 +54,7 @@ dl-reproducibility/
 
 ---
 
-## 3. Prerequisites
+## 4. Prerequisites
 
 | Requirement              | Purpose / Version                                         |
 | ------------------------ | --------------------------------------------------------- |
@@ -69,7 +67,7 @@ Basic Python, CNNs and Docker are enough. A CPU is sufficient; this lab ran on a
 
 ---
 
-## 4. Environment Setup
+## 5. Environment Setup
 
 1. Open the terminal: **Terminal → New Terminal**. If VS Code shows *Restricted Mode*, click **Trust Folder & Continue**.
 2. Check Docker:
@@ -88,15 +86,13 @@ cd ~/code/dl-reproducibility
 
 ![Docker check](docs/images/01-docker-check.png)
 
-*Figure 2: Docker client and server versions, CPU count and memory.*
-
 The red box shows that both the Docker client and the daemon (server 29.7.2) respond, so images can be built. The VM has 2 vCPUs and about 2 GB RAM, which is enough for this small CNN. Host Python is not used for training; everything runs inside the pinned image.
 
 Create each file below in VS Code (**Explorer → New File**), paste the content and save.
 
 ---
 
-## 5. Project Implementation
+## 6. Project Implementation
 
 ### Step 1 — Pin the Environment
 
@@ -164,14 +160,12 @@ import random
 import numpy as np
 import torch
 
-
 def set_global_seed(seed: int) -> None:
     """Seed Python, NumPy and PyTorch (CPU + all GPUs) RNGs."""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-
 
 def enable_determinism() -> None:
     """Force deterministic cuDNN / PyTorch algorithms."""
@@ -180,20 +174,17 @@ def enable_determinism() -> None:
     torch.backends.cudnn.benchmark = False
     torch.use_deterministic_algorithms(True)
 
-
 def seed_worker(worker_id: int) -> None:
     """DataLoader worker_init_fn: seed NumPy/random inside each worker."""
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
     random.seed(worker_seed)
 
-
 def make_generator(seed: int) -> torch.Generator:
     """Seeded generator that fixes the DataLoader shuffle order."""
     g = torch.Generator()
     g.manual_seed(seed)
     return g
-
 
 def state_dict_sha256(model: torch.nn.Module) -> str:
     """SHA-256 fingerprint of every weight (name + raw bytes)."""
@@ -202,7 +193,6 @@ def state_dict_sha256(model: torch.nn.Module) -> str:
         digest.update(name.encode("utf-8"))
         digest.update(tensor.detach().cpu().contiguous().numpy().tobytes())
     return digest.hexdigest()
-
 
 def environment_report() -> dict:
     cuda = torch.cuda.is_available()
@@ -219,7 +209,6 @@ def environment_report() -> dict:
         "cudnn_deterministic": torch.backends.cudnn.deterministic,
         "cudnn_benchmark": torch.backends.cudnn.benchmark,
     }
-
 
 if __name__ == "__main__":
     print("Before enable_determinism():")
@@ -253,7 +242,6 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from src.reproducibility import make_generator, seed_worker
 
-
 def load_digit_datasets(split_seed: int, val_fraction: float = 0.2):
     """Return (train_ds, val_ds). The split depends only on split_seed."""
     digits = load_digits()                              # 1,797 images, 8x8, values 0..16
@@ -268,7 +256,6 @@ def load_digit_datasets(split_seed: int, val_fraction: float = 0.2):
         return TensorDataset(torch.from_numpy(x).unsqueeze(1), torch.from_numpy(y))
 
     return to_dataset(x_train, y_train), to_dataset(x_val, y_val)
-
 
 def build_dataloaders(batch_size: int, split_seed: int, loader_seed: int, num_workers: int):
     train_ds, val_ds = load_digit_datasets(split_seed)
@@ -294,7 +281,6 @@ The split seed is kept separate from the training seed, so Run C changes only th
 """Small CNN for 8x8 single-channel digit images."""
 import torch.nn as nn
 
-
 class DigitsCNN(nn.Module):
     def __init__(self, num_classes: int = 10, dropout: float = 0.25):
         super().__init__()
@@ -316,7 +302,6 @@ class DigitsCNN(nn.Module):
 
     def forward(self, x):
         return self.classifier(self.features(x))
-
 
 def count_parameters(model: nn.Module) -> int:
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -349,7 +334,6 @@ from src.data import build_dataloaders
 from src.model import DigitsCNN, count_parameters
 from src.reproducibility import enable_determinism, environment_report, set_global_seed, state_dict_sha256
 
-
 def parse_args():
     p = argparse.ArgumentParser(description="Reproducible CNN training on scikit-learn digits")
     p.add_argument("--run-name", required=True)
@@ -366,7 +350,6 @@ def parse_args():
     p.add_argument("--output-dir", default="outputs")
     return p.parse_args()
 
-
 def evaluate(model, loader, criterion, device):
     model.eval()
     total_loss, correct, count = 0.0, 0, 0
@@ -378,7 +361,6 @@ def evaluate(model, loader, criterion, device):
             correct += (logits.argmax(dim=1) == labels).sum().item()
             count += labels.size(0)
     return total_loss / count, correct / count
-
 
 def main():
     args = parse_args()
@@ -453,7 +435,6 @@ def main():
     print(f"{tag} train time      = {train_seconds:.2f}s")
     print(f"{tag} saved           -> {run_dir}/metrics.json, model.pt")
 
-
 if __name__ == "__main__":
     main()
 ```
@@ -480,13 +461,11 @@ import matplotlib
 matplotlib.use("Agg")  # headless backend
 import matplotlib.pyplot as plt  # noqa: E402
 
-
 def load_run(run_dir):
     path = Path(run_dir) / "metrics.json"
     if not path.exists():
         raise SystemExit(f"metrics.json not found in {run_dir}. Train that run first.")
     return json.loads(path.read_text())
-
 
 def compare(ref, other):
     a, b = ref["step_losses_hex"], other["step_losses_hex"]
@@ -504,7 +483,6 @@ def compare(ref, other):
         "final_val_accuracy": other["final_val_accuracy"],
         "bit_identical": len(a) == len(b) and not mismatched and hash_match,
     }
-
 
 def plot(runs, out_path):
     ref = [float.fromhex(h) for h in runs[0]["step_losses_hex"]]
@@ -526,7 +504,6 @@ def plot(runs, out_path):
     ax2.grid(alpha=0.3)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
-
 
 def main():
     parser = argparse.ArgumentParser(description="Bit-level comparison of training runs")
@@ -556,7 +533,6 @@ def main():
                          str(r["model_hash_match"]), "{:.4f}".format(r["final_val_accuracy"]), verdict))
     print("Saved: {}, {}".format(out_dir / "loss_curves.png", out_dir / "comparison_report.json"))
 
-
 if __name__ == "__main__":
     main()
 ```
@@ -565,7 +541,7 @@ if __name__ == "__main__":
 
 **Objective:** build the pinned image and confirm, from inside the container, that versions and determinism settings are correct.
 
-**7.1 Build the image**
+**Build the image**
 
 ```bash
 docker build -t dl-repro:v1 .
@@ -573,11 +549,9 @@ docker build -t dl-repro:v1 .
 
 ![Docker build](docs/images/03-docker-build.png)
 
-*Figure 3: End of `docker build`.*
-
 The boxed lines show the image being tagged `dl-repro:v1` and the build finishing. The first build downloads PyTorch and takes a few minutes; later builds reuse the cached dependency layer and finish in seconds. Rebuilding does not change results as long as `requirements.txt` and the base image stay the same.
 
-**7.2 Check the project files and the image**
+**Check the project files and the image**
 
 ```bash
 find . -type f | sort && docker images dl-repro
@@ -585,19 +559,15 @@ find . -type f | sort && docker images dl-repro
 
 ![Project files and image](docs/images/02-project-files.png)
 
-*Figure 4: Project source files and the built image `dl-repro:v1`.*
+The first box lists the eight source files from Section 3 (Project Structure), so nothing is missing from the build context. The second box shows the image `dl-repro:v1` built from them. Its size (1.81 GB) is mostly Python and PyTorch, which the image pins once for everyone.
 
-The first box lists the eight source files from Section 2, so nothing is missing from the build context. The second box shows the image `dl-repro:v1` built from them. Its size (1.81 GB) is mostly Python and PyTorch, which the image pins once for everyone.
-
-**7.3 Print the environment report**
+**Print the environment report**
 
 ```bash
 docker run --rm dl-repro:v1 python -m src.reproducibility
 ```
 
 ![Environment report](docs/images/04-environment-report.png)
-
-*Figure 5: Environment report inside the container.*
 
 The top box shows the pinned versions: Python 3.11.9, torch 2.3.1+cpu and NumPy 1.26.4. The bottom box shows `enable_determinism()` turning `deterministic_algorithms` and `cudnn_deterministic` to `true`, while `cudnn_benchmark` stays `false`. `PYTHONHASHSEED` and `CUBLAS_WORKSPACE_CONFIG` come from the Dockerfile, so the image carries its own reproducibility settings.
 
@@ -616,19 +586,13 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$(pwd)/outputs:/app/outputs" \
 
 ![Run A](docs/images/05-run-a.png)
 
-*Figure 6: Run A (seed 42, deterministic).*
-
 The top box records the controlled setup: seed 42, `deterministic=True`, 38,282 parameters and 23 batches per epoch. The bottom box is the run's fingerprint: the final step loss in hex and the SHA-256 of all weights. The model reaches 0.9750 validation accuracy in about 6 seconds on the CPU.
 
 ![Run B](docs/images/06-run-b.png)
 
-*Figure 7: Run B, a second run with the same seed.*
-
 Every epoch line matches Run A exactly. The boxed hex loss `0x1.93a92a0000000p-3` and hash `33da440e…c59561` are identical to Run A's. Only the training time differs, which is expected because timing is not part of the model.
 
 ![Run C](docs/images/07-run-c.png)
-
-*Figure 8: Run C (random seed, determinism off).*
 
 The top box shows a seed drawn from the OS (1308484329) with `deterministic=False`. The loss values differ from the first epoch, and the boxed hash `e15c0b0d…605388` does not match. Validation accuracy (0.9611) is still good, which is why this problem is easy to miss: both models look valid, but they are different models.
 
@@ -641,13 +605,11 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$(pwd)/outputs:/app/outputs" \
 
 ![Comparison](docs/images/08-compare.png)
 
-*Figure 9: Bit-level comparison against Run A.*
-
 The boxed rows are the verdict. Run B has 0 mismatched steps out of 345, a maximum difference of `0.000e+00` and a matching hash, so it is **BIT-IDENTICAL**. Run C differs at all 345 steps, starting from step 0, with differences up to 0.409, so it is **DIFFERENT**.
 
 ---
 
-## 6. Verification and Testing
+## 7. Verification and Testing
 
 | Check              | Success means                                                                                                       |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------- |
@@ -666,8 +628,6 @@ python3 -c "import json; [print(r, json.load(open('outputs/'+r+'/metrics.json'))
 
 ![Hex losses](docs/images/09-hex-losses.png)
 
-*Figure 10: First three step losses in hex.*
-
 The boxed `run_a` and `run_b` lines match character for character, so the losses are equal at the bit level. `run_c` already differs at step 0, because its initial weights come from a different seed.
 
 ```bash
@@ -676,19 +636,15 @@ ls -l outputs/*/
 
 ![Output files](docs/images/10-outputs.png)
 
-*Figure 11: Files produced by the runs and the comparison.*
-
 Each run folder holds `metrics.json` and `model.pt`. The box marks `comparison_report.json` and `loss_curves.png`, the evidence files for the release report. Open `outputs/comparison/loss_curves.png` from the Explorer to view the plot.
 
 Exact losses, hashes and accuracy depend on the CPU type. Reproducibility is guaranteed for the **same image on the same hardware type**.
 
 ---
 
-## 7. Results and Observations
+## 8. Results and Observations
 
 ![Loss curves](docs/images/11-loss-curves.png)
-
-*Figure 12: `loss_curves.png`, training loss per step (top) and absolute difference from Run A (bottom).*
 
 In the top panel, Run B's dashed line sits exactly on Run A's thick line, while Run C's dotted line follows its own path. In the bottom panel, Run B's difference stays at zero for all 345 steps and Run C's jumps as high as 0.4.
 
@@ -711,7 +667,7 @@ All values below are from the runs in this lab (2 vCPU VM, Docker 29.7.2).
 
 ---
 
-## 8. Troubleshooting
+## 9. Troubleshooting
 
 **Terminal won't open / Restricted Mode**
 
@@ -745,6 +701,6 @@ All values below are from the runs in this lab (2 vCPU VM, Docker 29.7.2).
 
 ---
 
-## 9. Conclusion
+## 10. Conclusion
 
 ShasthyoLens's engineers got two different models from one commit because their environments, seeds and algorithm choices were uncontrolled. This lab fixed all three with a pinned Docker image, seeded Python, NumPy, PyTorch and DataLoader-worker RNGs, and deterministic PyTorch/cuDNN settings. The two seeded runs produced bit-identical losses at all 345 steps and the same weight hash (`33da440e…`), while the random-seed run differed from step 0. Because losses are stored in hex and the weights are hashed, reproducibility is a pass/fail check instead of a visual guess. A team can now trace any released model to an image tag, a commit and a seed, and rebuild it exactly on the same hardware type.

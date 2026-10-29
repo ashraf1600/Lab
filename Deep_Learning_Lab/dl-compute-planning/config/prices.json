@@ -1,0 +1,7 @@
+{
+  "checked_on": "2026-10-27",
+  "note": "On-demand list prices, USD per hour, used only to estimate cost per epoch.",
+  "cpu": {"instance": "AWS c6i.2xlarge (8 vCPU, 16 GiB), us-east-1", "usd_per_hour": 0.34, "source": "https://www.doit.com/compute/spot/us-east-1/c6i.2xlarge"},
+  "cuda": {"instance": "AWS g4dn.xlarge (1x NVIDIA T4 16 GB), us-east-1", "usd_per_hour": 0.526, "source": "https://calculator.holori.com/aws/ec2/g4dn.xlarge/us-east-1"},
+  "tpu": {"instance": "Google Cloud TPU v5e (1 chip), us-central1", "usd_per_hour": 1.20, "source": "https://cloud.google.com/tpu/pricing"}
+}

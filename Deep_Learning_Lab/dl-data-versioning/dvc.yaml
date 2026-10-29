@@ -1,0 +1,32 @@
+stages:
+  split:
+    cmd: python -m src.split
+    deps:
+      - data/raw
+      - src/split.py
+    params:
+      - split.seed
+      - split.test_size
+    outs:
+      - data/split
+  manifest:
+    cmd: python -m src.manifest
+    deps:
+      - data/split
+      - src/manifest.py
+    outs:
+      - data/manifest.csv
+      - data/dataset.json
+  train:
+    cmd: python -m src.train
+    deps:
+      - data/manifest.csv
+      - data/split
+      - src/train.py
+    params:
+      - train
+    outs:
+      - models/model.pt
+    metrics:
+      - metrics.json:
+          cache: false

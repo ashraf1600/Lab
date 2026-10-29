@@ -74,6 +74,9 @@ schema-evolution-lab/
    ```bash
    pip install -r requirements.txt
    ```
+
+![Dependencies Installation](assets/step1_pip_install.png)
+
 8. Using the VS Code Explorer, create the subdirectories: `schemas`, `producer`, `consumer`, `tests`, and `results`.
 
 ![Project Directory Structure](assets/step1_project_structure.png)

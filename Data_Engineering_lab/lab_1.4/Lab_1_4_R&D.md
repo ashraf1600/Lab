@@ -159,7 +159,7 @@ schema-evolution-lab/
 
 Open the project in **VS Code Server** and verify Python and the required JSON/schema libraries.
 
-**Show Image**
+![Dependencies Installation](assets/step1_pip_install.png)
 
 > VS Code Server will be the main development environment for the lab. Python will generate JSON events, validate schemas, and run compatibility tests. Keeping all components in one workspace makes the schema versions and test results easy to manage.
 
@@ -169,7 +169,7 @@ Open the project in **VS Code Server** and verify Python and the required JSON/s
 
 Create the folders and files using the VS Code Server file explorer.
 
-**Show Image**
+![Project Directory Structure](assets/step1_project_structure.png)
 
 > The project separates schemas, producer code, consumer code, and tests. Multiple schema files allow us to preserve the original version while testing different evolution scenarios. This structure also makes the compatibility experiments easy to follow.
 
@@ -203,7 +203,7 @@ Example:
 }
 ```
 
-**Show Image**
+![Baseline Schema Contract](assets/step2_schema_v1.png)
 
 > This is the original contract between the QuickCart producer and consumer. The producer must generate events that follow this structure, while the consumer expects these fields. We keep this version unchanged as the baseline for every later compatibility test.
 
