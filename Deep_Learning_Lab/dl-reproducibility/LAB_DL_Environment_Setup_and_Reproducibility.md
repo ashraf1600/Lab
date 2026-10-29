@@ -1,6 +1,6 @@
 # DL Environment Setup and Reproducibility
 
-**Level:** Beginner · **Stack:** Docker, Python 3.11.9, PyTorch 2.3.1 (CPU)
+
 
 ---
 
