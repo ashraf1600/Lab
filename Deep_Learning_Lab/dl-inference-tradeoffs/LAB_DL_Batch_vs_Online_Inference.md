@@ -1,6 +1,6 @@
 # Batch vs Online Inference Trade-offs
 
-**Level:** Intermediate · **Stack:** Docker, Python 3.11.9, PyTorch 2.3.1, FastAPI
+
 
 ---
 
