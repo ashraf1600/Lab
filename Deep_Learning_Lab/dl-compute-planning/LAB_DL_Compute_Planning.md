@@ -1,6 +1,5 @@
 # CPU vs GPU vs TPU Compute Planning
 
-**Level:** Beginner · **Stack:** Docker, Python 3.11.9, PyTorch 2.3.1
 
 ---
 
