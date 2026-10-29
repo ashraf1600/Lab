@@ -1,6 +1,5 @@
 # Data Dependencies and Versioning for DL
 
-**Level:** Intermediate · **Stack:** Docker, Python 3.11.9, PyTorch 2.3.1, DVC 3.51.2, MinIO (S3)
 
 ---
 
