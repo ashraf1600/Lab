@@ -1,6 +1,5 @@
 # CNN / RNN / Transformer Architecture Tour
 
-**Level:** Beginner · **Stack:** Docker, Python 3.11.9, PyTorch 2.3.1 (CPU)
 
 ---
 
