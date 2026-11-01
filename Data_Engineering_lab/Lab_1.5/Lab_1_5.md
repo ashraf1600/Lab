@@ -1,29 +1,33 @@
-# Lab 1.5: File Format Comparison (Parquet, Avro, ORC)
+# File Format Comparison (Parquet, Avro, ORC)
 
----
+## 1. Introduction
 
-## 1. Introduction & Real-Life Scenario
+Imagine you are a data engineer at **QuickCart**, a fast-growing online food delivery platform, and you are modernizing the storage layer for millions of daily order transactions. Raw JSON and CSV files have inflated storage costs and slowed down analytical queries.
 
-As a Senior Data Engineer at **QuickCart**, you are modernizing the storage layer for millions of daily food and grocery delivery transactions. Raw JSON and CSV files have caused severe storage cost inflation and slow analytical queries. In this lab, you build an empirical benchmark harness comparing **Apache Parquet**, **Apache Avro**, and **Apache ORC** on an identical 100,000-order dataset to evaluate compression efficiency, read/write throughput, and schema governance.
+Your task is to build a benchmark that compares **Apache Parquet**, **Apache Avro**, and **Apache ORC** on the same 100,000-order dataset, measuring file size, read/write speed, and schema support.
 
----
-
-## 2. Architecture Overview
+You will build the following QuickCart file format benchmark:
 
 ![Benchmark Architecture](images/Lab_1.5.drawio.svg)
-
-*Figure 1: Benchmark architecture pipeline.*
-
-Below is the architectural workflow of the QuickCart file format evaluation harness:
-
 
 The pipeline synthesizes 100,000 realistic QuickCart orders governed by strict canonical schemas. It encodes the records into Parquet, Avro, and ORC, validates record counts and value parity, runs timed multi-iteration read/write benchmarks, and outputs a structured comparative report.
 
 ---
 
+## 2. Objectives
+
+By the end of this lab, you will be able to:
+
+- Write the same dataset as Parquet, Avro, and ORC from one shared schema.
+- Verify that all three files hold identical records.
+- Benchmark file size, write speed, full-read speed, and column projection.
+- Choose the right format for streaming, data lake, and Hive/Trino workloads.
+
+---
+
 ## 3. Project File Structure
 
-The project is structured modularly inside `file-format-comparison-lab/`:
+The project uses the following structure:
 
 ```text
 file-format-comparison-lab/
@@ -48,20 +52,14 @@ file-format-comparison-lab/
 
 ## 4. Project Implementation
 
-Students will build and verify the entire file format benchmark suite using **VS Code Server**. All files are managed directly through the VS Code user interface—**no `cat` commands are used**.
-
----
-
-### Step 1 — Open VS Code Server and Scaffold the Project Structure
-
-**What we are doing**
+### Step 1: Set Up the Project and Environment
 
 Initialize the lab workspace in VS Code Server, create the modular project folder hierarchy, establish an isolated Python virtual environment, and install all required big data serialization libraries.
 
 1. Open your browser and access your **VS Code Server** environment.
 2. In the top menu bar, select **File > Open Folder...**, navigate to or create the project directory:
    ```text
-   Data_Engineering_lab/Lab_1.5/file-format-comparison-lab
+   file-format-comparison-lab
    ```
 3. In the VS Code Explorer sidebar (left panel), verify or create the project subdirectories by clicking the **New Folder** icon:
    - `data`
@@ -77,7 +75,7 @@ Initialize the lab workspace in VS Code Server, create the modular project folde
    ```bash
    source .venv/bin/activate
    ```
-   *(On Windows PowerShell, execute: `.\.venv\Scripts\Activate.ps1`)*
+   *(On Windows PowerShell, run: `.venv\Scripts\Activate.ps1`)*
 7. In the root of `file-format-comparison-lab/`, click the **New File** icon and create:
    ```text
    requirements.txt
@@ -99,13 +97,11 @@ Initialize the lab workspace in VS Code Server, create the modular project folde
 
 ![Project Structure and Environment](images/step-01-environment.png)
 
-The VS Code Server workspace displays the isolated `.venv` Python virtual environment alongside the `file-format-comparison-lab` project directory. The editor confirms the required dependencies (`pandas`, `numpy`, `pyarrow`, `fastavro`, `tabulate`, `cramjam`, and `tzdata`) defined in `requirements.txt` to support Parquet, Avro, and ORC processing. The integrated terminal visually verifies active virtual environment isolation with the `(.venv)` prefix. This sandbox guarantees reproducible execution without contaminating system packages or conflicting with other data pipeline environments.
+The workspace shows the `.venv` folder next to `file-format-comparison-lab`, and `requirements.txt` lists the libraries for Parquet, Avro, and ORC (`pyarrow`, `fastavro`), Snappy compression for Avro (`cramjam`), and the time zone data that the ORC writer needs (`tzdata`). The `(.venv)` prefix in the terminal confirms the virtual environment is active.
 
 ---
 
-### Step 2 — Define Canonical Schemas and Generate the QuickCart Dataset
-
-**What we are doing**
+### Step 2: Define the Schemas and Generate the Dataset
 
 Establish unambiguous schema contracts across row-oriented and columnar formats, then synthesize 100,000 realistic QuickCart order transactions to serve as the unified benchmark baseline.
 
@@ -223,15 +219,11 @@ Establish unambiguous schema contracts across row-oriented and columnar formats,
 
 ![Schema Definition and Dataset Generation](images/step-02-dataset-schema.png)
 
-*Figure 2: Avro schema and dataset generation.*
-
-The VS Code Server editor displays the canonical QuickCart Avro schema contract (`order_schema.avsc`) establishing formal data types for order IDs, epoch timestamps, monetary values, and flags. In the integrated terminal below, executing `python src/generate_data.py` generates exactly 100,000 synthetic transactional records and serializes them into the baseline file `data/orders_raw.parquet`. This step establishes strict schema parity across all subsequent conversions, preventing data type drift from skewing benchmark measurements. Students can verify the generation metrics directly in the terminal, confirming 8 columns, 2.53 MB compressed baseline file size, and 6.68 MB uncompressed in-memory footprint.
+The editor shows the Avro schema `order_schema.avsc` with types for IDs, timestamps, amounts, and flags. The terminal confirms that `generate_data.py` created 100,000 records with 8 columns in `data/orders_raw.parquet` (2.53 MB on disk, 6.68 MB in memory). Every converter reads this one baseline file, so all three formats start from identical data.
 
 ---
 
-### Step 3 — Implement Apache Parquet Serialization and Column Pruning
-
-**What we are doing**
+### Step 3: Write and Read Apache Parquet
 
 Implement the Apache Parquet converter and reader to evaluate columnar data layout, write performance with Snappy compression, full-table scanning speed, and selective column projection.
 
@@ -311,19 +303,15 @@ Implement the Apache Parquet converter and reader to evaluate columnar data layo
    ```bash
    python src/convert_parquet.py
    ```
-6. Observe the terminal output: notice the write throughput, the compact file size of ~2.53 MB, and how projected reading across 3 columns is significantly faster than a full scan due to columnar storage pruning.
+6. Check the terminal output: the write speed, the file size of about 2.53 MB, and how reading only 3 columns is faster than a full scan.
 
 ![Parquet Serialization and Projection](images/step-03-parquet-write.png)
 
-*Figure 3: Parquet serialization and column projection.*
-
-The VS Code Server editor displays `convert_parquet.py`, demonstrating columnar encoding with Snappy compression alongside selective column projection. In the terminal below, running `python src/convert_parquet.py` confirms that serializing 100,000 QuickCart orders took only 0.1269 seconds (~787,787 records/sec) producing a 2.53 MB compressed file. Reading the full dataset takes 0.0346 seconds (~2,888,871 records/sec), while projecting just three analytical columns (`order_id`, `order_amount`, `payment_method`) completes in 0.0185 seconds. This demonstrates Parquet's primary architectural advantage for QuickCart: skipping unrequested column chunks entirely from disk I/O to deliver sub-20ms query performance.
+Writing 100,000 orders to Parquet took 0.1269 s (787,787 records/s) and produced a 2.53 MB file. A full read took 0.0346 s (2,888,871 records/s), while reading only `order_id`, `order_amount`, and `payment_method` took 0.0185 s. Parquet skips the column chunks that are not requested, which is its main advantage for analytical queries.
 
 ---
 
-### Step 4 — Implement Apache Avro Serialization and Row-Oriented Ingestion
-
-**What we are doing**
+### Step 4: Write and Read Apache Avro
 
 Implement the Apache Avro serializer and deserializer using `fastavro` and `cramjam` to benchmark row-oriented streaming ingestion, schema-embedded data storage, and sequential row deserialization.
 
@@ -413,19 +401,15 @@ Implement the Apache Avro serializer and deserializer using `fastavro` and `cram
    ```bash
    python src/convert_avro.py
    ```
-5. Verify that 100,000 records are written to `data/orders.avro` (approx 2.80 MB) and read back sequentially. Notice that row deserialization requires iterating through each record sequentially, making full scans distinct from columnar vectorization.
+5. Check that 100,000 records are written to `data/orders.avro` (about 2.80 MB) and read back. Avro is read row by row, so every record is decoded in sequence.
 
 ![Avro Serialization and Deserialization](images/step-04-avro-write.png)
 
-*Figure 4: Avro serialization and row inspection.*
-
-The VS Code Server editor displays `convert_avro.py`, parsing the canonical schema contract via FastAvro and serializing records with Snappy compression. In the integrated terminal below, executing `python src/convert_avro.py` verifies that writing 100,000 QuickCart orders completed in 0.9709 seconds (~103,002 records/sec), yielding a 2.80 MB binary container file. Full sequential row deserialization required 0.8279 seconds (~120,792 records/sec), illustrating the CPU overhead of hydrating individual Python dictionary objects compared to columnar vectorization. This highlights why Avro excels for individual message streaming over Kafka and RPC payloads, whereas batch analytics queries favor columnar layouts.
+Writing 100,000 orders to Avro with Snappy took 0.9709 s (103,002 records/s) and produced a 2.80 MB file. Reading it back took 0.8279 s (120,792 records/s), because each row is turned into a Python dictionary one at a time. That cost is small for single messages, which is why Avro suits Kafka and RPC payloads, while batch analytics favors columnar formats.
 
 ---
 
-### Step 5 — Implement Apache ORC Serialization and Stripe Architecture
-
-**What we are doing**
+### Step 5: Write and Read Apache ORC
 
 Implement the Apache ORC converter and reader using PyArrow's native ORC engine to evaluate columnar stripe layout, metadata indexing, write speed, and selective column projection.
 
@@ -518,21 +502,17 @@ Implement the Apache ORC converter and reader using PyArrow's native ORC engine 
    ```bash
    python src/convert_orc.py
    ```
-5. Verify that 100,000 records are serialized into `data/orders.orc` (approx 2.68 MB). Notice the lightning-fast write latency (~0.09s) and how projected column reads finish in just ~0.014s thanks to ORC stripe indexes.
+5. Check that 100,000 records are written to `data/orders.orc` (about 2.68 MB), and compare the write time and the 3-column read time with Parquet.
 
 ![ORC Serialization and Column Projection](images/step-05-orc-write.png)
 
-*Figure 5: ORC serialization and column projection.*
-
-The VS Code Server editor displays `convert_orc.py`, utilizing PyArrow's built-in ORC engine configured with the portable IANA timezone environment (`TZDIR`). In the terminal below, executing `python src/convert_orc.py` completes 100,000 order serializations in 0.1051 seconds (~951,129 records/sec), producing a 2.68 MB columnar binary file. Full table reading completes in 0.0526 seconds (~1,902,721 records/sec), while projecting 3 columns (`order_id`, `order_amount`, `payment_method`) finishes in just 0.0155 seconds. This empirically proves the efficiency of ORC's internal stripe indexes and lightweight encodings, showing near-parity with Parquet for analytical projection workloads.
+`convert_orc.py` uses PyArrow's ORC writer and sets `TZDIR` so it can find time zone data. Writing 100,000 orders took 0.1051 s (951,129 records/s) and produced a 2.68 MB file. A full read took 0.0526 s (1,902,721 records/s), and reading 3 columns took 0.0155 s. Like Parquet, ORC stores data by column, so column projection is close to Parquet's speed.
 
 ---
 
-### Step 6 — Validate Cross-Format Data Integrity and Parity
+### Step 6: Validate Data Integrity Across Formats
 
-**What we are doing**
-
-Ensure rigorous scientific validity by running a cross-format validation suite that asserts exact record counts (100,000), schema column parity, absence of corrupted values, and total financial transaction amount matching across Parquet, Avro, and ORC files.
+Before benchmarking, confirm that the three files hold the same data: the same record count (100,000), the same columns, and the same total order amount.
 
 1. In the VS Code Explorer, click the **New File** icon inside `src/` and create:
    ```text
@@ -626,21 +606,17 @@ Ensure rigorous scientific validity by running a cross-format validation suite t
    ```bash
    python src/validate_integrity.py
    ```
-5. Verify that all 100,000 records match across all 3 formats with zero numeric divergence (`[PASS] INTEGRITY CONFIRMED`).
+5. Check that all three formats match and the script prints `[PASS] INTEGRITY CONFIRMED`.
 
 ![Integrity and Parity Verification](images/step-06-validation.png)
 
-*Figure 6: Cross-format parity validation.*
-
-The VS Code Server editor displays `validate_integrity.py`, which systematically reads the generated Parquet, Avro, and ORC files to cross-examine their record populations and numerical consistency. In the integrated terminal below, executing `python src/validate_integrity.py` confirms that each format accurately retained all 100,000 records, exactly 8 schema fields, and the exact same aggregate transaction sum of 177,532,403.85 BDT without float drift. This step scientifically guarantees that any differences observed in subsequent benchmarking reflect true format architecture characteristics rather than data corruption or mismatched fields. Students can verify the green `[PASS]` indicator confirming complete fidelity before initiating performance evaluations.
+All three files hold 100,000 records, 8 columns, and the same total order amount of 177,532,403.85 BDT. Because the data is identical, any difference in the benchmark comes from the file format itself, not from lost or changed data.
 
 ---
 
-### Step 7 — Execute Automated Multi-Iteration Benchmark Suite
+### Step 7: Run the Benchmark Suite
 
-**What we are doing**
-
-Execute an automated multi-iteration benchmarking harness that eliminates caching noise across 5 timed trials, measuring raw serialization throughput, full scan read speeds, column projection latency, and storage compression ratios.
+Run each operation once as a warm-up and then 5 timed times, and report the mean write time, full read time, 3-column read time, file size, and compression ratio.
 
 1. In the VS Code Explorer, click the **New File** icon inside `src/` and create:
    ```text
@@ -863,19 +839,17 @@ Execute an automated multi-iteration benchmarking harness that eliminates cachin
 
 ![Benchmark Results](images/step-07-benchmark-results.png)
 
-*Figure 7: Storage benchmark results.*
-
-The VS Code Server editor displays `benchmark.py`, implementing a 5-iteration warm-up and timing suite that measures write throughput, full-table scans, and projected column reads. In the integrated terminal below, executing `python src/benchmark.py` reveals that Apache Parquet achieved the highest analytical read throughput at 5,333,476 records/sec and highest compression (2.53 MB, 2.64x vs RAM), while Apache ORC delivered competitive write throughput at 910,149 records/sec (2.68 MB). Apache Avro completed writes at 98,667 records/sec with a 2.80 MB footprint, reflecting row-oriented serialization trade-offs where full scans require deserializing every row sequentially (107,991 records/sec). The automated runner persists these empirical measurements directly to `results/benchmark_report.json` for reproducible downstream analysis.
+Parquet has the fastest full read (5,333,476 records/s) and the smallest file (2.53 MB, 2.64x smaller than in memory). ORC has the fastest write (910,149 records/s) with a 2.68 MB file. Avro writes 98,667 records/s and reads 107,991 records/s with a 2.80 MB file, because every row is decoded one by one. The script also saves these numbers to `results/benchmark_report.json`.
 
 ---
 
-## 5. Measured Results & Empirical Comparison
+## 5. Results
 
-All benchmark metrics below represent the mean of 5 isolated execution iterations on the 100,000 QuickCart order dataset (6.68 MB in-memory baseline) using Snappy compression across all three formats:
+All metrics below are the mean of 5 isolated execution iterations on the 100,000 QuickCart order dataset (6.68 MB in-memory baseline) using Snappy compression across all three formats:
 
 | Benchmark Metric | Apache Parquet | Apache Avro | Apache ORC | Architectural Winner |
 | :--- | :--- | :--- | :--- | :--- |
-| **Disk File Size (MB)** | **2.53 MB** | 2.80 MB | 2.68 MB | **Apache Parquet** (5.6% smaller than ORC, 9.6% smaller than Avro) |
+| **Disk File Size (MB)** | **2.53 MB** | 2.80 MB | 2.68 MB | **Apache Parquet** (5.5% smaller than ORC, 9.4% smaller than Avro) |
 | **Raw File Size (Bytes)** | **2,656,602** | 2,933,577 | 2,811,133 | **Apache Parquet** |
 | **Compression Ratio vs RAM** | **2.64x** | 2.39x | 2.49x | **Apache Parquet** |
 | **Mean Write Latency (Sec)** | 0.1151s | 1.0135s | **0.1099s** | **Apache ORC** (Fastest columnar writer) |
@@ -883,21 +857,21 @@ All benchmark metrics below represent the mean of 5 isolated execution iteration
 | **Full Read Latency (Sec)** | **0.0187s** | 0.9260s | 0.0349s | **Apache Parquet** (1.8x faster than ORC, 49x faster than Avro) |
 | **Full Read Throughput (Rec/sec)**| **5,333,476** | 107,991 | 2,865,364 | **Apache Parquet** |
 | **Projected Read (3 Columns)** | 0.0159s | *N/A (Row scan)* | **0.0153s** | **Apache ORC & Parquet** (Near parity, ~15ms) |
-| **Projected Throughput (Rec/sec)**| 6,289,308 | *N/A* | **6,535,947** | **Apache ORC** |
+| **Projected Throughput (Rec/sec)**| 6,293,623 | *N/A* | **6,553,303** | **Apache ORC** |
 
 ---
 
-## 6. Architectural Interpretation & Decision Matrix
+## 6. Interpretation and Decision Matrix
 
 ### Columnar vs. Row-Oriented Layout
-- **Parquet & ORC (Columnar):** Store data by column chunks (Parquet Row Groups and ORC Stripes). Because consecutive values in a column share the same data type and high cardinality redundancy, columnar formats apply run-length encoding (RLE), dictionary encoding, and bit-packing before compression. This explains why Parquet compressed 6.68 MB of in-memory transactional records down to **2.53 MB** (2.64x compression).
-- **Avro (Row-Oriented):** Encodes records sequentially as binary structures. Each row's fields are laid out contiguously. While Avro provides a compact binary envelope compared to JSON or CSV (2.80 MB vs >15 MB uncompressed text), it cannot achieve Parquet's compression density because heterogeneous data types adjacent in memory compress less efficiently than homogeneous column values.
+- **Parquet & ORC (Columnar):** Store data by column chunks (Parquet Row Groups and ORC Stripes). Because consecutive values in a column share the same data type and often repeat, columnar formats apply run-length encoding (RLE), dictionary encoding, and bit-packing before compression. This explains why Parquet compressed 6.68 MB of in-memory transactional records down to **2.53 MB** (2.64x compression).
+- **Avro (Row-Oriented):** Encodes records sequentially as binary structures. Each row's fields are laid out contiguously. While Avro is a compact binary format compared with JSON or CSV, it cannot achieve Parquet's compression density because heterogeneous data types adjacent in memory compress less efficiently than homogeneous column values.
 
-### Analytical Query Throughput & Column Pruning
+### Query Speed and Column Pruning
 - When QuickCart's BI dashboards calculate metrics like *total gross merchandise value (GMV)* by aggregating `order_amount`, Parquet and ORC perform **column projection (pruning)**. The storage engine reads only the byte offsets for `order_amount`, bypassing all customer IDs, timestamps, and delivery distances entirely.
 - In our empirical tests, reading 3 out of 8 columns dropped execution time to **0.015s**, sustaining over **6.5 million records/second**. In contrast, Avro must read and deserialize every preceding field of every single row from disk, achieving 107,991 records/second.
 
-### Schema Governance & Evolution
+### Schema Governance and Evolution
 - **Avro:** The gold standard for real-time event streaming architectures (Kafka, Redpanda). Avro schemas are defined in pure JSON contracts (`.avsc`), support centralized Schema Registries, and offer robust backward, forward, and full compatibility modes where new fields with defaults never break existing consumers.
 - **Parquet & ORC:** Embed schema metadata directly inside file footers and postscripts. They allow schema evolution during downstream batch reads (e.g., Spark schema merging), but lack real-time schema registry validation for fine-grained per-event messaging.
 
@@ -911,13 +885,13 @@ All benchmark metrics below represent the mean of 5 isolated execution iteration
 
 ---
 
-## 7. Troubleshooting & Common Pitfalls
+## 7. Troubleshooting
 
-### 1. `ValueError: snappy codec is supported but you need to install cramjam`
+### `ValueError: snappy codec is supported but you need to install cramjam`
 - **Cause:** `fastavro` delegates Snappy compression to external decompression libraries.
 - **Solution:** Add `cramjam>=2.0.0` to `requirements.txt`. Cramjam provides precompiled wheels across Windows and Linux without C++ toolchain prerequisites.
 
-### 2. `pyarrow.lib.ArrowException: Time zone file /usr/share/zoneinfo/GMT does not exist`
+### `pyarrow.lib.ArrowException: Time zone file /usr/share/zoneinfo/GMT does not exist`
 - **Cause:** PyArrow's underlying C++ ORC engine looks for IANA timezone files on disk when serializing timestamp columns. On Windows, `/usr/share/zoneinfo` does not exist by default.
 - **Solution:** Install Python's standard `tzdata` package and export the environment path before invoking ORC:
   ```python
@@ -925,7 +899,7 @@ All benchmark metrics below represent the mean of 5 isolated execution iteration
   os.environ["TZDIR"] = str(Path(tzdata.__file__).parent / "zoneinfo")
   ```
 
-### 3. Skewed Benchmark Results Due to Different Compression Codecs
+### Skewed Results from Different Compression Codecs
 - **Cause:** Comparing Parquet with Snappy against Avro with uncompressed (`null`) or ORC with Zlib skews file size and throughput in favor of the codec rather than the format architecture.
 - **Solution:** Standardize on `snappy` across Parquet, Avro, and ORC to isolate file structure performance from compression algorithm discrepancies.
 

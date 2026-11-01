@@ -1,0 +1,7 @@
+data/
+models/
+outputs/
+docs/
+.dvc/cache/
+**/__pycache__/
+*.md

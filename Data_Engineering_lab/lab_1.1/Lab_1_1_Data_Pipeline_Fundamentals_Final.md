@@ -1,6 +1,6 @@
 # Data Pipeline Fundamentals
 
-## 1. Introduction:
+## 1. Introduction
 
 Imagine you have just joined **QuickCart**, a fast-growing online food delivery platform, as a **Junior Data Engineer**. Every evening, partner restaurants upload raw CSV order files, but the data often contains missing IDs, corrupted numbers, negative quantities, and inconsistent text formatting. Manual spreadsheet checks are no longer enough, and analytics dashboards are becoming slow over unindexed CSV data.
 
@@ -14,9 +14,20 @@ Raw CSV files are loaded into Pandas, cleaned, validated against business rules,
 
 ---
 
-## 2. Project File Structure
+## 2. Objectives
 
-Following your architectural design, the project maintains strict separation between raw inputs, transformed outputs, business logic, and operational logs:
+By the end of this lab, you will be able to:
+
+- Build a Python ETL script that reads a CSV file, transforms it, and writes Parquet.
+- Validate records against business rules and quarantine invalid rows.
+- Add structured logging so every pipeline stage leaves a trace.
+- Use `try/except` error handling to capture pipeline failures with full stack traces.
+
+---
+
+## 3. Project File Structure
+
+The project keeps raw inputs, transformed outputs, business logic, and operational logs in separate folders:
 
 ```text
 quickcart-data-pipeline/
@@ -29,7 +40,8 @@ quickcart-data-pipeline/
 │   └── check_output.py         # Output verification script
 │
 ├── output/
-│   └── orders_clean.parquet    # Cleaned Parquet data
+│   ├── orders_clean.parquet    # Cleaned Parquet data
+│   └── rejected_orders.csv     # Quarantined invalid rows
 │
 ├── logs/
 │   └── pipeline.log            # Pipeline execution logs
@@ -39,26 +51,26 @@ quickcart-data-pipeline/
 
 ---
 
-## 3. Project Implementation
+## 4. Project Implementation
 
 ### Step 1: Open VS Code Server and Create Project Folders
 
-1. Open your **VS Code Server** workspace and create folder
-2. ```text
+1. Open your **VS Code Server** workspace and create a project folder named:
+   ```text
    quickcart-data-pipeline
    ```
+2. Open the folder with **File > Open Folder...**.
 3. In the VS Code Explorer sidebar (left panel), click the **New Folder** icon to create the following directories:
    - `data`
    - `src`
    - `output`
    - `logs`
 
-
 ---
 
 ### Step 2: Initialize and Activate Python Virtual Environment
 
-1. In VS Code Server, open an integrated terminal by clicking **Terminal > New Terminal**.
+1. Open an integrated terminal by clicking **Terminal > New Terminal**.
 2. Create an isolated virtual environment named `.venv`:
    ```bash
    python3 -m venv .venv
@@ -73,7 +85,7 @@ quickcart-data-pipeline/
 
 ![Virtual Environment Activated](assets/step2_virtual_environment.png)
 
-The activated virtual environment provides an isolated runtime sandbox for the QuickCart data pipeline. Sandboxing ensures that specific library versions do not conflict with system-wide Python packages. The `(.venv)` prompt prefix visually confirms that subsequent package installations will reside exclusively inside this workspace.
+The `(.venv)` prefix confirms the virtual environment is active. Every package installed from now on stays inside this project and does not conflict with system-wide Python packages.
 
 ---
 
@@ -100,7 +112,7 @@ The activated virtual environment provides an isolated runtime sandbox for the Q
 
 ![Installed Dependencies](assets/step3_dependencies_installed.png)
 
-The package manager successfully installs Pandas for data transformations and PyArrow for Parquet serialization. Defining requirements in a standalone file ensures the pipeline can be deterministically reproduced across different cloud environments. The terminal output confirms that the correct library versions are active in the virtual environment.
+Pandas handles the data transformations and PyArrow writes the Parquet file. Keeping the dependencies in `requirements.txt` lets anyone recreate the same environment with one command.
 
 ---
 
@@ -144,7 +156,7 @@ The package manager successfully installs Pandas for data transformations and Py
 
 ![Raw Orders Dataset](assets/step4_raw_orders_csv.png)
 
-The raw CSV file reflects realistic daily operational data submitted by QuickCart's restaurant partners. It contains vital business fields such as order identifiers, customer IDs, menu items, prices, and timestamps. Creating this sample batch allows us to test transformation rules and validation checks before deploying to production feeds.
+The CSV holds 25 orders from QuickCart's restaurant partners with order IDs, customer IDs, menu items, quantities, prices, and order dates. This sample batch is used to test the transformation and validation rules.
 
 ---
 
@@ -154,7 +166,7 @@ The raw CSV file reflects realistic daily operational data submitted by QuickCar
    ```text
    pipeline.py
    ```
-2. Open `src/pipeline.py` and write the complete modular ETL implementation:
+2. Open `src/pipeline.py` and add the ETL implementation:
 
 ```python
 import logging
@@ -268,7 +280,7 @@ if __name__ == "__main__":
 
 3. Save the file by clicking **File > Save**.
 
-The pipeline code organizes the ETL workflow into independent, modular functions. Extraction loads the raw order file, transformation cleans strings and derives the `total_amount` metric, and validation removes corrupted rows. Wrapping the execution in a `try/except` block guarantees that unhandled errors are automatically captured in the operational log.
+The pipeline is split into four functions. Extraction loads the raw file, transformation cleans text, removes duplicate orders, and derives `total_amount`, validation moves invalid rows to `output/rejected_orders.csv`, and loading writes the valid rows to Parquet. The `try/except` block in `main()` writes any unhandled error and its stack trace to the log.
 
 ---
 
@@ -278,11 +290,11 @@ The pipeline code organizes the ETL workflow into independent, modular functions
    ```bash
    python src/pipeline.py
    ```
-2. The terminal executes cleanly without noisy stdout output because all metrics are routed to the structured log file.
+2. The command prints nothing to the terminal because all messages go to the log file.
 
 ![Pipeline Execution](assets/step6_pipeline_execution.png)
 
-The command runs the end-to-end pipeline against the raw order dataset. Because professional data engineering workflows avoid printing raw output directly to the terminal, silence indicates smooth execution. The resulting data and execution traces are written to their respective disk directories.
+The pipeline ran end to end. The cleaned data is written to `output/` and the execution trace to `logs/pipeline.log`.
 
 ---
 
@@ -318,7 +330,7 @@ The command runs the end-to-end pipeline against the raw order dataset. Because 
 
 ![Parquet Output and Schema](assets/step7_parquet_output.png)
 
-The inspection script confirms that the Parquet dataset was created with proper data types and schemas. The newly derived `total_amount` column is accurately calculated as `quantity * unit_price` for every record. Downstream analytics queries on this Parquet file will run significantly faster and consume less storage than the original CSV.
+The Parquet file holds all 25 records with typed columns: `order_date` is a datetime and `quantity`, `unit_price`, and `total_amount` are integers. The derived `total_amount` column equals `quantity * unit_price` for every row. The `None` on the last line is the return value of `df.info()`, which prints its own output.
 
 ---
 
@@ -328,25 +340,25 @@ The inspection script confirms that the Parquet dataset was created with proper 
 2. Click on `pipeline.log` to open it in the editor.
 3. Review the execution trace:
    ```text
-   2026-10-04 12:30:01 | INFO | ========== Pipeline Started ==========
-   2026-10-04 12:30:01 | INFO | Starting data extraction
-   2026-10-04 12:30:01 | INFO | Data extraction completed | rows=8
-   2026-10-04 12:30:01 | INFO | Starting data transformation
-   2026-10-04 12:30:01 | INFO | Data transformation completed
-   2026-10-04 12:30:01 | INFO | Starting data validation
-   2026-10-04 12:30:01 | INFO | Validation completed | valid=8 | rejected=0
-   2026-10-04 12:30:01 | INFO | Starting data loading
-   2026-10-04 12:30:01 | INFO | Data loading completed | destination=... | rows=8
-   2026-10-04 12:30:01 | INFO | ========== Pipeline Completed Successfully ==========
+   2026-10-04 14:30:41,843 | INFO | ========== Pipeline Started ==========
+   2026-10-04 14:30:41,843 | INFO | Starting data extraction
+   2026-10-04 14:30:41,859 | INFO | Data extraction completed | rows=25
+   2026-10-04 14:30:41,859 | INFO | Starting data transformation
+   2026-10-04 14:30:41,887 | INFO | Data transformation completed
+   2026-10-04 14:30:41,887 | INFO | Starting data validation
+   2026-10-04 14:30:41,897 | INFO | Validation completed | valid=25 | rejected=0
+   2026-10-04 14:30:41,897 | INFO | Starting data loading
+   2026-10-04 14:30:42,256 | INFO | Data loading completed | destination=... | rows=25
+   2026-10-04 14:30:42,256 | INFO | ========== Pipeline Completed Successfully ==========
    ```
 
 ![Structured Logs](assets/step8_structured_logs.png)
 
-The structured log file preserves a complete, timestamped history of each ETL milestone. It records incoming batch sizes, transformation progress, and final record counts loaded into storage. In a production setting, centralized log monitoring tools parse these structured logs to trigger alerts if batch sizes drop unexpectedly.
+The log keeps a timestamped record of every ETL stage: 25 rows extracted, 25 valid, 0 rejected, and 25 loaded. Because every line uses the same `time | level | message` format, monitoring tools can parse it and raise alerts, for example when a batch is smaller than expected.
 
 ---
 
-### Step 9: Test Data Quality Validation & Record Rejection
+### Step 9: Test Data Quality Validation and Record Rejection
 
 1. In the VS Code Explorer, open `data/orders.csv`.
 2. Edit line 4 (order `1003`) by changing the quantity from `2` to `-2` (simulating a corrupted cancellation entry):
@@ -358,7 +370,7 @@ The structured log file preserves a complete, timestamped history of each ETL mi
    ```bash
    python src/pipeline.py
    ```
-5. Re-open `logs/pipeline.log` to observe the data quality warning:
+5. Re-open `logs/pipeline.log` and check the data quality warning:
    ```text
    WARNING | Invalid records detected | rejected_count=1
    INFO | Validation completed | valid=24 | rejected=1
@@ -366,7 +378,7 @@ The structured log file preserves a complete, timestamped history of each ETL mi
 
 ![Validation Warning](assets/step9_validation_warning.png)
 
-The pipeline successfully flags the negative quantity record and prevents it from contaminating analytical reports. The invalid order is quarantined, leaving exactly 24 verified records to be loaded into the Parquet output. The log records a detailed warning indicating how many records were rejected, ensuring full data auditability.
+The pipeline flags the negative quantity, so the bad order never reaches the analytics data. The invalid row is saved to `output/rejected_orders.csv` and the remaining 24 valid records are written to Parquet. The warning line records how many rows were rejected.
 
 ---
 
@@ -380,7 +392,7 @@ The pipeline successfully flags the negative quantity record and prevents it fro
    ```bash
    python src/pipeline.py
    ```
-3. Open `logs/pipeline.log` and scroll to the bottom. Observe that the `try/except` block captured the fatal `FileNotFoundError` along with the full stack trace:
+3. Open `logs/pipeline.log` and scroll to the bottom. The `try/except` block captured the `FileNotFoundError` together with the full stack trace:
    ```text
    ERROR | Pipeline failed with unexpected error | error=Input file not found...
    Traceback (most recent call last):
@@ -392,10 +404,10 @@ The pipeline successfully flags the negative quantity record and prevents it fro
 
 ![Error Handling Stack Trace](assets/step10_pipeline_error.png)
 
-This test proves the pipeline's resilience against sudden environmental failures, such as delayed or missing upstream files. Rather than terminating silently, the script records the exact exception details and traceback in the log file. Data engineering teams rely on these detailed stack traces to quickly diagnose and resolve infrastructure issues.
+This test simulates a missing upstream file. The pipeline does not fail silently: it writes the exception and its traceback to the log and then stops with a non-zero exit code, so the team can see exactly what went wrong.
 
 ---
 
-## 4. Conclusion
+## 5. Conclusion
 
 QuickCart's daily restaurant orders are now ingested, cleaned, validated, and stored as efficient Parquet datasets. With modular ETL stages, structured logging, and exception handling, the pipeline delivers reliable data to dashboards and future ML workflows. In the next lab, we will extend this batch pipeline into real-time event streaming with Apache Kafka.

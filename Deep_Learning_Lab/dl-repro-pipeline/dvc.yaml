@@ -1,0 +1,54 @@
+stages:
+  prepare:
+    cmd: python -m src.prepare
+    deps:
+      - data/raw
+      - src/prepare.py
+    params:
+      - prepare
+    outs:
+      - data/split
+      - data/manifest.csv
+  train:
+    cmd: python -m src.train
+    deps:
+      - data/split
+      - data/manifest.csv
+      - src/repro.py
+      - src/model.py
+      - src/train.py
+    params:
+      - train
+    outs:
+      - models/model.pt
+      - outputs/loss_curve.csv
+  evaluate:
+    cmd: python -m src.evaluate
+    deps:
+      - models/model.pt
+      - data/split
+      - data/manifest.csv
+      - src/evaluate.py
+    outs:
+      - outputs/predictions.csv
+    metrics:
+      - outputs/metrics.json:
+          cache: false
+  fingerprint:
+    cmd: python -m src.fingerprint
+    deps:
+      - data/manifest.csv
+      - models/model.pt
+      - outputs/loss_curve.csv
+      - outputs/predictions.csv
+      - outputs/metrics.json
+      - src
+      - params.yaml
+      - dvc.yaml
+      - requirements.txt
+      - Dockerfile
+    outs:
+      - fingerprint.json:
+          cache: false
+      - artifacts.sha256:
+          cache: false

@@ -1,6 +1,6 @@
 # Train-Serve Skew Simulation
 
-## 1. Introduction:
+## 1. Introduction
 
 Imagine you are working as a **Machine Learning Data Engineer** at **QuickCart**, a fast-growing online food delivery platform. Your team previously deployed a machine learning model to predict order cancellations in real time, which performed accurately during offline validation on historical data.
 
@@ -14,48 +14,55 @@ The pipeline trains a baseline model on historical data, passes drifted live ser
 
 ---
 
-## 2. Project File Structure
+## 2. Objectives
 
-Following your architectural design, the project maintains strict separation between raw historical data, persisted model artifacts, modular ML pipelines, and output monitoring reports:
+By the end of this lab, you will be able to:
+
+- Train and save a model pipeline on a fixed historical dataset.
+- Simulate production data drift and serve the unchanged model on it.
+- Compare offline and online prediction distributions to spot train-serve skew.
+- Generate a skew report and distribution plots, and outline a remediation runbook.
+
+---
+
+## 3. Project File Structure
+
+The project keeps historical data, model artifacts, pipeline scripts, and monitoring reports in separate folders:
 
 ```text
 train-serve-skew-lab/
 │
 ├── data/
-│   ├── train.csv               # training dataset
-│   ├── test.csv                # evaluation dataset (20% split)
-│   └── online_data.csv         # incoming data
+│   ├── train.csv               # Training dataset (80% split)
+│   ├── test.csv                # Evaluation dataset (20% split)
+│   └── online_data.csv         # Drifted production data
 │
 ├── models/
-│   └── model.pkl               # pipeline artifact
+│   └── model.pkl               # Trained pipeline artifact
 │
 ├── src/
-│   ├── prepare_data.py         # dataset and splits train/test
-│   ├── train.py                # exports model.pkl
-│   ├── offline_predict.py      # offline metrics & predictions
-│   ├── generate_online_data.py # feature drift (rush hour, radius)
-│   ├── online_predict.py       # online data with frozen model
-│   └── detect_skew.py          # drift and skew detection
+│   ├── prepare_data.py         # Builds dataset and train/test split
+│   ├── train.py                # Trains and exports model.pkl
+│   ├── offline_predict.py      # Offline metrics and predictions
+│   ├── generate_online_data.py # Simulates drifted production data
+│   ├── online_predict.py       # Scores online data with the frozen model
+│   └── detect_skew.py          # Drift and skew detection
 │
 ├── results/
-│   ├── offline_predictions.csv # test predictions & probabilities
-│   ├── online_predictions.csv  # predictions & probabilities
-│   ├── skew_report.csv         # drift and skew delta report
-│   └── skew_distribution.png   # feature distribution visualization
+│   ├── offline_predictions.csv # Test predictions and probabilities
+│   ├── online_predictions.csv  # Online predictions and probabilities
+│   ├── skew_report.csv         # Drift and skew report
+│   └── skew_distribution.png   # Feature distribution plot
 │
 ├── requirements.txt            # Python dependencies
 └── README.md                   # Lab execution documentation
 ```
 
-The project structure enforces clean boundaries between development, production serving, and monitoring layers. Isolating datasets in `data/` preserves immutable historical baselines while allowing production streams to be updated independently. The `models/` directory acts as an artifact store for frozen model binaries, preventing unintentional code-level drift during serving. Storing runtime outputs in `results/` allows operational teams to inspect prediction distributions, CSV audit logs, and graphical drift reports without contaminating source code.
+`data/` keeps the historical baseline separate from incoming production data, `models/` stores the frozen model used for both offline testing and serving, and `results/` holds every prediction file and drift report so they never mix with source code.
 
 ---
 
-## 3. Project Implementation
-
-
-
----
+## 4. Project Implementation
 
 ### Step 1: Open VS Code Server and Create Project Directories
 
@@ -69,7 +76,6 @@ The project structure enforces clean boundaries between development, production 
    - `models`
    - `src`
    - `results`
-
 
 ---
 
@@ -112,7 +118,7 @@ The project structure enforces clean boundaries between development, production 
 
 ![Dependencies Setup](assets/step2_environment_setup.png)
 
-The terminal verifies the successful installation of all required machine learning and data engineering packages inside the isolated virtual environment. The Scikit-Learn library provides feature transformers and classification algorithms, while Pandas and NumPy manage tabular dataset structures. Matplotlib enables automated rendering of multi-panel feature density distribution plots. Confining these dependencies to `.venv` guarantees a reproducible execution environment that mirrors real-world cloud server environments.
+All packages are installed inside `.venv`. Scikit-learn provides the scaler and classifier, Pandas and NumPy handle the tabular data, and Matplotlib draws the distribution plots in Step 8.
 
 ---
 
@@ -236,7 +242,7 @@ if __name__ == "__main__":
 
 ![Data Preparation](assets/step3_prepare_data.png)
 
-The terminal confirms the generation and splitting of QuickCart's historical order data. The training partition contains 800 certified orders exhibiting realistic operational baselines, with roughly 16% historical cancellations reflecting typical food delivery operations. Reserving 200 orders in `test.csv` establishes a baseline test partition that will never be used during training. This strict separation guarantees unbiased evaluation before the model is exposed to production shifts.
+The script saved 800 training rows and 200 test rows. The training set has 126 cancellations (15.8%), and its feature means (order amount 500.90, delivery time 30.34 min, customer orders 7.88, distance 6.52 km) match the normal operating conditions. The 200 rows in `test.csv` are never used for training, so the offline evaluation in Step 5 is unbiased.
 
 ---
 
@@ -342,7 +348,7 @@ if __name__ == "__main__":
 
 ![Model Training](assets/step4_model_training.png)
 
-The execution output demonstrates that the logistic regression pipeline achieved over 93% training accuracy on QuickCart's baseline dataset. The learned coefficients reveal logical operational weights: longer delivery times (+2.71) and transit distances (+1.67) strongly increase cancellation likelihood, while customer order history (-1.99) reduces churn risk. Serializing the fitted pipeline to `models/model.pkl` packages the learned standard deviation scalers and model weights together. This frozen binary will now be reused across both offline testing and production serving.
+The pipeline reached 93.12% training accuracy. The coefficients make operational sense: longer delivery time (+2.71), longer distance (+1.67), and larger order amount (+1.00) raise cancellation risk, while more past orders (-1.99) lowers it. `models/model.pkl` stores the fitted scaler and classifier together, and this same file is used for offline testing and production serving.
 
 ---
 
@@ -447,7 +453,7 @@ if __name__ == "__main__":
 
 ![Offline Evaluation](assets/step5_offline_eval.png)
 
-The terminal confirms that the model generalizes effectively to unseen historical test orders, reaching 91.0% accuracy. The baseline offline prediction distribution shows that the model predicts cancellations for approximately 10.5% of incoming orders, with a mean predicted probability of 0.1462. Persisting these predictions to `results/offline_predictions.csv` creates a definitive mathematical baseline. When live serving begins, any deviation from this reference distribution will serve as an indicator of potential data drift.
+The model reaches 91.00% accuracy on the 200 unseen test orders. It predicts 21 cancellations (10.5%) with a mean cancellation probability of 0.1462. These predictions, saved to `results/offline_predictions.csv`, are the baseline: a large deviation from this distribution during serving signals drift. The `Pandas4Warning` about `inplace=True` is only a deprecation notice and does not affect the result.
 
 ---
 
@@ -460,7 +466,7 @@ In production, customer habits and external conditions evolve. You will now writ
 - Average `distance` rises from 6.5 km to **10.7 km** (due to geographic service boundary expansions).
 - Customer past orders shift downward (influx of newly registered first-time users).
 
-> **Crucial Data Engineering Concept: Label Unavailability in Production**
+> **Label unavailability in production:**
 > In real-time serving, the `cancelled` label is **unknown at inference time**. An ML model must score the order the instant the customer clicks "Checkout". Whether the customer cancels 20 minutes later is determined by downstream event streams. Hence, `online_data.csv` contains only input feature columns.
 
 1. In the `src` folder, create:
@@ -563,7 +569,7 @@ if __name__ == "__main__":
 
 ![Drift Simulation](assets/step6_drift_simulation.png)
 
-The feature comparison table quantifies substantial data drift across all operational inputs. Average delivery times surged by +59.0% (from 30.3 to 48.2 mins), delivery distances increased by +64.4% (from 6.5 to 10.7 km), and order values inflated by +70.3%. Notice that `data/online_data.csv` does not contain a `cancelled` column, faithfully reproducing real-time serving realities where true labels are unavailable at inference. This synthetic distribution represents production data arriving under extreme weather and delivery expansion pressures.
+The table shows drift in every feature: order amount +70.3% (500.90 to 852.89), delivery time +59.0% (30.34 to 48.24 min), distance +64.4% (6.52 to 10.72 km), and customer orders -36.9% (7.88 to 4.97). `data/online_data.csv` has no `cancelled` column, because true labels are not available at inference time.
 
 ---
 
@@ -654,13 +660,13 @@ if __name__ == "__main__":
 
 ![Online Serving](assets/step7_online_serving.png)
 
-The online serving output illustrates the dramatic operational consequence of data drift. Because the frozen model received inputs with inflated delivery delays and transit distances, its predicted cancellation rate exploded from a historical 10.5% baseline up to 99.2%. The average predicted probability of cancellation escalated from 0.1462 to 0.9925. The code executed without software exceptions, but the business utility of the model has collapsed due to severe train-serve skew.
+The frozen model now predicts 496 of 500 orders (99.2%) as cancellations, compared with 10.5% offline, and the mean cancellation probability rises from 0.1462 to 0.9925. The code ran without any error, yet the predictions are no longer useful. This silent failure is train-serve skew.
 
 ---
 
-### Step 8: Detect Train-Serve Skew, Generate Audit Reports, and Plot Distributions
+### Step 8: Detect Train-Serve Skew and Plot Distributions
 
-To complete the data engineering loop, you will implement `src/detect_skew.py`. This script quantifies feature-level drift percentages, compares offline vs online prediction distributions, validates drift thresholds ($\ge 20\%$), produces `results/skew_report.csv`, outputs ASCII visual bars in the terminal, and renders a 4-panel publication-quality chart to `results/skew_distribution.png`.
+To complete the data engineering loop, you will implement `src/detect_skew.py`. This script quantifies feature-level drift percentages, compares offline vs online prediction distributions, flags features that drift by 20% or more, produces `results/skew_report.csv`, outputs ASCII visual bars in the terminal, and saves a 4-panel chart to `results/skew_distribution.png`.
 
 1. In the `src` folder, create:
    ```text
@@ -866,19 +872,19 @@ if __name__ == "__main__":
 
 ![Skew Detection Output](assets/step8_skew_detection.png)
 
-The monitoring script synthesizes feature-level drift with prediction-level shift to deliver an automated diagnostic verdict. Every operational feature surpassed the 20% drift alert threshold, triggering a critical train-serve skew warning as cancellation predictions surged by +88.7%. The ASCII comparison bars provide rapid visual confirmation of feature distribution inflation directly inside the terminal. Exporting `results/skew_report.csv` creates a machine-readable audit artifact for automated monitoring pipelines.
+The script combines feature drift and prediction shift into one verdict. All four features cross the 20% drift threshold, and the cancellation ratio jumps by +88.7 percentage points (10.5% to 99.2%), so the script reports severe train-serve skew. The ASCII bars give a quick view of the shift in the terminal, and `results/skew_report.csv` stores the same numbers for automated monitoring.
 
 4. Open `results/skew_distribution.png` in VS Code Server to inspect the graphical distribution comparison:
 
 ![Feature Distribution Plot](assets/skew_distribution.png)
 
-The four-panel distribution plot visually contrasts the baseline historical distribution (blue) against live production serving (red). The density curves for delivery time and distance have migrated completely to the right, showing almost zero overlap with the original training regime. This clear visual evidence explains why the linear decision boundary classified nearly all incoming orders as cancellations. Visualizations like this form the core dashboard telemetry used by MLOps teams to justify model recalibration.
+The plot compares the training distribution (blue) with production (red). Order amount, delivery time, and distance shift strongly to the right with little overlap, while customer orders shift to the left. This explains why the model labels almost every new order as a cancellation.
 
 ---
 
-### Step 9: Production Engineering Remediation Runbook
+### Step 9: Plan the Remediation Runbook
 
-Detecting train-serve skew is only the first phase of an ML data engineer's responsibility. Once `detect_skew.py` raises a critical alert, you must execute the following production runbook:
+Detecting skew is only the first step. Once `detect_skew.py` raises an alert, a production team typically follows this runbook:
 
 1. **Trigger Automated Incident Alerts:** Dispatch high-priority webhook notifications to Slack and PagerDuty when feature drift exceeds 20% or prediction shift exceeds 15%.
 2. **Buffer and Log Production Serving Payloads:** Ensure all live prediction payloads in `results/online_predictions.csv` are mirrored into a cold-storage data lake (e.g., S3/GCS or Snowflake).
@@ -888,6 +894,6 @@ Detecting train-serve skew is only the first phase of an ML data engineer's resp
 
 ---
 
-## 4. Conclusion
+## 5. Conclusion
 
 In this lab, you simulated train-serve skew in QuickCart’s real-time order cancellation service. You observed how data drift can severely degrade a fixed model’s performance, built an automated drift detection and reporting system, and outlined a production runbook for monitoring, delayed labels, and automated retraining.

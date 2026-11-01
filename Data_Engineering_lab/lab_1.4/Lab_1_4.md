@@ -1,8 +1,6 @@
-# Lab 1.4: Schema Evolution & Governance
+# Schema Evolution and Governance
 
----
-
-## 1. Introduction:
+## 1. Introduction
 
 Imagine you are a data engineer at **QuickCart**, a fast-growing online food delivery platform. Whenever customers place orders, the Ordering Service emits JSON events containing fields like `order_id`, `customer_id`, and `amount` to downstream billing, analytics, and notification services.
 
@@ -16,9 +14,20 @@ The Order Service publishes JSON events validated against schema contracts. When
 
 ---
 
-## 2. Project File Structure
+## 2. Objectives
 
-Before implementing the pipeline, organize your project in VS Code Server using the following modular structure:
+By the end of this lab, you will be able to:
+
+- Define a versioned JSON Schema data contract for order events.
+- Build a producer and a consumer that validate events against the contract.
+- Add, remove, and rename fields and observe which changes break the consumer.
+- Run a compatibility matrix that blocks breaking changes before release.
+
+---
+
+## 3. Project File Structure
+
+The project uses the following structure:
 
 ```text
 schema-evolution-lab/
@@ -31,28 +40,29 @@ schema-evolution-lab/
 │   └── producer.py              # Event producer
 ├── consumer/
 │   └── consumer.py              # Event consumer (V1 contract)
+├── events/                      # Emitted event payloads (created by the producer)
 ├── tests/
-│   ├── test_add_field.py        # Test Scenario A (add field)
-│   ├── test_remove_field.py     # Test Scenario B (remove field)
-│   └── test_rename_field.py     # Test Scenario C (rename field)
+│   ├── test_add_field.py        # Scenario A: add field
+│   ├── test_remove_field.py     # Scenario B: remove field
+│   └── test_rename_field.py     # Scenario C: rename field
 ├── results/
 │   └── compatibility_report.json # Compatibility report
 ├── requirements.txt             # Python dependencies
-├── run_compatibility_matrix.py # Compatibility matrix runner
+├── run_compatibility_matrix.py  # Compatibility matrix runner
 └── README.md                    # Lab documentation
 ```
 
 ---
 
-## 3. Project Implementation
+## 4. Project Implementation
 
-### Step 1 — Verify the Working Environment & Project Structure
+### Step 1: Set Up the Project and Environment
 
 1. Open your workspace in **VS Code Server**.
 2. Open an integrated terminal by clicking **Terminal > New Terminal**.
-3. Navigate to the project root directory:
+3. Create the project folder and move into it:
    ```bash
-   cd lab_1.4/schema-evolution-lab
+   mkdir -p schema-evolution-lab && cd schema-evolution-lab
    ```
 4. Create an isolated Python virtual environment named `.venv`:
    ```bash
@@ -81,11 +91,11 @@ schema-evolution-lab/
 
 ![Project Directory Structure](assets/step1_project_structure.png)
 
-The VS Code Server Explorer displays the newly created `schema-evolution-lab` workspace alongside its isolated `.venv` virtual environment and modular subfolders. Isolating Python dependencies within `.venv` ensures that our JSON Schema validation engine operates without interference from system-level packages. Establishing distinct subdirectories decouples schema contract definitions from runtime execution scripts and automated test suites. This clean baseline structure guarantees reproducibility for all subsequent schema evolution experiments.
+The Explorer shows the `schema-evolution-lab` workspace with its `.venv` and subfolders. Keeping schema contracts, runtime scripts, and tests in separate folders makes each experiment easy to follow and repeat.
 
 ---
 
-### Step 2 — Create the Baseline Schema Contract (`order_v1.json`)
+### Step 2: Create the Baseline Schema Contract
 
 1. In the VS Code Explorer, navigate to the `schemas/` directory.
 2. Right-click the `schemas/` folder, select **New File**, and name it:
@@ -130,11 +140,11 @@ The VS Code Server Explorer displays the newly created `schema-evolution-lab` wo
 
 ![Baseline Schema Contract](assets/step2_schema_v1.png)
 
-The VS Code editor displays the formal data contract `schemas/order_v1.json` defining the schema types and validation constraints for QuickCart order events. The red bounding box highlights the `required` array, which explicitly dictates that `order_id`, `customer_id`, and `amount` must be present in every emitted event. Setting `"additionalProperties": true` establishes an open-content model that allows producers to attach optional auxiliary fields without violating baseline contract integrity. This contract serves as the single source of truth for both producer generation and downstream consumer validation.
+`schemas/order_v1.json` defines the types and rules for QuickCart order events. The red box highlights the `required` array: `order_id`, `customer_id`, and `amount` must be present in every event, while `delivery_address` is optional. `"additionalProperties": true` lets producers add extra fields without breaking the contract. Both the producer and the consumer validate against this file.
 
 ---
 
-### Step 3 — Implement & Execute the Order Event Producer (`producer.py`)
+### Step 3: Implement and Run the Order Event Producer
 
 1. In the VS Code Explorer, expand the `producer/` folder.
 2. Create a new file named:
@@ -259,11 +269,11 @@ The VS Code editor displays the formal data contract `schemas/order_v1.json` def
 
 ![Producer Execution Output](assets/step3_producer_v1.png)
 
-The integrated terminal displays the execution of `producer/producer.py`, which instantiates a baseline order event for customer `CUST-8842` amounting to `650.0 BDT`. Before emitting the message, the script verifies the dictionary against `schemas/order_v1.json`, guaranteeing contract compliance at the boundary. The highlighted red box confirms the presence of all required fields (`order_id`, `customer_id`, `amount`, and `delivery_address`). Finally, the producer persists the event to `events/order_v1_live.json`, establishing a verifiable payload for downstream consumers to ingest.
+The producer builds a baseline order event for customer `CUST-8842` with an amount of 650.0 BDT. Before emitting it, the script validates the event against `schemas/order_v1.json`. The event has the three required fields (`order_id`, `customer_id`, `amount`) plus the optional `delivery_address`. The red box marks the optional field and the output path: the event is saved to `events/order_v1_live.json` for the consumer to read.
 
 ---
 
-### Step 4 — Implement & Verify the Downstream Consumer (`consumer.py`)
+### Step 4: Implement and Run the Downstream Consumer
 
 1. In the VS Code Explorer, expand the `consumer/` directory.
 2. Create a new file named:
@@ -374,11 +384,11 @@ The integrated terminal displays the execution of `producer/producer.py`, which 
 
 ![Consumer Execution Output](assets/step4_consumer_v1.png)
 
-The integrated terminal displays the execution of `consumer/consumer.py`, which reads the order event generated by the upstream producer. The red highlight emphasizes the primary checkpoint: `Contract Verification: PASSED (order_v1.json)`. The consumer successfully decodes all mandatory fields (`order_id`, `customer_id`, `amount`), computes the 5% VAT (32.5 BDT), and calculates the final invoice total (682.5 BDT) without encountering schema violations or `KeyError` exceptions. This successful baseline establishes the benchmark against which all schema evolution changes will be measured.
+The consumer reads the event created by the producer. The red box shows `Contract Verification: PASSED (order_v1.json)`. The consumer reads the required fields, computes 5% VAT (32.5 BDT), and produces a final invoice of 682.5 BDT with no schema violation or `KeyError`. This is the baseline that the schema changes below are compared against.
 
 ---
 
-### Step 5 — Test Schema Evolution: Adding an Optional Field (`test_add_field.py`)
+### Step 5: Add an Optional Field
 
 1. In the VS Code Explorer, open `schemas/` and create:
    ```text
@@ -469,11 +479,11 @@ The integrated terminal displays the execution of `consumer/consumer.py`, which 
 
 ![Scenario A Test Output](assets/step5_add_field_pass.png)
 
-The integrated terminal displays the execution of `tests/test_add_field.py`, validating Experiment A where an upgraded V2 producer emits an event containing the supplementary `payment_method: "bKash"` field. The consumer continues to enforce its original `order_v1.json` contract, which accepts the payload because all mandatory properties (`order_id`, `customer_id`, `amount`) are present and open content is permitted. Downstream billing calculations complete without disruption (final invoice BDT 861.0). The red box highlights the test result `>> PASS: Non-Breaking Change! <<`, demonstrating that adding optional properties enables safe, independent producer deployments.
+In Experiment A, a V2 producer sends an event with the extra field `payment_method: "bKash"`. The consumer still uses the original `order_v1.json` contract and accepts the event, because all required fields are present and extra fields are allowed. Billing completes normally with a final invoice of BDT 861.0. The red box shows `>> PASS: Non-Breaking Change! <<`: adding an optional field is safe.
 
 ---
 
-### Step 6 — Test Schema Evolution: Removing a Required Field (`test_remove_field.py`)
+### Step 6: Remove a Required Field
 
 1. In the VS Code Explorer, open `schemas/` and create:
    ```text
@@ -556,11 +566,11 @@ The integrated terminal displays the execution of `tests/test_add_field.py`, val
 
 ![Scenario B Test Output](assets/step6_remove_field_fail.png)
 
-The integrated terminal displays the execution of `tests/test_remove_field.py`, simulating Experiment B where an upstream team deployed an event payload missing `amount`. When the V1 consumer validates the incoming JSON against `schemas/order_v1.json`, the validation engine immediately raises `SCHEMA_CONTRACT_VIOLATION: 'amount' is a required property`. Because `amount` is essential for the billing engine to calculate VAT and invoice totals, processing is halted immediately with `Is Backward-Compatible: False`. The highlighted red box shows `>> FAIL: Breaking Change Detected! <<`, proving why deleting mandatory properties from an active contract breaks downstream subscribers.
+In Experiment B, the producer sends an event without `amount`. Validation against `schemas/order_v1.json` fails with `SCHEMA_CONTRACT_VIOLATION: 'amount' is a required property`. Billing cannot compute VAT or the invoice without `amount`, so processing stops with `Is Backward-Compatible: False`. The red box shows `>> FAIL: Breaking Change Detected! <<`: removing a required field breaks existing consumers.
 
 ---
 
-### Step 7 — Test Schema Evolution: Renaming a Required Field (`test_rename_field.py`)
+### Step 7: Rename a Required Field
 
 1. In the VS Code Explorer, open `schemas/` and create:
    ```text
@@ -645,11 +655,11 @@ The integrated terminal displays the execution of `tests/test_remove_field.py`, 
 
 ![Scenario C Test Output](assets/step7_rename_field_fail.png)
 
-The integrated terminal displays the execution of `tests/test_rename_field.py`, representing Experiment C where an upstream developer renamed `amount` to `total_amount`. Although the business semantic remains identical, the consumer contract strictly enforces the key name `amount`. The validation engine fails with `SCHEMA_CONTRACT_VIOLATION: 'amount' is a required property`. The red box highlights `>> FAIL: Breaking Change Detected! <<`, illustrating that field renames without dual-write deprecation windows are breaking changes that disconnect upstream producers from existing consumers.
+In Experiment C, the producer renames `amount` to `total_amount`. The meaning is the same, but the consumer contract requires the key `amount`, so validation fails with `SCHEMA_CONTRACT_VIOLATION: 'amount' is a required property`. The red box shows `>> FAIL: Breaking Change Detected! <<`. A rename is a breaking change unless the producer sends both names for a transition period (dual write).
 
 ---
 
-### Step 8 — Execute Compatibility Matrix & Governance Gate (`run_compatibility_matrix.py`)
+### Step 8: Run the Compatibility Matrix
 
 1. In the VS Code Explorer, open the project root directory `schema-evolution-lab/`.
 2. Create a new file named:
@@ -797,10 +807,10 @@ The integrated terminal displays the execution of `tests/test_rename_field.py`, 
 
 ![Compatibility Matrix Output](assets/step8_compatibility_matrix.png)
 
-The integrated terminal displays the comprehensive output from `run_compatibility_matrix.py`, consolidating all four schema evolution scenarios into a unified evaluation grid. Scenarios `TEST-01` (baseline V1) and `TEST-02` (adding optional `payment_method`) evaluate to `[PASS]`, confirming backward compatibility. In contrast, scenarios `TEST-03` (removing `amount`) and `TEST-04` (renaming `amount` to `total_amount`) evaluate to `[FAIL]`, flagging breaking changes before code deployment. The red highlighted box confirms that 2 potential downstream production outages were successfully detected and prevented by the automated governance gate.
+The matrix runs all four scenarios in one table. `TEST-01` (baseline) and `TEST-02` (add optional `payment_method`) show `[PASS]`, so they are backward compatible. `TEST-03` (remove `amount`) and `TEST-04` (rename `amount` to `total_amount`) show `[FAIL]`, so they are flagged as breaking before deployment. The red box shows the summary: 2 of 4 tests passed and 2 breaking changes were caught. The full results are saved to `results/compatibility_report.json`.
 
 ---
 
-## 4. Conclusion
+## 5. Conclusion
 
 In this lab, you designed versioned JSON schema contracts and tested schema evolution across QuickCart’s event pipeline. You confirmed that adding optional fields preserves backward compatibility while removing or renaming required fields introduces breaking changes, and established an automated compatibility matrix to govern releases and prevent downstream outages.

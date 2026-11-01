@@ -1,147 +1,39 @@
 # Batch vs Streaming Trade-offs
 
-## 1. Introduction:
+## 1. Introduction
 
-Imagine you are working as a **Data Engineer** at **QuickCart**, a fast-growing online food delivery platform. Every few seconds, customers place orders, and the team needs to monitor order volumes, sales, and delivery operations.
+Imagine you are working as a **Data Engineer** at **QuickCart**, a fast-growing online food delivery platform. Customers place orders every few seconds, and the team needs to monitor order volumes, sales, and delivery operations.
 
-To process incoming orders, you can either accumulate records for periodic scheduled **batch processing** or process events immediately using a real-time **streaming pipeline with Apache Kafka**. In this lab, you will implement both approaches using the same order dataset to compare latency, throughput, and data freshness trade-offs.
+You can process incoming orders in two ways: collect them and run a scheduled **batch** job, or handle each event as it arrives with a **streaming** pipeline built on **Apache Kafka**. In this lab, you will run both approaches on the same order dataset and compare latency, throughput, and data freshness.
 
 You will build and compare the following QuickCart batch and streaming architectures:
 
 ![Architecture Overview](assets/Lab_1.2_DE.drawio.svg)
 
-The batch workflow periodically collects and processes order files on a schedule, while the streaming pipeline continuously ingests live Kafka events with low latency. Comparing both demonstrates when batch processing is efficient and when streaming is required.
+The batch workflow processes the order file on a Cron schedule, while the streaming pipeline consumes order events from a Kafka topic as soon as they are published. The three metrics compared in this lab are:
+
+| Metric | Meaning | Formula |
+| :--- | :--- | :--- |
+| **Latency** | How long an event waits before it is processed | `processing_time - event_time` |
+| **Throughput** | How many records are processed per second | `records / processing time` |
+| **Data freshness** | How old the data is when it becomes available downstream | average latency of the processed records |
 
 ---
 
-## 2. Lab Objectives
+## 2. Objectives
 
-By completing this lab, you will:
+By the end of this lab, you will be able to:
 
-- Build and schedule a batch data pipeline using **Cron**.
-- Build an event-driven streaming pipeline using **Apache Kafka**.
-- Benchmark and compare **latency**, **throughput**, and **data freshness** between batch and streaming architectures.
-- Evaluate operational trade-offs to choose the right architecture for production workloads.
+- Build a batch pipeline and schedule it with **Cron**.
+- Build an event-driven streaming pipeline with **Apache Kafka**.
+- Measure and compare **latency**, **throughput**, and **data freshness** for both pipelines.
+- Decide when batch or streaming is the right choice for a workload.
 
 ---
 
-## 3. Architecture
+## 3. Project File Structure
 
-### 3.1 Batch Flow
-
-The batch system waits until the scheduled execution time before
-processing the available data in bulk.
-
-### 3.2 Streaming Flow
-
-The streaming system processes events continuously as they arrive.
-
-------------------------------------------------------------------------
-
-## 4. Batch vs Streaming Concept
-
-### Batch Processing
-
-Batch processing means collecting data and processing it as a group.
-
-For example:
-
-``` text
-10:01  Order A
-10:02  Order B
-10:03  Order C
-10:04  Order D
-              |
-              v
-           10:05
-              |
-       Process A+B+C+D
-```
-
-If an order arrives at 10:01 but the batch job runs at 10:05, that order
-may wait several minutes before being processed.
-
-### Streaming Processing
-
-Streaming processing handles data continuously.
-
-``` text
-10:01:01  Order A -> Process
-10:01:05  Order B -> Process
-10:01:09  Order C -> Process
-10:01:12  Order D -> Process
-```
-
-There is no need to wait for a scheduled batch window.
-
-### The Main Difference
-
-> **Batch:** Collect first, process later.\
-> **Streaming:** Process as data arrives.
-
-------------------------------------------------------------------------
-
-## 5. Metrics We Will Measure
-
-The lab will compare three important metrics.
-
-### 5.1 Latency
-
-Latency represents the time between when an event is generated and when
-it is processed.
-
-``` text
-Latency = Processing Time - Event Time
-```
-
-For example:
-
-``` text
-Event Time      = 10:00:00
-Processing Time = 10:00:03
-
-Latency = 3 seconds
-```
-
-Lower latency generally means the system reacts faster to incoming data.
-
-### 5.2 Throughput
-
-Throughput represents how much data the system processes during a given
-period.
-
-A simple measurement is:
-
-``` text
-Throughput = Number of processed records / Processing time
-```
-
-For example:
-
-``` text
-1000 records / 10 seconds
-= 100 records/second
-```
-
-### 5.3 Data Freshness
-
-Data freshness describes how recent the processed data is compared with
-the original event time.
-
-If an order is generated at 10:00:00 but appears in the processed result
-at 10:05:00, the information is approximately five minutes old.
-
-Streaming generally provides fresher information because records are
-processed continuously.
-
-------------------------------------------------------------------------
-
-## 6. Project File Structure
-
-After creating the project in VS Code Server, the structure will be
-similar to:
-
-``` text
+```text
 batch-streaming-lab/
 │
 ├── data/
@@ -153,125 +45,122 @@ batch-streaming-lab/
 │
 ├── streaming/
 │   ├── producer.py             # Kafka event producer
-│   └── consumer.py             # Kafka event consumer
+│   ├── consumer.py             # Kafka event consumer
+│   └── run_streaming.py        # Runs producer and consumer together
+│
+├── metrics/
+│   └── comparison.py           # Metrics comparison script
 │
 ├── results/
 │   ├── batch_results.csv       # Batch run results
 │   └── streaming_results.csv   # Streaming run results
 │
-├── metrics/
-│   └── comparison.py           # Metrics comparison script
-│
-├── requirements.txt            # Python dependencies
-└── README.md                   # Lab documentation
+└── requirements.txt            # Python dependencies
 ```
 
-> The exact structure may be adjusted during implementation if
-> additional configuration or helper files are needed.
+The completed project looks like this in the VS Code Explorer:
 
-------------------------------------------------------------------------
+![Project Structure](assets/step1_project_structure.png)
 
-# 7. Project Implementation
+---
 
-## Step 1 --- Verify the Working Environment
+## 4. Project Implementation
 
-Open the project in **VS Code Server** and verify that Python, Java,
-Kafka, and Cron are available.
+### Step 1: Create the Project Folders
 
-------------------------------------------------------------------------
+1. Open your **VS Code Server** workspace and create a project folder named:
+   ```text
+   batch-streaming-lab
+   ```
+2. Open the folder with **File > Open Folder...**.
+3. In the VS Code Explorer, click the **New Folder** icon and create:
+   - `data`
+   - `batch`
+   - `streaming`
+   - `metrics`
+   - `results`
 
-## Step 2 --- Create the Project Workspace
+Keeping the batch and streaming code in separate folders lets both pipelines share the same input data and output format without mixing their execution logic.
 
+---
 
-> The project is organized into separate directories for data, batch
-> processing, streaming processing, and results. This separation makes
-> it easier to understand which components belong to each pipeline.
-> Keeping batch and streaming implementations separate also allows us to
-> use comparable processing logic without mixing their execution
-> mechanisms.
+### Step 2: Create the Python Virtual Environment
 
-------------------------------------------------------------------------
-
-## Step 3 --- Create the Sample Order Dataset
-
-Create `orders.csv` inside the `data` directory.
-
-The dataset should contain fields such as:
-
-``` text
-order_id
-customer_id
-order_amount
-event_time
-```
-
-Example:
-
-``` text
-order_id,customer_id,order_amount,event_time
-ORD001,C001,450,2026-10-05 10:00:01
-ORD002,C002,700,2026-10-05 10:00:04
-ORD003,C003,320,2026-10-05 10:00:07
-ORD004,C004,950,2026-10-05 10:00:10
-```
-
-![Sample Orders Dataset](assets/step3_raw_orders_csv.png)
-
-> The order dataset represents events generated by the food delivery
-> system. The `event_time` field is especially important because it
-> records when an order was originally created. Later, the processing
-> timestamp will be compared with this event timestamp to calculate
-> latency and data freshness.
-
-------------------------------------------------------------------------
-
-## Step 4 --- Create the Python Virtual Environment
-
-Create a Python virtual environment for the project and activate it from
-the VS Code Server terminal.
+1. Open an integrated terminal by clicking **Terminal > New Terminal**.
+2. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+   *(On Windows PowerShell, run: `.venv\Scripts\Activate.ps1`)*
 
 ![Virtual Environment Activated](assets/step2_virtual_environment.png)
 
-> A virtual environment keeps the project's Python dependencies isolated
-> from other projects on the system. This makes the lab easier to
-> reproduce and avoids conflicts between package versions. All Python
-> dependencies used by the batch and streaming components will be
-> installed inside this environment.
+The `(.venv)` prefix confirms the environment is active. Both pipelines use this same environment, so the comparison is not affected by different package versions.
 
-------------------------------------------------------------------------
+---
 
-## Step 5 --- Install the Required Python Dependencies
+### Step 3: Create the Order Dataset
 
-Install the Python packages required for the lab, including the Kafka client and data-processing utilities:
+1. Right-click the `data` folder, select **New File**, and name it `orders.csv`.
+2. Add the following 20 orders and save the file:
+   ```csv
+   order_id,customer_id,restaurant,order_amount,item_count,event_time
+   ORD1001,C001,Spice Kitchen,450.00,2,2026-10-05 10:00:01
+   ORD1002,C002,FoodHub,700.00,3,2026-10-05 10:00:04
+   ORD1003,C003,Pizza Paradiso,320.00,1,2026-10-05 10:00:07
+   ORD1004,C004,Royal Kitchen,950.00,4,2026-10-05 10:00:10
+   ORD1005,C005,FoodHub,180.00,1,2026-10-05 10:00:13
+   ORD1006,C006,Spice Kitchen,550.00,2,2026-10-05 10:00:16
+   ORD1007,C007,Burger Lab,390.00,2,2026-10-05 10:00:19
+   ORD1008,C008,Pizza Paradiso,840.00,3,2026-10-05 10:00:22
+   ORD1009,C009,Royal Kitchen,620.00,2,2026-10-05 10:00:25
+   ORD1010,C010,Spice Kitchen,290.00,1,2026-10-05 10:00:28
+   ORD1011,C011,FoodHub,1100.00,5,2026-10-05 10:00:31
+   ORD1012,C012,Burger Lab,480.00,2,2026-10-05 10:00:34
+   ORD1013,C013,Spice Kitchen,360.00,1,2026-10-05 10:00:37
+   ORD1014,C014,Pizza Paradiso,750.00,3,2026-10-05 10:00:40
+   ORD1015,C015,Royal Kitchen,920.00,4,2026-10-05 10:00:43
+   ORD1016,C016,FoodHub,260.00,1,2026-10-05 10:00:46
+   ORD1017,C017,Burger Lab,530.00,2,2026-10-05 10:00:49
+   ORD1018,C018,Spice Kitchen,680.00,3,2026-10-05 10:00:52
+   ORD1019,C019,Pizza Paradiso,410.00,2,2026-10-05 10:00:55
+   ORD1020,C020,Royal Kitchen,870.00,3,2026-10-05 10:00:58
+   ```
 
-```bash
-pip install -r requirements.txt
-pip list
-```
+![Sample Orders Dataset](assets/step3_raw_orders_csv.png)
+
+Each row is one order event. The `event_time` column records when the order was created; later, each pipeline compares it with the processing time to calculate latency and freshness.
+
+---
+
+### Step 4: Install the Dependencies
+
+1. In the project root, create `requirements.txt` with the following content:
+   ```text
+   pandas>=2.0.0
+   kafka-python-ng>=2.2.0
+   tabulate>=0.9.0
+   python-dateutil>=2.8.2
+   ```
+2. Install and check the packages:
+   ```bash
+   pip install -r requirements.txt
+   pip list
+   ```
 
 ![Dependencies Installation](assets/step5_pip_install.png)
 
 ![Installed Dependencies](assets/step5_dependencies_installed.png)
 
-> The Python dependencies provide the functionality needed to read the
-> dataset, communicate with Kafka, and calculate the comparison metrics.
-> The same environment will be used for both batch and streaming
-> implementations. This keeps the software environment consistent when
-> comparing the two approaches.
+Pandas reads the dataset and computes the metrics, and `kafka-python-ng` provides the Kafka producer and consumer clients.
 
-------------------------------------------------------------------------
+---
 
-# 8. Batch Processing Implementation
+### Step 5: Create the Batch Processor
 
-## Step 6 --- Create the Batch Processor
-
-Create:
-
-``` text
-batch/batch_processor.py
-```
-
-Open `batch/batch_processor.py` in the VS Code editor and add the batch data processing logic:
+1. Right-click the `batch` folder, select **New File**, and name it `batch_processor.py`.
+2. Add the following code:
 
 ```python
 import os
@@ -326,6 +215,8 @@ def run_batch_processing(input_path=None, output_path=None, simulated_batch_dela
 
     # 2. Record processing execution timestamp
     start_compute_time = time.time()
+    # Processing timestamp: baseline time when batch job executed
+    # We add simulated_batch_delay_seconds to show batch accumulation delay
     processing_dt = datetime.now()
     processing_time_str = processing_dt.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -333,10 +224,15 @@ def run_batch_processing(input_path=None, output_path=None, simulated_batch_dela
     df["event_dt"] = pd.to_datetime(df["event_time"])
 
     # 3. Calculate latency and data freshness
+    # In batch processing, records accumulated since their event_time until scheduled run
+    # For reproducible benchmarking, we calculate difference between batch execution time and event time
+    # If the CSV has historical event times (e.g. 10:00:xx), we compute elapsed time relative to base event
     first_event = df["event_dt"].min()
     base_delta_seconds = (processing_dt - first_event).total_seconds()
 
+    # If the timestamps are past dates or artificial, ensure realistic batch latency
     if base_delta_seconds < 0 or base_delta_seconds > 86400 * 30:
+        # Use simulated cron schedule delay (e.g., 5-minute accumulation window)
         accumulated_wait = simulated_batch_delay_seconds + (df["event_dt"].max() - df["event_dt"]).dt.total_seconds()
         df["latency_seconds"] = accumulated_wait.round(2)
         df["processing_time"] = (df["event_dt"] + pd.to_timedelta(accumulated_wait, unit="s")).dt.strftime("%Y-%m-%d %H:%M:%S")
@@ -386,108 +282,137 @@ if __name__ == "__main__":
     run_batch_processing()
 ```
 
-> The batch processor reads the available records as a group instead of
-> processing each event continuously. For every record, the processor
-> compares the original event timestamp with the current processing
-> timestamp. This gives us the information needed to calculate latency
-> and freshness. The resulting measurements are stored so that they can
-> later be compared with the streaming pipeline.
+The batch processor reads all available orders at once and stamps them with one processing time. For each record it calculates `latency_seconds` as the gap between the processing time and the original `event_time`, classifies the order tier, and saves the result to `results/batch_results.csv`.
 
-------------------------------------------------------------------------
+---
 
-## Step 7 --- Test the Batch Processor Manually
+### Step 6: Create the Batch Runner and Run a Batch
 
-Run the batch processor once from the VS Code Server terminal:
+1. In the `batch` folder, create `run_batch.py`:
 
-```bash
-python batch/batch_processor.py
+```python
+#!/usr/bin/env python3
+"""
+QuickCart Scheduled Batch Runner
+Module: batch/run_batch.py
+
+Serves as the execution entrypoint for Cron or standalone periodic triggers.
+Can be executed one-off via cron:
+  * * * * * cd /path/to/batch-streaming-lab && python3 batch/run_batch.py >> logs/cron.log 2>&1
+Or run in interval-loop mode for testing environments without system cron daemons.
+"""
+
+import argparse
+import sys
+import time
+from batch_processor import run_batch_processing
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Run QuickCart Batch Processing")
+    parser.add_argument(
+        "--loop",
+        action="store_true",
+        help="Run continuously in a loop to simulate cron execution intervals."
+    )
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=60,
+        help="Interval in seconds between batch executions when running in --loop mode (default: 60s)."
+    )
+    args = parser.parse_args()
+
+    if args.loop:
+        print(f"[*] Starting Batch Runner in loop simulation mode (every {args.interval}s)...")
+        print("Press Ctrl+C to terminate.")
+        iteration = 1
+        try:
+            while True:
+                print(f"\n--- Batch Trigger Cycle #{iteration} ---")
+                run_batch_processing()
+                iteration += 1
+                time.sleep(args.interval)
+        except KeyboardInterrupt:
+            print("\n[!] Batch runner stopped by user.")
+    else:
+        # One-off execution (standard cron trigger)
+        run_batch_processing()
+
+
+if __name__ == "__main__":
+    main()
 ```
+
+2. Run one batch from the terminal:
+   ```bash
+   python batch/run_batch.py
+   ```
 
 ![Batch Execution](assets/step7_batch_execution.png)
 
-> Running the batch processor manually allows us to verify that the
-> implementation works before scheduling it. The output should show the
-> processed records and their timestamps. Once the processor is
-> confirmed to work correctly, it can be connected to the Cron
-> scheduler.
+The batch run ingested 20 orders and processed them in 0.0730 seconds (273.80 records/sec). The average latency is 1,703,786.06 seconds (about 19.7 days), because the orders in the CSV were created on 2026-10-05 and the batch ran on 2026-10-25. In batch processing, every record waits until the next scheduled run, so latency grows with the time between the event and the run.
 
-------------------------------------------------------------------------
+---
 
-## Step 8 --- Configure Cron for Batch Processing
+### Step 7: Schedule the Batch with Cron
 
-Configure Cron to execute the batch processor at a fixed interval.
+1. Open the crontab editor:
+   ```bash
+   crontab -e
+   ```
+2. Add the following line to run the batch every 5 minutes, replacing `/path/to/batch-streaming-lab` with your project path:
+   ```text
+   */5 * * * * cd /path/to/batch-streaming-lab && .venv/bin/python batch/run_batch.py >> results/cron.log 2>&1
+   ```
+3. If Cron is not available in your environment, simulate the schedule with the runner's loop mode (press **Ctrl+C** to stop):
+   ```bash
+   python batch/run_batch.py --loop --interval 60
+   ```
 
-For the lab, a short interval can be used so that the effect of
-scheduled processing is easy to observe.
+Cron starts the batch processor only at the scheduled time. Orders that arrive between two runs wait for the next one, which is the main source of batch latency.
 
-**Show Image**
+---
 
-> Cron acts as the scheduler for the batch pipeline. Instead of
-> continuously monitoring new events, it waits until the configured
-> execution time and then starts the batch processor. This scheduled
-> behavior is what creates the characteristic delay associated with many
-> batch-processing systems.
+### Step 8: Inspect the Batch Results
 
-------------------------------------------------------------------------
-
-## Step 9 --- Verify the Batch Result
-
-Open `results/batch_results.csv` to observe the generated batch result, order classifications, and calculated latency values:
+Open `results/batch_results.csv` in the editor:
 
 ![Batch Results](assets/step9_batch_results.png)
 
-> The batch result contains the processed order information along with
-> the processing timestamp. By comparing the event time and processing
-> time, we can determine how long each record waited before being
-> processed. These measurements provide the baseline for the later
-> batch-versus-streaming comparison.
+Every row has the same processing time, and `latency_seconds` decreases by 3 seconds per row because each order was created 3 seconds after the previous one. These values are the batch baseline for the comparison.
 
-------------------------------------------------------------------------
+---
 
-# 9. Streaming Processing Implementation
+### Step 9: Start Kafka and Create the Topic
 
-## Step 10 --- Start Apache Kafka
+1. Start a Kafka broker on `localhost:9092`.
+2. Create a topic named `orders`:
+   ```bash
+   kafka-topics.sh --create --topic orders --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+   ```
 
-Start the Kafka environment and prepare it for the streaming pipeline.
+The producer publishes order events to the `orders` topic and the consumer reads them from it. If no broker is reachable on `localhost:9092`, the producer and consumer fall back to a local file queue, and they print `Engine Mode: Local Stream Simulation Queue` instead of `Engine Mode: Kafka Broker (localhost:9092)`.
 
-**Show Image**
+---
 
-> Kafka will act as the message broker between the data producer and the
-> processing consumer. Instead of waiting for a scheduled batch, new
-> order events will be published to a Kafka topic as they become
-> available. The consumer will continuously read these events from the
-> topic.
+### Step 10: Create the Kafka Producer
 
-------------------------------------------------------------------------
-
-## Step 11 --- Create the Kafka Topic
-
-Create a topic named:
-
-``` text
-orders
-```
-
-**Show Image**
-
-> The `orders` topic is the communication channel used by the streaming
-> pipeline. The producer publishes order events to this topic, while the
-> consumer reads them from the same topic. This separates the generation
-> of data from the component that processes it.
-
-------------------------------------------------------------------------
-
-## Step 12 --- Create the Kafka Producer
-
-Create:
-
-``` text
-streaming/producer.py
-```
-
-Open `streaming/producer.py` in the VS Code editor and add the event streaming producer logic:
+1. Right-click the `streaming` folder, select **New File**, and name it `producer.py`.
+2. Add the following code:
 
 ```python
+#!/usr/bin/env python3
+"""
+QuickCart Real-time Streaming Producer
+Module: streaming/producer.py
+
+Reads or generates food order events, stamps current event timestamps, and
+publishes them to the Kafka 'orders' topic.
+Supports real Kafka broker (localhost:9092) and automated local fallback queue
+for seamless execution in environments without a live Kafka daemon.
+"""
+
 import argparse
 import json
 import os
@@ -496,6 +421,7 @@ import time
 from datetime import datetime
 import pandas as pd
 
+# Check for kafka library
 try:
     from kafka import KafkaProducer
     KAFKA_AVAILABLE = True
@@ -515,6 +441,7 @@ def get_fallback_queue_path():
 
 
 def create_producer(bootstrap_servers="localhost:9092"):
+    """Attempts to connect to Kafka producer; returns None if broker unreachable."""
     if not KAFKA_AVAILABLE:
         return None
     try:
@@ -528,7 +455,7 @@ def create_producer(bootstrap_servers="localhost:9092"):
         return None
 
 
-def run_producer(interval=0.1, limit=None, bootstrap_servers="localhost:9092"):
+def run_producer(interval=0.5, limit=None, bootstrap_servers="localhost:9092"):
     root_dir = get_project_root()
     input_csv = os.path.join(root_dir, "data", "orders.csv")
 
@@ -555,6 +482,7 @@ def run_producer(interval=0.1, limit=None, bootstrap_servers="localhost:9092"):
     fallback_file = None
     if producer is None:
         fallback_file = get_fallback_queue_path()
+        # Reset queue for fresh run
         with open(fallback_file, "w", encoding="utf-8") as f:
             pass
 
@@ -562,6 +490,7 @@ def run_producer(interval=0.1, limit=None, bootstrap_servers="localhost:9092"):
     start_time = time.time()
 
     for idx, row in enumerate(records, start=1):
+        # Generate real-time event timestamp
         event_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         event_epoch = time.time()
 
@@ -597,28 +526,34 @@ def run_producer(interval=0.1, limit=None, bootstrap_servers="localhost:9092"):
 
 
 if __name__ == "__main__":
-    run_producer()
+    parser = argparse.ArgumentParser(description="QuickCart Streaming Producer")
+    parser.add_argument("--interval", type=float, default=0.3, help="Interval in seconds between orders (default: 0.3)")
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of events to publish")
+    parser.add_argument("--bootstrap-servers", type=str, default="localhost:9092", help="Kafka broker address")
+    args = parser.parse_args()
+
+    run_producer(interval=args.interval, limit=args.limit, bootstrap_servers=args.bootstrap_servers)
 ```
 
-> The Kafka producer represents the part of the food delivery system
-> that generates new orders. Each order is published as an individual
-> event instead of waiting for a group of records to accumulate. The
-> event timestamp is preserved so that the consumer can later calculate
-> how quickly the event was processed.
+The producer publishes each order as a separate event and stamps it with the current time as `event_time` and `event_epoch`, so the consumer can measure how quickly each event is processed.
 
-------------------------------------------------------------------------
+---
 
-## Step 13 --- Create the Kafka Consumer
+### Step 11: Create the Kafka Consumer
 
-Create:
-
-``` text
-streaming/consumer.py
-```
-
-Open `streaming/consumer.py` in the VS Code editor and add the event consumer and latency tracking logic:
+1. In the `streaming` folder, create `consumer.py`:
 
 ```python
+#!/usr/bin/env python3
+"""
+QuickCart Real-time Streaming Consumer
+Module: streaming/consumer.py
+
+Subscribes to the Kafka 'orders' topic, processes incoming order events immediately,
+records processing timestamps, computes per-record latency and data freshness,
+and persists streaming results to results/streaming_results.csv.
+"""
+
 import argparse
 import csv
 import json
@@ -627,6 +562,7 @@ import sys
 import time
 from datetime import datetime
 
+# Check for kafka library
 try:
     from kafka import KafkaConsumer
     KAFKA_AVAILABLE = True
@@ -675,6 +611,7 @@ def run_consumer(bootstrap_servers="localhost:9092", max_records=None, timeout_s
     mode = "Kafka Broker (localhost:9092)" if consumer else "Local Stream Simulation Queue"
     print(f"[*] Engine Mode: {mode}\n")
 
+    # CSV headers
     fieldnames = [
         "order_id",
         "customer_id",
@@ -688,6 +625,7 @@ def run_consumer(bootstrap_servers="localhost:9092", max_records=None, timeout_s
         "pipeline_type"
     ]
 
+    # Initialize CSV file with header
     with open(output_csv, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -701,6 +639,7 @@ def run_consumer(bootstrap_servers="localhost:9092", max_records=None, timeout_s
         proc_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         proc_epoch = time.time()
 
+        # Compute real-time processing latency
         event_epoch = event_dict.get("event_epoch")
         if event_epoch:
             latency = max(0.001, proc_epoch - event_epoch)
@@ -739,6 +678,7 @@ def run_consumer(bootstrap_servers="localhost:9092", max_records=None, timeout_s
               f"Latency: {latency * 1000:>6.1f} ms ({latency:.3f}s) | Avg: {avg_lat:.3f}s | "
               f"Tier: {tier:<10} | Freshness: FRESH")
 
+    # Streaming loop
     if consumer:
         try:
             for message in consumer:
@@ -748,6 +688,7 @@ def run_consumer(bootstrap_servers="localhost:9092", max_records=None, timeout_s
         except KeyboardInterrupt:
             pass
     else:
+        # Fallback file stream tailer
         fallback_file = get_fallback_queue_path()
         last_pos = 0
         idle_start = time.time()
@@ -756,6 +697,7 @@ def run_consumer(bootstrap_servers="localhost:9092", max_records=None, timeout_s
             if os.path.exists(fallback_file):
                 current_size = os.path.getsize(fallback_file)
                 if current_size < last_pos:
+                    # File was truncated/restarted by a new producer run
                     last_pos = 0
 
                 with open(fallback_file, "r", encoding="utf-8") as f:
@@ -801,66 +743,109 @@ def run_consumer(bootstrap_servers="localhost:9092", max_records=None, timeout_s
 
 
 if __name__ == "__main__":
-    run_consumer()
+    parser = argparse.ArgumentParser(description="QuickCart Streaming Consumer")
+    parser.add_argument("--bootstrap-servers", type=str, default="localhost:9092", help="Kafka broker address")
+    parser.add_argument("--max-records", type=int, default=None, help="Exit after processing N records")
+    parser.add_argument("--timeout", type=int, default=5, help="Seconds to wait before exiting when idle")
+    args = parser.parse_args()
+
+    run_consumer(bootstrap_servers=args.bootstrap_servers, max_records=args.max_records, timeout_seconds=args.timeout)
 ```
 
-> The Kafka consumer continuously listens for new order events. As soon
-> as an event arrives, it records the processing time and compares it
-> with the original event time. Because the consumer does not wait for a
-> scheduled batch window, the resulting latency should generally be
-> lower than the batch pipeline.
+The consumer processes every event as soon as it arrives. It calculates latency per event, assigns the same order tiers as the batch processor, and appends each record to `results/streaming_results.csv`.
 
-------------------------------------------------------------------------
+---
 
-## Step 14 --- Run the Streaming Pipeline
+### Step 12: Run the Streaming Pipeline
 
-Execute the end-to-end streaming pipeline to produce and consume order events concurrently:
+1. In the `streaming` folder, create `run_streaming.py`, which starts the consumer in a background thread and then runs the producer:
 
-```bash
-python streaming/run_streaming.py
+```python
+#!/usr/bin/env python3
+"""
+QuickCart End-to-End Streaming Runner
+Module: streaming/run_streaming.py
+
+Runs the Kafka Consumer in a background worker thread and executes the Producer
+concurrently in the main thread. This demonstrates true real-time event streaming
+with sub-second latency even in single-terminal environments.
+"""
+
+import os
+import threading
+import time
+from consumer import run_consumer
+from producer import run_producer
+
+
+def main():
+    print("=" * 60)
+    print("LAUNCHING QUICKCART CONCURRENT STREAMING PIPELINE")
+    print("=" * 60)
+
+    # Clean existing fallback queue if present
+    from producer import get_fallback_queue_path
+    queue_path = get_fallback_queue_path()
+    if os.path.exists(queue_path):
+        os.remove(queue_path)
+
+    # Start consumer in worker thread
+    consumer_thread = threading.Thread(
+        target=run_consumer,
+        kwargs={"timeout_seconds": 3, "max_records": 20},
+        daemon=True
+    )
+    consumer_thread.start()
+
+    # Small pause to allow consumer to attach to topic/queue
+    time.sleep(0.5)
+
+    # Run producer in main thread
+    run_producer(interval=0.1, limit=20)
+
+    # Wait for consumer to finish processing all records
+    consumer_thread.join(timeout=10)
+    print("\n[+] Streaming pipeline run complete!")
+
+
+if __name__ == "__main__":
+    main()
 ```
+
+2. Run the streaming pipeline:
+   ```bash
+   python streaming/run_streaming.py
+   ```
 
 ![Streaming Live Events](assets/step14_streaming_live.png)
 
 ![Streaming Summary](assets/step14_streaming_summary.png)
 
-> The streaming pipeline is now processing order events continuously.
-> The producer sends events into Kafka, and the consumer receives and
-> processes them almost immediately. The output should show event
-> timestamps, processing timestamps, and calculated latency values for
-> the incoming records.
+The producer published 20 events at 0.1-second intervals, and the consumer processed each one within about 17–60 ms, with an average latency of 40.4 ms. In this run both components printed `Engine Mode: Local Stream Simulation Queue`, which means no Kafka broker was reachable and the events went through the local fallback queue.
 
-------------------------------------------------------------------------
+---
 
-# 10. Collect the Streaming Results
+### Step 13: Compare Batch and Streaming
 
-Save the streaming results into:
-
-``` text
-results/streaming_results.csv
-```
-
-**Show Image**
-
-> The streaming results contain the same type of timestamp information
-> collected for the batch pipeline. Keeping the measurements in a
-> comparable format allows us to calculate the same metrics for both
-> systems. This makes the final comparison based on observed data rather
-> than assumptions.
-
-------------------------------------------------------------------------
-
-# 11. Calculate Comparison Metrics
-
-Create:
-
-``` text
-metrics/comparison.py
-```
-
-Open `metrics/comparison.py` in the VS Code editor and add the comparative benchmark calculation logic:
+1. In the `metrics` folder, create `comparison.py`:
 
 ```python
+#!/usr/bin/env python3
+"""
+QuickCart Data Engineering Benchmark: Batch vs Streaming Comparison
+Module: metrics/comparison.py
+
+Reads results from both batch and streaming runs:
+- results/batch_results.csv
+- results/streaming_results.csv
+
+Calculates and displays comparative metrics:
+- Latency (Average, Min, Max, Median)
+- Throughput (Records per second)
+- Data Freshness (Event lag to processing availability)
+- Trade-off Analysis Summary
+"""
+
 import os
 import sys
 import pandas as pd
@@ -883,16 +868,24 @@ def calculate_metrics(df, pipeline_name):
     if total_records == 0:
         return None
 
+    # Latency stats
     avg_latency = df["latency_seconds"].mean()
     min_latency = df["latency_seconds"].min()
     max_latency = df["latency_seconds"].max()
     median_latency = df["latency_seconds"].median()
+
+    # Data Freshness
+    # Freshness measures the average time elapsed between event occurrence and result availability
     freshness_seconds = avg_latency
 
+    # Processing window throughput calculation
+    # Throughput = records processed / total span of processing timestamps (or compute span)
     proc_times = pd.to_datetime(df["processing_time"])
     time_span = (proc_times.max() - proc_times.min()).total_seconds()
     
+    # If all records processed in the same second (typical for batch), estimate throughput
     if time_span <= 0:
+        # Batch burst compute: 20 records in ~0.08s
         estimated_compute_time = 0.08
         throughput = total_records / estimated_compute_time
     else:
@@ -930,6 +923,7 @@ def print_comparison_table(b_metrics, s_metrics):
     print(f"{'Data Freshness (Avg Lag)':<28} | {b_metrics['freshness_seconds']:>8.2f} sec (STALE)     | {s_metrics['freshness_seconds'] * 1000:>8.1f} ms (LIVE)")
     print(header_sep)
 
+    # Ratio comparisons
     latency_ratio = b_metrics['avg_latency'] / max(s_metrics['avg_latency'], 0.0001)
     print(f"\n[*] KEY TAKEAWAY & TRADE-OFF SUMMARY:")
     print(f"  • Latency Advantage   : Streaming is {latency_ratio:,.0f}x FASTER at reacting to incoming orders.")
@@ -961,144 +955,37 @@ if __name__ == "__main__":
     main()
 ```
 
-Run the benchmark comparison script from your terminal:
-
-```bash
-python metrics/comparison.py
-```
+2. Run the comparison:
+   ```bash
+   python metrics/comparison.py
+   ```
 
 ![Benchmark Comparison](assets/step11_benchmark_comparison.png)
 
-> The comparison step brings the results of the two pipelines together.
-> We calculate the same metrics for batch and streaming so that the
-> comparison is fair. The most important expected difference is that
-> streaming should provide lower latency and fresher data, while batch
-> processing may be efficient for periodic large-scale workloads.
+The script reads both result files and prints the same metrics for each pipeline. Streaming has an average latency of 40.3 ms, while batch has 1,703,786.06 seconds, because batch records wait for the scheduled run. Batch throughput is reported as 250.0 records/sec: all batch rows share one processing timestamp, so the script uses an estimated compute time of 0.08 seconds. Streaming throughput is 10.0 records/sec, limited by the producer's 0.1-second publish interval rather than by processing speed.
 
-------------------------------------------------------------------------
+---
 
-# 12. Observe Latency
+## 5. Results
 
-Compare the average latency of both approaches.
+| Metric | Batch (Cron) | Streaming |
+| :--- | :--- | :--- |
+| Records processed | 20 | 20 |
+| Average latency | 1,703,786.06 s | 40.3 ms |
+| Min / max latency | 1,703,757.56 s / 1,703,814.56 s | 17.0 ms / 60.0 ms |
+| Throughput | 250.0 rec/s (estimated) | 10.0 rec/s |
+| Data freshness | Stale (waits for the next run) | Live (sub-second) |
 
-Example format:
+| | Batch | Streaming |
+| :--- | :--- | :--- |
+| Processing model | Periodic | Continuous |
+| Scheduling | Cron | Event-driven |
+| Broker | Not required | Kafka |
+| System complexity | Simple script and scheduler | Broker and long-running services |
+| Best for | Reports, scheduled ETL, large periodic loads | Monitoring, alerts, live dashboards |
 
-``` text
-Batch Average Latency     : XX seconds
-Streaming Average Latency: XX seconds
-```
+---
 
-**Show Image**
+## 6. Conclusion
 
-> Latency shows how long the system takes to react after an event is
-> generated. The batch pipeline can have higher latency because an event
-> may have to wait for the next scheduled execution. The streaming
-> pipeline processes events continuously, so its latency should
-> generally be much smaller under the same test conditions.
-
-------------------------------------------------------------------------
-
-# 13. Observe Throughput
-
-Compare the number of records processed per unit of time.
-
-Example:
-
-``` text
-Batch Throughput     : XX records/second
-Streaming Throughput : XX records/second
-```
-
-**Show Image**
-
-> Throughput measures how much data each pipeline can process during a
-> given period. A batch system can process a large collection of records
-> efficiently in one execution, while a streaming system is designed to
-> continuously handle incoming events. The observed throughput depends
-> on the implementation, hardware, workload, and test configuration.
-
-------------------------------------------------------------------------
-
-# 14. Observe Data Freshness
-
-Compare the difference between event time and processing time.
-
-``` text
-Data Freshness = Processing Time - Event Time
-```
-
-**Show Image**
-
-> Data freshness indicates how recent the information is when it becomes
-> available for processing or downstream use. Batch processing can
-> produce older information because records wait for the next scheduled
-> execution. Streaming generally provides fresher information because
-> records are processed soon after they are generated.
-
-------------------------------------------------------------------------
-
-# 15. Final Batch vs Streaming Comparison
-
-  -----------------------------------------------------------------------
-  Metric                  Batch                   Streaming
-  ----------------------- ----------------------- -----------------------
-  Processing model        Periodic                Continuous
-
-  Scheduling              Cron                    Event-driven
-
-  Broker                  Not required            Kafka
-
-  Latency                 Usually higher          Usually lower
-
-  Data freshness          Lower                   Higher
-
-  Real-time processing    Limited                 Strong
-
-  Periodic reporting      Excellent               Possible but
-                                                  unnecessary in many
-                                                  cases
-
-  Continuous monitoring   Not ideal               Excellent
-
-  System complexity       Relatively simple       More components
-
-  Typical use case        Reports, ETL, scheduled Monitoring, alerts,
-                          analytics               live analytics
-  -----------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-# 16. What We Learned
-
-The lab demonstrates that batch and streaming processing solve different
-types of problems.
-
-### Batch is suitable when:
-
--   Data can be processed periodically.
--   Immediate results are not required.
--   Large groups of records need to be processed together.
--   Scheduled reports or ETL workloads are required.
-
-### Streaming is suitable when:
-
--   Data needs to be processed continuously.
--   Low latency is important.
--   Fresh information is required.
--   Real-time monitoring or alerting is needed.
-
-------------------------------------------------------------------------
-
-# 17. Conclusion
-
-In this lab, we implemented the same data-processing scenario using both
-batch and streaming approaches. The batch pipeline used Cron to process
-accumulated data periodically, while the streaming pipeline used Kafka
-to process events continuously. Timestamp-based measurements allowed us
-to compare latency, throughput, and data freshness using actual
-observations from both pipelines. The results demonstrate that batch
-processing is well suited to scheduled and periodic workloads, while
-streaming is more appropriate when low latency and fresh data are
-important. Therefore, the choice between batch and streaming should be
-based on the application's data freshness, latency, throughput, and
-operational requirements.
+In this lab, you processed the same QuickCart orders with a Cron-scheduled batch pipeline and an event-driven streaming pipeline, and compared them using timestamps recorded by each pipeline. Batch processing is simple and handles a whole file in one fast run, but every record waits for the next scheduled run, so its data is never fresher than the schedule allows. Streaming processes each event within milliseconds but needs a broker and always-on services. Choose between them based on how fresh the data must be, how much data arrives, and how much operational complexity the team can support.
